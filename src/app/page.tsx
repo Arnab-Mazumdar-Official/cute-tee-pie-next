@@ -1,7 +1,15 @@
-export default function UserDashboard() {
+import AnnouncementBar from '../../components/anouncement/announcement';
+import Header from '../../components/header/header';
+import BannerSection from '../../components/firstbanner/firstbanner';
+
+async function Page() {
   return (
-    <div>
-      <h1>Welcome to the User Dashboard By Arnab!</h1>
-    </div>
+    <>
+      <AnnouncementBar />
+      <Header />
+      <BannerSection />
+    </>
   );
 }
+
+export default Page;
