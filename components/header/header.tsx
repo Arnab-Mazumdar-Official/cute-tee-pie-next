@@ -30,7 +30,7 @@ export default function ResponsiveHeader() {
             src="https://cuteteepie.myshopify.com/cdn/shop/files/3F7FMK1hTpy-0nMPCtuwLQ-removebg-preview.png?v=1745130189&width=600"
             alt="Cute Tee Pie"
             style={{
-              height: isMobile ? "40px" : "100px",
+              height: isMobile ? "80px" : "100px",
               maxWidth: "160px",
               objectFit: "contain",
             }}

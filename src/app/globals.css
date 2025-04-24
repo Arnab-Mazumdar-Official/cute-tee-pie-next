@@ -24,3 +24,16 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Optional: Make button appear on hover */
+.add-to-cart {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.MuiCard-root:hover .add-to-cart {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}

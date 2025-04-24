@@ -1,8 +1,17 @@
 'use client';
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography, Button, Grid } from "@mui/material";
+import ComingSoonModal from '../commingsoon/commingsoon';
+import { motion } from 'framer-motion';
+
+const AnimatedButton = motion(Button);
 
 const BannerSection = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleClick = () => {
+    console.log("Shop Now clicked!");
+    setModalOpen(true);
+  };
   return (
     <Box sx={{ backgroundColor: "#000", py: 6, px: 3 }}>
       <Grid container spacing={4} alignItems="center" justifyContent="center">
@@ -13,8 +22,8 @@ const BannerSection = () => {
             src="//cuteteepie.myshopify.com/cdn/shop/files/WaD2Z_ZlTr2kSiFPMhDFaw.webp?v=1745130964&width=3840"
             alt="T-shirt left"
             sx={{
-              width: 300,
-              height: 400,
+              width: { xs: 550, sm: 700, md: 550 },  // Adjusts the image width based on screen size
+              height: { xs: 600, sm: 700, md: 550 },
               objectFit: "cover",
               borderRadius: 2,
             }}
@@ -32,7 +41,7 @@ const BannerSection = () => {
           <Typography variant="body1" color="white" mb={3}>
             Express your energy - Shop now
           </Typography>
-          <Button
+          {/* <Button
             variant="outlined"
             color="inherit"
             sx={{
@@ -47,7 +56,29 @@ const BannerSection = () => {
             }}
           >
             Shop Now
-          </Button>
+          </Button> */}
+          <AnimatedButton
+            // onClick={() => console.log("clicked")}
+            whileTap={{ scale: 0.95 }}
+            variant="outlined"
+            color="inherit"
+            onClick={handleClick}
+            sx={{
+              borderColor: "white",
+              color: "white",
+              px: 4,
+              py: 1.5,
+              fontWeight: 'bold',
+              "&:hover": {
+                backgroundColor: "#fff",
+                color: "#000",
+              },
+            }}
+          >
+            Shop Now
+        </AnimatedButton>
+
+      <ComingSoonModal open={modalOpen} onClose={() => setModalOpen(false)} />
         </Grid>
 
         {/* Right Image */}
@@ -57,8 +88,8 @@ const BannerSection = () => {
             src="//cuteteepie.myshopify.com/cdn/shop/files/h_u0trkkRhyuYa06ouhurg.jpg?v=1745140671&width=3840"
             alt="T-shirt right"
             sx={{
-              width: 300,
-              height: 400,
+              width: { xs: 550, sm: 700, md: 550 },  // Adjusts the image width based on screen size
+              height: { xs: 600, sm: 700, md: 550 },
               objectFit: "cover",
               borderRadius: 2,
             }}
@@ -70,6 +101,3 @@ const BannerSection = () => {
 };
 
 export default BannerSection;
-
-
-
