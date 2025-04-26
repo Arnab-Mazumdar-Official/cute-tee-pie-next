@@ -12,7 +12,8 @@ import {
   Card,
   CardMedia,
   CardContent,
-  Typography
+  Typography,
+  Button
 } from "@mui/material";
 
 const items = [
@@ -62,11 +63,17 @@ const TShirtGrid = () => {
       setOpenModal(false);
       setSelectedItem(null);
     };
+
+    const handleViewAll = () => {
+      setOpenModal(true);
+    }
+
+
   return (
     <Box sx={{ backgroundColor: "#000", py: 5, px: 2 }}>
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
-        spaceBetween={20} // Increased gap between slides
+        spaceBetween={20}
         slidesPerView={3}
         navigation
         pagination={{ clickable: true }}
@@ -106,9 +113,9 @@ const TShirtGrid = () => {
                 image={item.image}
                 alt={item.title}
                 sx={{
-                  height: 480, // Fixed height for uniformity
-                  width: "100%", // Ensure full width
-                  objectFit: "cover", // Maintain aspect ratio without stretching
+                  height: 480,
+                  width: "100%",
+                  objectFit: "cover",
                 }}
               />
               <CardContent>
@@ -120,11 +127,42 @@ const TShirtGrid = () => {
           </SwiperSlide>
         ))}
       </Swiper>
+
+      {/* View All Button */}
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+      <Button
+          variant="outlined"
+          onClick={handleViewAll}
+          sx={{
+            textTransform: "none",
+            fontWeight: "bold",
+            fontSize: "1rem",
+            color: "#fff", // White text
+            borderColor: "#fff", // White border
+            px: 4,
+            py: 1.5,
+            borderRadius: 8,
+            transition: "all 0.3s ease",
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.1)", // slight white transparent on hover
+              borderColor: "#fff",
+              transform: "scale(1.05)",
+            },
+            "&:active": {
+              transform: "scale(0.95)",
+            },
+          }}
+        >
+          View All
+        </Button>
+      </Box>
+
       <ComingSoonModal
         open={openModal}
         onClose={handleCloseModal}
       />
     </Box>
+
   );
 };
 
