@@ -14,7 +14,8 @@ import {
   CardContent,
   Typography,
   Chip,
-  IconButton
+  IconButton,
+  Button
 } from "@mui/material";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
@@ -71,6 +72,10 @@ const TrendingProducts = () => {
     setOpenModal(false);
     setSelectedItem(null);
   };
+
+  const handleViewAll = () => {
+    setOpenModal(true);
+  }
   return (
     <Box sx={{ backgroundColor: "#000", py: 6, px: 2 }}>
       <Typography
@@ -213,6 +218,33 @@ const TrendingProducts = () => {
           </SwiperSlide>
         ))}
       </Swiper>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+      <Button
+          variant="outlined"
+          onClick={handleViewAll}
+          sx={{
+            textTransform: "none",
+            fontWeight: "bold",
+            fontSize: "1rem",
+            color: "#fff", // White text
+            borderColor: "#fff", // White border
+            px: 4,
+            py: 1.5,
+            borderRadius: 8,
+            transition: "all 0.3s ease",
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.1)", // slight white transparent on hover
+              borderColor: "#fff",
+              transform: "scale(1.05)",
+            },
+            "&:active": {
+              transform: "scale(0.95)",
+            },
+          }}
+        >
+          View All
+        </Button>
+      </Box>
       <ComingSoonModal
         open={openModal}
         onClose={handleCloseModal}
