@@ -23,13 +23,13 @@ export async function login(data: any): Promise<any> {
       if (!email || !password) {
         const errorMessage = 'Email and password are required';
         
-        await sendLoginEmail(
-          ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
-          email ?? 'Unknown',
-          ipInfo ?? 'IP Info Not Available',
-          errorMessage,
-          moment().toISOString()
-        );
+        // await sendLoginEmail(
+        //   ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
+        //   email ?? 'Unknown',
+        //   ipInfo ?? 'IP Info Not Available',
+        //   errorMessage,
+        //   moment().toISOString()
+        // );
         return { message: errorMessage };
       }
   
@@ -43,13 +43,13 @@ export async function login(data: any): Promise<any> {
         console.log("Arnab 1")
         await loginDetails.create({email:email,ipInfo:ipInfo,login_status:false,cause:'User Not Found'})
         console.log("Arnab 2")
-        await sendLoginEmail(
-          ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
-          email,
-          ipInfo ?? 'IP Info Not Available',
-          errorMessage,
-          moment().toISOString()
-        );
+        // await sendLoginEmail(
+        //   ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
+        //   email,
+        //   ipInfo ?? 'IP Info Not Available',
+        //   errorMessage,
+        //   moment().toISOString()
+        // );
         return { message: errorMessage };
       }
       
@@ -57,22 +57,22 @@ export async function login(data: any): Promise<any> {
       if (!isMatch) {
         const errorMessage = 'Invalid Email Or Password';
         await loginDetails.create({email:data.email,ipInfo:data.ipInfo,login_status:false,cause:'Invalid Email Or Password'})
-        await sendLoginEmail(
-          ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
-          email,
-          ipInfo ?? 'IP Info Not Available',
-          errorMessage,
-          moment().toISOString()
-        );
+        // await sendLoginEmail(
+        //   ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
+        //   email,
+        //   ipInfo ?? 'IP Info Not Available',
+        //   errorMessage,
+        //   moment().toISOString()
+        // );
         return { message: errorMessage };
       }
   
       // ✅ Successful login:
-      await sendSuccessNotification(
-        ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
-        user.email,
-        ipInfo ?? 'IP Info Not Available'
-      );
+      // await sendSuccessNotification(
+      //   ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
+      //   user.email,
+      //   ipInfo ?? 'IP Info Not Available'
+      // );
 
       let aggregation = [
         {
@@ -98,13 +98,13 @@ export async function login(data: any): Promise<any> {
       console.error('Login error:', err);
       const errorMessage = 'Something went wrong';
       await loginDetails.create({email:data.email,ipInfo:data.ipInfo,login_status:false,cause:'Something went wrong'})
-      await sendLoginEmail(
-        ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
-        data.email ?? 'Unknown',
-        data.ipInfo ?? 'IP Info Not Available',
-        errorMessage,
-        moment().toISOString()
-      );
+      // await sendLoginEmail(
+      //   ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
+      //   data.email ?? 'Unknown',
+      //   data.ipInfo ?? 'IP Info Not Available',
+      //   errorMessage,
+      //   moment().toISOString()
+      // );
       return { message: errorMessage };
     }
   }
