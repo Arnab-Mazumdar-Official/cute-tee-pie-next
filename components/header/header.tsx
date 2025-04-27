@@ -54,7 +54,8 @@ export default function ResponsiveHeader() {
     router.push("/login");
   };
   const  handelComingsoon = () => {
-    setOpenModal(true);
+    // setOpenModal(true);
+    router.push("/admin-dashboard")
   };
   const handleCloseModal = () => {
     setOpenModal(false);
