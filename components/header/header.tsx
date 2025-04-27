@@ -17,7 +17,6 @@ import { motion } from "framer-motion"; // Import motion
 import { AccountCircle } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import ComingSoonModal from '../commingsoon/commingsoon';
-import Image from "next/image";
 
 
 const MotionButtonNew = motion(Button); 
