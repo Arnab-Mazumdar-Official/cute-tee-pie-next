@@ -51,7 +51,7 @@ const Footer = () => {
           Get in Touch
         </Typography>
         <Typography variant="body1" color="#a0a0a0">
-          We're a fun-loving brand on a mission to bring cuteness to your closet. Follow us and stay connected!
+        We&apos;re a fun-loving brand on a mission to bring cuteness to your closet. Follow us and stay connected!
         </Typography>
         <Box mt={2}>
           <IconButton

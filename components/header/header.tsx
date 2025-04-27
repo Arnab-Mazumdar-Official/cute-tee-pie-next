@@ -7,18 +7,18 @@ import {
   Tooltip,
   useTheme,
   useMediaQuery,
-  Snackbar,
   Button,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion"; // Import motion
 import { AccountCircle } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import ComingSoonModal from '../commingsoon/commingsoon';
+import Image from "next/image";
+
 
 const MotionButtonNew = motion(Button); 
 const MotionButton = ({ children, onClick }: { children: React.ReactNode, onClick?: () => void }) => (
@@ -42,7 +42,7 @@ const MotionButton = ({ children, onClick }: { children: React.ReactNode, onClic
 
 
 export default function ResponsiveHeader() {
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [openModal, setOpenModal] = useState(false); 
   const theme = useTheme();
@@ -50,7 +50,7 @@ export default function ResponsiveHeader() {
   const router = useRouter();
 
   const handleLoginClick = () => {
-    setLoading(true);
+    // setLoading(true);
     router.push("/login");
   };
   const  handelComingsoon = () => {
@@ -91,7 +91,7 @@ export default function ResponsiveHeader() {
 
         {/* Center: Logo */}
         {!isAdmin &&(<Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
-          <img
+          <Image
             src="https://cuteteepie.myshopify.com/cdn/shop/files/3F7FMK1hTpy-0nMPCtuwLQ-removebg-preview.png?v=1745130189&width=600"
             alt="Cute Tee Pie"
             style={{

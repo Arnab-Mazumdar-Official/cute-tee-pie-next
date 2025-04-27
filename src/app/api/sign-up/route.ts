@@ -4,10 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 export const POST = async (request: NextRequest) => {
   const req = await request.json();
   console.log("payload +++++++", req);
-  let response: any
 
-  response = await savedata(req);
-
+  const response = await savedata(req);
 
   return NextResponse.json({
     success: true,
@@ -15,4 +13,4 @@ export const POST = async (request: NextRequest) => {
     message: req.id ? "Opportunity updated successfully" : response.message,
     data: response,
   });
-}
+};

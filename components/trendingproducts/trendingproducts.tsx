@@ -61,16 +61,16 @@ const items = [
 const TrendingProducts = () => {
   const swiperRef = useRef<SwiperCore | null>(null);
   const [openModal, setOpenModal] = useState(false); 
-  const [selectedItem, setSelectedItem] = useState<any>(null);
+  // const [selectedItem, setSelectedItem] = useState<any>(null);
 
-  const handleCardClick = (item: any) => {
-    setSelectedItem(item);
+  const handleCardClick = () => {
+    // setSelectedItem(item);
     setOpenModal(true);
   };
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    setSelectedItem(null);
+    // setSelectedItem(null);
   };
 
   const handleViewAll = () => {
@@ -120,7 +120,7 @@ const TrendingProducts = () => {
         {items.map((item, index) => (
           <SwiperSlide key={index}>
             <Box
-              onClick={() => handleCardClick(item)}
+              onClick={() => handleCardClick()}
               onMouseEnter={() => swiperRef.current?.autoplay?.stop()}
               onMouseLeave={() => swiperRef.current?.autoplay?.start()}
               sx={{

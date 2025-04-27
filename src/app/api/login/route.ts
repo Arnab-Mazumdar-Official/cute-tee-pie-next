@@ -6,7 +6,7 @@ export const POST = async (request: NextRequest) => {
       const req = await request.json();
       console.log("Payload received:", req);
   
-      const { email, password, ipInfo } = req;
+      const { email, password } = req;
   
       if (!email || !password) {
         return NextResponse.json({

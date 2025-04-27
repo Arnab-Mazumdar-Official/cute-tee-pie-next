@@ -1,10 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Button, Typography, Link, Paper, LinearProgress, Snackbar, FormHelperText } from '@mui/material';
+import { Box, TextField, Button, Typography, Link, Paper, LinearProgress, Snackbar } from '@mui/material';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import router from 'next/router';
 
 
 // Define the structure of the IP info
@@ -27,7 +26,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [ipInfo, setIpInfo] = useState<IpInfo | null>(null); 
   const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
+  // const [passwordError, setPasswordError] = useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
 
 
@@ -59,11 +58,11 @@ export default function LoginForm() {
     console.log("Just Clicked 2");
   
     setEmailError(false);
-    setPasswordError(false);
+    // setPasswordError(false);
   
     if (!email || !password) {
       if (!email) setEmailError(true);
-      if (!password) setPasswordError(true);
+      // if (!password) setPasswordError(true);
       setLoading(false);
       return;
     }

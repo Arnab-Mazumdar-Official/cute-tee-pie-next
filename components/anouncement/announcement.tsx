@@ -1,9 +1,8 @@
 'use client';
 import React from 'react';
-import { Box, SxProps, Theme, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 const AnnouncementBar = () => {
-
   return (
     <Box
       sx={{
@@ -15,7 +14,7 @@ const AnnouncementBar = () => {
       }}
     >
       <Typography variant="body2" sx={{ color: '#cfcfcf' }}>
-        "We're live! Discover unique, high-quality t-shirts designed to express your vibe – shop now and wear your story."
+        &quot;We&apos;re live! Discover unique, high-quality t-shirts designed to express your vibe – shop now and wear your story.&quot;
       </Typography>
     </Box>
   );

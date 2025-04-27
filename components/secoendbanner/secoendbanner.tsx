@@ -58,16 +58,16 @@ const MovableSectionWithBackgrounds = () => {
                 margin: { xs: 2, md: 10 },
               }}
             >
-              Say hello to the tee that gives “too cute to care” energy all day, every day. This isn't just a piece of clothing—it’s your flirty alter ego in fabric form. She’s cheeky, she’s confident, and she’s always camera-ready (even if you just rolled outta bed).
-
-              🩷 Vibe check: Think bubblegum confidence with a side of sass.
-              🌈 Style inspo: Perfect for coffee runs, Insta reels, or surprise run-ins with your crush.
-              🧁 Fit check: Soft, breathable, and hugs just right—aka your new ride-or-die for cozy slayage.
-              💋 Attitude: “Oops, did I steal the spotlight again?” – You, wearing this tee.
-
-              Pair with your fave ripped jeans, platform sneakers, and a bold lip. Or go full cozy cutie with bike shorts and a messy bun. Either way, you're stealing hearts and taking names.
-
-              Tee-Rrific Cutie isn’t just a look—it’s a lifestyle. And baby, you wear it well. 😘
+              Say hello to the tee that gives &ldquo;too cute to care&rdquo; energy all day, every day. This isn&rsquo;t just a piece of clothing&mdash;it&rsquo;s your flirty alter ego in fabric form. She&rsquo;s cheeky, she&rsquo;s confident, and she&rsquo;s always camera-ready (even if you just rolled outta bed).
+              <br /><br />
+              🩷 Vibe check: Think bubblegum confidence with a side of sass.<br />
+              🌈 Style inspo: Perfect for coffee runs, Insta reels, or surprise run-ins with your crush.<br />
+              🧁 Fit check: Soft, breathable, and hugs just right&mdash;aka your new ride-or-die for cozy slayage.<br />
+              💋 Attitude: &ldquo;Oops, did I steal the spotlight again?&rdquo; &ndash; You, wearing this tee.
+              <br /><br />
+              Pair with your fave ripped jeans, platform sneakers, and a bold lip. Or go full cozy cutie with bike shorts and a messy bun. Either way, you&rsquo;re stealing hearts and taking names.
+              <br /><br />
+              Tee-Rrific Cutie isn&rsquo;t just a look&mdash;it&rsquo;s a lifestyle. And baby, you wear it well. 😘
             </Typography>
             <Typography
               variant="h5"

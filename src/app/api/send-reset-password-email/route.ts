@@ -4,15 +4,13 @@ import { generateResetToken } from "../../../../helpers/user";
 export const POST = async (request: NextRequest) => {
   const req = await request.json();
   console.log("payload +++++++", req);
-  let response: any
 
-  response = await generateResetToken(req);
-
+  const response = await generateResetToken(req);
 
   return NextResponse.json({
     success: true,
     status: 200,
-    message: "Password reset link send successfully",
+    message: "Password reset link sent successfully",
     data: response,
   });
 }

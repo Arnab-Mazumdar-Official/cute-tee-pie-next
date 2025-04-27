@@ -1,18 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createProducts } from "../../../../helpers/products";
+// import { NextRequest, NextResponse } from 'next/server'
+// import { createProducts } from "../../../../helpers/products";
 
-export const POST = async (request: NextRequest) => {
-  const req = await request.json();
-  console.log("payload +++++++", req);
-  let response: any
+import { NextResponse } from "next/server";
 
-  response = await createProducts(req);
+// export const POST = async (request: NextRequest) => {
+//   const req = await request.json();
+//   console.log("payload +++++++", req);
+//   let response: any
+
+//   response = await createProducts(req);
 
 
-  return NextResponse.json({
-    success: true,
-    status: 200,
-    message: req.id ? "Opportunity updated successfully" : "Opportunity created successfully",
-    data: response,
-  });
+//   return NextResponse.json({
+//     success: true,
+//     status: 200,
+//     message: req.id ? "Opportunity updated successfully" : "Opportunity created successfully",
+//     data: response,
+//   });
+// }
+// File: src/app/api/hello/route.ts
+
+export async function GET() {
+  return NextResponse.json({ message: 'Hello world!' })
 }
+

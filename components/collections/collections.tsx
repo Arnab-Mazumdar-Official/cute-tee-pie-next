@@ -16,7 +16,12 @@ import {
   Button
 } from "@mui/material";
 
-const items = [
+type TShirtItem = {
+  title: string;
+  image: string;
+};
+
+const items: TShirtItem[] = [
   {
     title: "Casuals with chaos.",
     image:
@@ -52,16 +57,16 @@ const items = [
 const TShirtGrid = () => {
     const swiperRef = useRef<SwiperCore | null>(null);
     const [openModal, setOpenModal] = useState(false); 
-    const [selectedItem, setSelectedItem] = useState<any>(null);
+    // const [selectedItem, setSelectedItem] = useState<any>(null);
 
-    const handleCardClick = (item: any) => {
-      setSelectedItem(item);
+    const handleCardClick = () => {
+      // setSelectedItem(item);
       setOpenModal(true);
     };
   
     const handleCloseModal = () => {
       setOpenModal(false);
-      setSelectedItem(null);
+      // setSelectedItem(null);
     };
 
     const handleViewAll = () => {
@@ -94,7 +99,7 @@ const TShirtGrid = () => {
         {items.map((item, index) => (
           <SwiperSlide key={index}>
             <Card
-              onClick={() => handleCardClick(item)}
+              onClick={() => handleCardClick()}
               onMouseEnter={() => swiperRef.current?.autoplay?.stop()}
               onMouseLeave={() => swiperRef.current?.autoplay?.start()}
               sx={{
