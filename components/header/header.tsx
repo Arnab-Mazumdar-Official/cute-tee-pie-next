@@ -90,17 +90,14 @@ export default function ResponsiveHeader() {
         </MotionButton>
 
         {/* Center: Logo */}
-        {!isAdmin &&(<Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+        {/* {!isAdmin &&(<Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
           <Image
             src="https://cuteteepie.myshopify.com/cdn/shop/files/3F7FMK1hTpy-0nMPCtuwLQ-removebg-preview.png?v=1745130189&width=600"
+            width={600}
+            height={400} // Estimate or set an appropriate height
             alt="Cute Tee Pie"
-            style={{
-              height: isMobile ? "80px" : "100px",
-              maxWidth: "160px",
-              objectFit: "contain",
-            }}
           />
-        </Box>)}
+        </Box>)} */}
 
         {isAdmin && (
               <Box sx={{ display: "flex", justifyContent: "center", width: "100%", mt: 2 }}>
