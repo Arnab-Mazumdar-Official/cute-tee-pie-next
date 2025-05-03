@@ -31,8 +31,8 @@ yarn-error.log*
 pnpm-debug.log*
 
 # environment variables (ignored for security)
-# /.env
-# .env.* # Ignore all other env variants like .env.local, .env.production, etc.
+.env
+.env.*  # Ignore all env variants like .env.local, .env.production, etc.
 
 # vercel deployment
 .vercel/
