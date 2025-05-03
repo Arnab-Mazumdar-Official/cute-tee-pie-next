@@ -5,10 +5,10 @@ import { createCategory, updateCategory } from "../../../../helpers/collections"
 
 
 const s3 = new S3Client({
-  region: process.env.AWS_REGION!,
+  region: process.env.MYAPP_AWS_REGION!,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.MYAPP_AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.MYAPP_AWS_SECRET_ACCESS_KEY!,
   },
 });
 
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       console.log('Upload successful.');
 
 
-      imageUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+      imageUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.MYAPP_AWS_REGION}.amazonaws.com/${key}`;
     } else {
       console.error('Image is missing or invalid');
       return NextResponse.json({ error: 'Valid image file or URL is required' }, { status: 400 });
