@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
-import { createCategory, updateCategory } from "../../../../helpers/collections";
+import { createCategory, updateCategory } from '../../../../helpers/collections';
 
 const s3 = new S3Client({
   region: process.env.MYAPP_AWS_REGION!,
@@ -13,10 +13,10 @@ const s3 = new S3Client({
 
 export async function POST(req: NextRequest) {
   try {
-    console.log("AccessKey---------->>", process.env.MYAPP_AWS_ACCESS_KEY_ID);
-    console.log("SecretKey---------->>", process.env.MYAPP_AWS_SECRET_ACCESS_KEY);
-    console.log("RegionKey---------->>", process.env.MYAPP_AWS_REGION);
-    console.log("BucketKey---------->>", process.env.S3_BUCKET_NAME);
+    console.log('AccessKey---------->>', process.env.MYAPP_AWS_ACCESS_KEY_ID);
+    console.log('SecretKey---------->>', process.env.MYAPP_AWS_SECRET_ACCESS_KEY);
+    console.log('RegionKey---------->>', process.env.MYAPP_AWS_REGION);
+    console.log('BucketKey---------->>', process.env.S3_BUCKET_NAME);
 
     console.log('Receiving request...');
     const formData = await req.formData();
@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
     const image = formData.get('image');
     let imageUrl = '';
 
-    // 🔥 Detailed logging of the image object
     console.log('Raw image object:', image);
 
     if (typeof image === 'string') {
@@ -39,30 +38,37 @@ export async function POST(req: NextRequest) {
         imageUrl = image;
         console.log('Reusing existing image URL:', imageUrl);
       } else {
-        console.error('Invalid image string:', image);
-        return NextResponse.json({ error: 'Invalid image string' }, { status: 400 });
+        console.error('Invalid image string format');
+        return NextResponse.json({ error: 'Invalid image string format' }, { status: 400 });
       }
-    } else if (image instanceof File) {
-      console.log('Received image as File:', image);
-      console.log('image name:', image.name);
-      console.log('image type:', image.type);
-      console.log('image size:', image.size);
+    }
+    // Check if image is a Blob or has arrayBuffer() function
+    else if (image && typeof (image as any).arrayBuffer === 'function') {
+      const file = image as unknown as Blob;
 
-      const arrayBuffer = await image.arrayBuffer();
+      const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      const ext = image.name.split('.').pop() || 'jpg';
+      // Get file extension safely
+      const fileName = (file as any).name || `upload-${Date.now()}`;
+      const ext = fileName.split('.').pop() || 'jpg';
       const key = `tshirts/${uuidv4()}.${ext}`;
+
+      console.log('Uploading new image:');
+      console.log(' - name:', fileName);
+      console.log(' - type:', (file as any).type);
+      console.log(' - size:', (file as any).size);
+      console.log(' - S3 key:', key);
 
       const uploadCommand = new PutObjectCommand({
         Bucket: process.env.S3_BUCKET_NAME!,
         Key: key,
         Body: buffer,
-        ContentType: image.type || 'application/octet-stream',
+        ContentType: (file as any).type || 'application/octet-stream',
       });
 
       await s3.send(uploadCommand);
-      console.log('Upload successful.');
+      console.log('Upload to S3 successful.');
 
       imageUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.MYAPP_AWS_REGION}.amazonaws.com/${key}`;
     } else {
@@ -88,10 +94,13 @@ export async function POST(req: NextRequest) {
       result = await createCategory(categoryData);
     }
 
+    console.log('Category processed successfully.');
     return NextResponse.json({ message: 'Category processed successfully', data: result, success: true });
-
   } catch (error) {
     console.error('Upload error:', error);
-    return NextResponse.json({ error: (error as Error).message || 'Server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: (error as Error).message || 'Server error' },
+      { status: 500 }
+    );
   }
 }
