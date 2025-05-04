@@ -13,10 +13,10 @@ const s3 = new S3Client({
 
 export async function POST(req: NextRequest) {
   try {
-    console.log('AccessKey---------->>', process.env.MYAPP_AWS_ACCESS_KEY_ID);
-    console.log('SecretKey---------->>', process.env.MYAPP_AWS_SECRET_ACCESS_KEY);
-    console.log('RegionKey---------->>', process.env.MYAPP_AWS_REGION);
-    console.log('BucketKey---------->>', process.env.S3_BUCKET_NAME);
+    // console.log('AccessKey---------->>', process.env.MYAPP_AWS_ACCESS_KEY_ID);
+    // console.log('SecretKey---------->>', process.env.MYAPP_AWS_SECRET_ACCESS_KEY);
+    // console.log('RegionKey---------->>', process.env.MYAPP_AWS_REGION);
+    // console.log('BucketKey---------->>', process.env.S3_BUCKET_NAME);
 
     console.log('Receiving request...');
     const formData = await req.formData();

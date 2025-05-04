@@ -1,4 +1,4 @@
-import mongoose, { CallbackError, model, models } from "mongoose";
+import mongoose, { model, models } from "mongoose";
 import moment from "moment";
 
 const productsSchema = new mongoose.Schema(
@@ -8,43 +8,58 @@ const productsSchema = new mongoose.Schema(
       required: true,
       index: -1,
     },
-
     description: {
       type: String,
     },
     priority: {
       type: Number,
-      // required: true,
-
       index: -1,
     },
-    status: {
-      type: Number
+    active: {
+      type: Boolean,
     },
-    
-    images: {
-      type: Array<object>,
+
+    type: {
+      type: String,
+    },
+
+    price: {
+      type: Number,
+    },
+
+    sizes: {
+      type: [String],
+    },
+
+    colors: {
+      type: [String],
+    },
+
+    thumbnail_url: {
+      type: String,
+    },
+
+    image_urls: {
+      type: [String]
     },
 
     created_on: {
       type: Number,
-      default: moment().valueOf(),
+      default: () => moment().valueOf(),
     },
     updated_on: {
       type: Number,
-      default: moment().valueOf(),
+      default: () => moment().valueOf(),
     },
-    category_id: {
+
+    collectionId: {
       type: String,
     },
   },
-
   {
     timestamps: true,
   }
 );
 
-const products =
-  models.products || model("products", productsSchema);
-
+const products = models.products || model("products", productsSchema);
 export default products;

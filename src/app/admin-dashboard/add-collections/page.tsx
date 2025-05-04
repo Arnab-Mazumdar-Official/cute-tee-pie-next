@@ -50,16 +50,16 @@ const TshirtCategoryForm: React.FC = () => {
 
 
       setIsEditMode(true);
-      setCategoryId(category._id);
-      setTitle(category.title);
-      setActive(category.active);
-      setPriority(category.priority);
-      setDescription(category.description);
+      setCategoryId(category.payload._id);
+      setTitle(category.payload.title);
+      setActive(category.payload.active);
+      setPriority(category.payload.priority);
+      setDescription(category.payload.description);
 
 
-      if (category.imageUrl) {
-        setImagePreviewUrl(category.imageUrl);
-        setImageFile(category.imageUrl);
+      if (category.payload.imageUrl) {
+        setImagePreviewUrl(category.payload.imageUrl);
+        setImageFile(category.payload.imageUrl);
       }
     }
   }, []);
@@ -214,7 +214,7 @@ const TshirtCategoryForm: React.FC = () => {
         }}
       >
         <Typography variant="h5" gutterBottom align="center">
-          Add T-Shirt Category
+          Add Products
         </Typography>
 
 

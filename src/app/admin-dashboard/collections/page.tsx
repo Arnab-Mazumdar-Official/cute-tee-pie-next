@@ -116,7 +116,13 @@ const [loading, setLoading] = useState(false);
       const data = await response.json();
 
 
-      Cookies.set('edit-category-data', JSON.stringify(data.data), { expires: 1 });
+      // Cookies.set('edit-category-data', JSON.stringify(data.data), { expires: 1 });
+      const dataToStore = {
+        payload: data.data,
+        expiresAt: Date.now() + 30 * 1000, // current time + 30 sec
+      };
+      
+      Cookies.set('edit-category-data', JSON.stringify(dataToStore));
       setLoading(false);
       router.push('/admin-dashboard/add-collections');
     } catch (error) {
@@ -148,6 +154,11 @@ const [loading, setLoading] = useState(false);
   return (
     <Box sx={{ flexGrow: 1, padding: 3 }}>
         {loading && <LinearProgress />}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+          <Typography variant="h4" fontWeight="bold">
+            Our Collections
+          </Typography>
+        </Box>
       {/* Top Button Row */}
       <Stack
         direction={isAbove716 ? 'row' : 'column'}
