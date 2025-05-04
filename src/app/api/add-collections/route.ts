@@ -15,9 +15,15 @@ const s3 = new S3Client({
 
 export async function POST(req: NextRequest) {
   try {
+
+    console.log("AccessKey---------->>",process.env.MYAPP_AWS_ACCESS_KEY_ID);
+    console.log("SecretKey---------->>",process.env.MYAPP_AWS_SECRET_ACCESS_KEY);
+    console.log("RegionKey---------->>",process.env.S3_BUCKET_NAME);
+    console.log("BucketKey---------->>",process.env.MYAPP_AWS_REGION);
+    
     console.log('Receiving request...');
     const formData = await req.formData();
-    console.log('FormData received.');
+    console.log('FormData received.',formData);
 
 
     const _id = formData.get('_id')?.toString(); // if present, we're updating
