@@ -2,14 +2,13 @@ import mongoose, { Types } from "mongoose";
 import dbConnect from "../db/dbConnect";
 import products from "../models/products";
 import moment from "moment";
+import slugifyLib from 'slugify';
 
 
 export async function createCategory(body: any) {
   await dbConnect();
 
-  const now = moment().valueOf();
-
-  const category = await products.create({
+  const productData = {
     title: body.title,
     description: body.description,
     priority: Number(body.priority),
@@ -21,9 +20,15 @@ export async function createCategory(body: any) {
     thumbnail_url: body.thumbnail_url,
     image_urls: Array.isArray(body.image_urls) ? body.image_urls : [],
     collectionId: body.collectionId || '', 
-  });
+    slug: body.slug || '', 
+  }
 
-  return { message: 'Category created', category };
+  console.log("Product Data--------->>",productData);
+  
+
+  const Product = await products.create(productData);
+
+  return { message: 'Product created', Product };
 }
 export async function collectionList() {
 
@@ -79,6 +84,7 @@ export async function collectionList() {
         'title': 1, 
         'active': 1, 
         'image': '$thumbnail_url', 
+        'slug':'$slug',
         'createdOn': {
           '$dateToString': {
             'format': '%Y-%m-%d', 
@@ -111,7 +117,7 @@ export async function updateCategory(_id: string, body: any) {
   await dbConnect();
 
   if (!Types.ObjectId.isValid(_id)) {
-    throw new Error('Invalid category ID');
+    throw new Error('Invalid Product ID');
   }
 
   const updateFields = {
@@ -128,7 +134,11 @@ export async function updateCategory(_id: string, body: any) {
     image_urls: Array.isArray(body.image_urls) ? body.image_urls : [],
     collectionId: body.collectionId || '',
     updated_on: moment().valueOf(),
+    slug: body.slug || '',
   };
+
+  console.log("updateFields----------->>",updateFields);
+  
 
   const updatedCategory = await products.findByIdAndUpdate(_id, updateFields, { new: true });
 
@@ -137,6 +147,27 @@ export async function updateCategory(_id: string, body: any) {
   }
 
   return { message: 'Category updated', category: updatedCategory };
+}
+
+export function generateSlug(text: string): string {
+  return slugifyLib(text, { lower: true, strict: true });
+}
+
+export async function getProductByName(productname: string) {
+  await dbConnect();
+  const slug = generateSlug(productname);
+  console.log("Slug----------->>",slug);
+  
+  const productDetails = await products.findOne({ slug });
+  console.log("Product Details--------->>",productDetails);
+  
+
+  if(productDetails){
+    return productDetails;
+  }
+  else{
+    return "Not Found";
+  }
 }
 
 

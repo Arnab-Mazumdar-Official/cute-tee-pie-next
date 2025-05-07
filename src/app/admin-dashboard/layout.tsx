@@ -1,7 +1,4 @@
-
 'use client';
-
-
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
@@ -82,15 +79,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Main content */}
         <main
-          className={`flex-1 p-4 transition-all duration-300 overflow-auto ${
-            sidebarOpen ? 'ml-36 sm:ml-48 md:ml-64' : ''
-          }`}
-          style={{
-            marginLeft: sidebarOpen ? sidebarWidth : 0,
-          }}
-        >
-          {children}
-        </main>
+            className={`flex-1 p-4 transition-all duration-300 overflow-auto ${
+              sidebarOpen ? 'ml-36 sm:ml-48 md:ml-64' : ''
+            }`}
+            style={{
+              marginLeft: sidebarOpen ? sidebarWidth : 0,
+            }}
+          >
+            {children}
+          </main>
+
       </div>
     </div>
   );

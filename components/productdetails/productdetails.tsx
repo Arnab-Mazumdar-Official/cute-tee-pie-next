@@ -8,37 +8,54 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import ShareIcon from '@mui/icons-material/Share';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import Tooltip from '@mui/material/Tooltip';
+import Snackbar from '@mui/material/Snackbar';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import Header from '../../../components/header/header';
-import TrendingProducts from '../../../components/trendingproducts/trendingproducts';
+import Header from '../header/header';
+import TrendingProducts from '../trendingproducts/trendingproducts';
 import { useRouter } from 'next/navigation';
-import WelcomePage from '../../../components/welcomenote/welcomenote';
-import Footer from '../../../components/footer/footer';
+import WelcomePage from '../welcomenote/welcomenote';
+import Footer from '../footer/footer';
 
-const product = {
-  title: "Test new 12",
-  description: "test",
-  price: 422,
-  sizes: ["M", "L"],
-  colors: ["Green", "Black", "White"],
-  thumbnail_url: "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/3804d9a3-e8dd-418c-bad3-909c90b3c057.jpeg",
-  image_urls: [
-    "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/80f8b8b7-3af6-481b-87c9-1e4d7d6fde72.jpeg",
-    "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/3804d9a3-e8dd-418c-bad3-909c90b3c057.jpeg",
-    "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/fdeb3f1b-dd37-4836-976b-4724bf1a7006.jpeg"
-  ],
-  active: true,
-};
-
-export default function ProductDetails() {
+export default function ProductDetails({ product }: { product: any }) {
+    console.log('ProductDetails received product:', product);
     const router = useRouter();
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [quantity, setQuantity] = useState(1);
   const [openSizeChart, setOpenSizeChart] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product.title,
+          text: `Check out this product: ${product.title}`,
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      alert('Sharing not supported on this device.');
+    }
+  };
+  
+  const handleCopyURL = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopySuccess(true);
+    } catch (error) {
+      console.error('Failed to copy:', error);
+    }
+  };
+  
 
   const sizeChart = [
     { size: 'EXTRA SMALL', chest: 36, length: 24.5, sleeve: 6.5 },
@@ -51,9 +68,32 @@ export default function ProductDetails() {
     { size: '4X LARGE', chest: 50, length: 32, sleeve: 10 },
     { size: '5X LARGE', chest: 52, length: 33, sleeve: 10 }
   ];
-
   return (
-    <><Header /><Box sx={{ backgroundColor: 'black', color: 'white', p: 4 }}>
+    <><Header /><Box sx={{ backgroundColor: 'black', color: 'white', p: 4, position: 'relative' }}>
+        <Box
+            sx={{
+                position: 'absolute',
+                top: 16,
+                right: 16,
+                display: 'inline-flex', // Use inline-flex to prevent full row usage
+                gap: 1,
+                zIndex: 10, // Optional: Ensure it appears on top
+                bgcolor: 'transparent', // Optional: Avoid unexpected background
+            }}
+            >
+            <Tooltip title="Share">
+                <IconButton onClick={handleShare} sx={{ color: 'white' }}>
+                <ShareIcon />
+                </IconButton>
+            </Tooltip>
+            <Tooltip title="Copy URL">
+                <IconButton onClick={handleCopyURL} sx={{ color: 'white' }}>
+                <ContentCopyIcon />
+                </IconButton>
+            </Tooltip>
+            </Box>
+
+
           <Grid container spacing={4}>
               {/* Image Section */}
               <Grid item xs={12} md={6}>
@@ -65,7 +105,7 @@ export default function ProductDetails() {
                       loop
                       style={{ borderRadius: 10 }}
                   >
-                      {product.image_urls.map((img, idx) => (
+                      {product.image_urls.map((img:string, idx:number) => (
                           <SwiperSlide key={idx}>
                               <Box
                                   component="img"
@@ -76,7 +116,7 @@ export default function ProductDetails() {
                                       height: 450,
                                       objectFit: 'contain',
                                       borderRadius: 2,
-                                      backgroundColor: '#222',
+                                    //   backgroundColor: '#222',
                                   }} />
                           </SwiperSlide>
                       ))}
@@ -86,7 +126,7 @@ export default function ProductDetails() {
               {/* Info Section */}
               <Grid item xs={12} md={6}>
                   <Typography variant="h4" fontWeight={600}>{product.title}</Typography>
-                  <Typography variant="h6" color="gold">₹ {product.price}</Typography>
+                  <Typography variant="h6" color="gold">Only For [₹ {product.price}]</Typography>
                   <Chip label="Limited: 5 Left" color="warning" size="small" sx={{ mt: 1 }} />
 
                   {/* Promo Box */}
@@ -106,14 +146,14 @@ export default function ProductDetails() {
 
                   {/* Sizes */}
                   <Box mt={3}>
-                      <Typography sx={{ color: 'white' }}>Size:</Typography>
+                      <Typography sx={{ color: 'white' }}>Size: {selectedSize}</Typography>
                       <ToggleButtonGroup
                           value={selectedSize}
                           exclusive
                           onChange={(_, val) => val && setSelectedSize(val)}
                           sx={{ mt: 1 }}
                       >
-                          {product.sizes.map(size => (
+                          {product.sizes.map((size: string) => (
                               <ToggleButton
                                   key={size}
                                   value={size}
@@ -142,7 +182,7 @@ export default function ProductDetails() {
                           onChange={(_, val) => val && setSelectedColor(val)}
                           sx={{ mt: 1 }}
                       >
-                          {product.colors.map(color => (
+                          {product.colors.map((color:string) => (
                               <ToggleButton
                                   key={color}
                                   value={color}
@@ -246,6 +286,12 @@ export default function ProductDetails() {
               </Dialog>
           </Grid>
       </Box>
+      <Snackbar
+        open={copySuccess}
+        autoHideDuration={3000}
+        onClose={() => setCopySuccess(false)}
+        message="URL copied to clipboard!"
+        />
       <TrendingProducts />
       <WelcomePage />
       <Footer /></>

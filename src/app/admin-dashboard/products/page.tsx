@@ -24,6 +24,7 @@ interface Product {
   createdOn: string;
   active: boolean;
   category: string;
+  slug: string;
 }
 
 export default function ProductGrid() {
@@ -110,6 +111,12 @@ export default function ProductGrid() {
           setLoading(false);
         console.error('Error fetching product:', error);
       }
+    };
+
+    const handleClick = (productname: string) => {
+      const route = `/shop/${encodeURIComponent(productname)}`;
+      // Cookies.set('lastViewedProduct', route);
+      router.push(route);
     };
 
   const filteredProducts = products.filter(product => {
@@ -321,7 +328,7 @@ export default function ProductGrid() {
                             control={<Checkbox checked={product.active} onChange={() => handleToggle(index)} />}
                             label="Active"
                           />
-                          <Button variant="outlined" size="small" fullWidth sx={{ mt: '0 !important' , mb: 3 }}>View</Button>
+                          <Button variant="outlined" size="small" fullWidth sx={{ mt: '0 !important' , mb: 3 }} onClick={() => handleClick(product.slug)}>View</Button>
                         </Box>
                       </CardContent>
                     </Card>

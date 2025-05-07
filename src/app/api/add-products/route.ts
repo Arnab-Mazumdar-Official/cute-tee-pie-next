@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import { createCategory, updateCategory } from '../../../../helpers/products';
+import slugify from "slugify";
+
 
 const s3 = new S3Client({
   region: process.env.MYAPP_AWS_REGION!,
@@ -11,10 +13,15 @@ const s3 = new S3Client({
   },
 });
 
+function generateSlug(text: string): string {
+  return slugify(text, { lower: true, strict: true });
+}
+
 export async function POST(req: NextRequest) {
   try {
     console.log('📥 Receiving form data...');
     const formData = await req.formData();
+    console.log("formData--------->>",formData);
 
     const _id = formData.get('_id')?.toString();
     const title = formData.get('title')?.toString();
@@ -97,6 +104,7 @@ export async function POST(req: NextRequest) {
       image_urls: imageUrls,
       thumbnail_url: imageUrls[thumbnailIndex] || imageUrls[0] || '',
       collectionId,
+      slug: generateSlug(title || ""),
     };
 
     console.log('📦 Final Product Data:', productata);

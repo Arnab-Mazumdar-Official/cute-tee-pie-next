@@ -11,28 +11,38 @@ const productsSchema = new mongoose.Schema(
     description: {
       type: String,
     },
+    slug: {
+      type: String,
+      required: true, unique: true,
+      index: -1,
+    },
     priority: {
       type: Number,
       index: -1,
     },
     active: {
       type: Boolean,
+      index: -1,
     },
 
     type: {
       type: String,
+      index: -1,
     },
 
     price: {
       type: Number,
+      index: -1,
     },
 
     sizes: {
       type: [String],
+      index: -1,
     },
 
     colors: {
       type: [String],
+      index: -1,
     },
 
     thumbnail_url: {
@@ -54,7 +64,10 @@ const productsSchema = new mongoose.Schema(
 
     collectionId: {
       type: String,
+      index: -1,
     },
+
+    
   },
   {
     timestamps: true,

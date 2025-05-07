@@ -16,12 +16,11 @@ const collectionsSchema = new mongoose.Schema(
     },
     priority: {
       type: Number,
-
-
       index: -1,
     },
     active: {
-      type: Boolean
+      type: Boolean,
+      index: -1,
     },
    
     imageUrl: {
