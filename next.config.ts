@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
     NOTIFICATION_EMAIL_PASS: process.env.NOTIFICATION_EMAIL_PASS,
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
     SECRET_KEY: process.env.SECRET_KEY,
+    RAZORPAY_PAYMENT_TOKEN: process.env.RAZORPAY_PAYMENT_TOKEN,
   },
 };
 
