@@ -1,22 +1,40 @@
 // app/layout.tsx
 import './globals.css';
 import type { Metadata } from 'next';
+import Script from 'next/script'; // ✅ Import Google Analytics Script helper
 import WhatsAppButton from '../../components/whatsappbtn/whatsapp';
 
 export const metadata: Metadata = {
   title: 'Prin Tee Pal – Custom T-Shirts & Apparel',
   description:
     'Discover unique and high-quality custom t-shirts at Prin Tee Pal. Perfect for individuals and businesses. Style meets comfort with every print!',
-  metadataBase: new URL('https://www.printeepal.com'),
+  metadataBase: new URL('https://prin-tee-pal.d28tf79avao1gk.amplifyapp.com/'),
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+  },
+  keywords: [
+    'custom t-shirts',
+    'Prin Tee Pal',
+    'tshirt printing',
+    'custom apparel',
+    'design your own shirt',
+    'bulk t-shirt orders',
+    't-shirt',
+    'tshirt',
+    'tshirt website',
+    't-shirt website',
+  ],
   openGraph: {
     title: 'Prin Tee Pal – Custom T-Shirts & Apparel',
     description:
       'Discover unique and high-quality custom t-shirts at Prin Tee Pal. Perfect for individuals and businesses. Style meets comfort with every print!',
-    url: 'https://www.printeepal.com',
+    url: 'https://prin-tee-pal.d28tf79avao1gk.amplifyapp.com/',
     siteName: 'Prin Tee Pal',
     images: [
       {
-        url: 'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/79bdb959-d316-4642-8750-da7ab560ec39.jpeg',
+        url: 'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/logo/27250cb0-6277-43fb-9fce-ba82a97cc364.jpeg',
         width: 1200,
         height: 630,
         alt: 'Prin Tee Pal Product Image',
@@ -31,7 +49,7 @@ export const metadata: Metadata = {
     description:
       'Discover unique and high-quality custom t-shirts at Prin Tee Pal. Perfect for individuals and businesses. Style meets comfort with every print!',
     images: [
-      'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/79bdb959-d316-4642-8750-da7ab560ec39.jpeg',
+      'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/logo/27250cb0-6277-43fb-9fce-ba82a97cc364.jpeg',
     ],
   },
 };
@@ -39,8 +57,23 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        {/* ✅ Google Analytics Script: Loads gtag.js */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-8W65Y0NRBP"
+          strategy="afterInteractive"
+        />
+        {/* ✅ Google Analytics Initialization Code */}
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-8W65Y0NRBP');
+          `}
+        </Script>
+      </head>
       <body>
-        {/* <AdminLayout>{children}</AdminLayout> */} {/* Uncomment if needed */}
         <main>{children}</main>
         <WhatsAppButton />
       </body>

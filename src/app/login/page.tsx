@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,25 +20,62 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const handleLogin = () => {
-    if (!email) {
-      setEmailError(true);
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setEmailError(!email);
+      setPasswordError(!password);
       return;
     }
+  
     setEmailError(false);
+    setPasswordError(false);
     setLoading(true);
+  
+    try {
+      const ipInfoRes = await fetch(`https://ipinfo.io?token=${process.env.IP_INFO_TOKEN}`);
+      const ipInfo = await ipInfoRes.json();
 
-    // Simulate login
-    setTimeout(() => {
-      setLoading(false);
-      setSnackbarMessage('Logged in successfully!');
+      console.log("Ip Info --------->>",ipInfo);
+      
+  
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          ipInfo,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (data?.success === true) {
+        Cookies.set('user_login_data', JSON.stringify(data.data), { expires: 5 });
+        setTimeout(() => {
+          router.push('/');
+        }, 1500);
+      } else {
+        setSnackbarMessage(data.message || 'Login failed');
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      setSnackbarMessage('An error occurred during login');
       setSnackbarOpen(true);
-    }, 1500);
+    } finally {
+      setLoading(false);
+    }
   };
+  
+  
+  
 
   return (
     <Box
@@ -131,6 +169,8 @@ export default function LoginPage() {
             variant="filled"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            error={passwordError}
+            helperText={passwordError ? "*Password is required" : ""}
             InputProps={{
               style: { backgroundColor: '#1C1C1C', color: '#fff' },
               endAdornment: (
