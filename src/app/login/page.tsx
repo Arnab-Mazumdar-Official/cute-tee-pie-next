@@ -60,7 +60,7 @@ export default function LoginPage() {
       if (data?.success === true) {
         Cookies.set('user_login_data', JSON.stringify(data.data), { expires: 5 });
         setTimeout(() => {
-          router.push('/');
+          router.back();
         }, 1500);
       } else {
         setSnackbarMessage(data.message || 'Login failed');

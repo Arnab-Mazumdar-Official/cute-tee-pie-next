@@ -1,6 +1,4 @@
 import { collectionList } from "../../../../helpers/products";
-
-
 import { NextResponse } from "next/server";
 
 

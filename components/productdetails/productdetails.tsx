@@ -22,6 +22,8 @@ import Header from '../header/header';
 import TrendingProducts from '../trendingproducts/trendingproducts';
 import WelcomePage from '../welcomenote/welcomenote';
 import Footer from '../footer/footer';
+import Cookies from 'js-cookie';
+import Alert from '@mui/material/Alert'; 
 
 const Transition = React.forwardRef(function Transition(
     props: any,
@@ -39,6 +41,14 @@ export default function ProductDetails({ product }: { product: any }) {
   const [quantity, setQuantity] = useState(1);
   const [openSizeChart, setOpenSizeChart] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'info' | 'warning' | 'error'>('info');
+
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -53,6 +63,33 @@ export default function ProductDetails({ product }: { product: any }) {
       }
     } else {
       alert('Sharing not supported on this device.');
+    }
+  };
+
+  const buyItNow = async () => {
+    const userLoginData = Cookies.get('user_login_data');
+
+    try {
+      const parsedUser = userLoginData ? JSON.parse(userLoginData) : null;
+
+      if (!parsedUser || !parsedUser._id) {
+        setSnackbarMessage('You need to log in to proceed.');
+        setSnackbarSeverity('warning');
+        setSnackbarOpen(true);
+        router.push('/login');
+        return;
+      }
+
+      const orders = [product];
+      const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
+      Cookies.set('user_order_data', JSON.stringify(orders), { expires: in15Minutes });
+      router.push('/address');
+
+    } catch (error) {
+      setSnackbarMessage('Error validating user session.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      router.push('/login');
     }
   };
 
@@ -282,7 +319,7 @@ export default function ProductDetails({ product }: { product: any }) {
                         },
                     }}
                     fullWidth
-                    onClick={() => router.push('/address')} // Replace '/address' with your address page route
+                    onClick={buyItNow} 
                     >
                     Buy it Now
                     </Button>
@@ -336,6 +373,17 @@ export default function ProductDetails({ product }: { product: any }) {
         onClose={() => setCopySuccess(false)}
         message="URL copied to clipboard!"
       />
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert  onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert >
+      </Snackbar>
       <TrendingProducts />
       <WelcomePage />
       <Footer />

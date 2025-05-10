@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
     SECRET_KEY: process.env.SECRET_KEY,
     RAZORPAY_PAYMENT_TOKEN: process.env.RAZORPAY_PAYMENT_TOKEN,
+    RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
+  },
+  images: {
+    domains: ["printeepal-collections-images.s3.us-east-1.amazonaws.com"],
   },
 };
 

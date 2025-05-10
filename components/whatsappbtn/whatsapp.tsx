@@ -4,7 +4,7 @@ import { Fab, Tooltip } from '@mui/material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
 const WhatsAppButton = () => {
-  const phoneNumber = '8101826739';
+  const phoneNumber = '+918101826739';
   const message = encodeURIComponent("Hi, I'm interested in your products!");
   const url = `https://wa.me/${phoneNumber}?text=${message}`;
 
