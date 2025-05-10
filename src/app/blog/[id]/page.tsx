@@ -6,10 +6,10 @@ import { getProductByName } from '../../../../lib/fetchproduct';
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: { id: string };
 }): Promise<Metadata> {
-  const { slug } = params;
-  const product = await getProductByName(slug);
+  const { id } = params;
+  const product = await getProductByName(id);
 
   if (!product) return {};
 
@@ -42,11 +42,11 @@ export async function generateMetadata({
 export default async function Page({
     params,
   }: {
-    params: Promise<{ slug: string }>
+    params: Promise<{ id: string }>
     
   }) {
-    const { slug } = await params
-    const product = await getProductByName(slug);
+    const { id } = await params
+    const product = await getProductByName(id);
     console.log("Fetch Product Data---------->>",product);
     
     if (!product) return notFound();

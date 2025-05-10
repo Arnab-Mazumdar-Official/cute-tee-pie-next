@@ -114,7 +114,8 @@ export default function ProductGrid() {
     };
 
     const handleClick = (productname: string) => {
-      const route = `/shop/${encodeURIComponent(productname)}`;
+      const route = `/blog/${productname}`;
+      // const route = `/shop/${encodeURIComponent(productname)}`;
       // Cookies.set('lastViewedProduct', route);
       router.push(route);
     };

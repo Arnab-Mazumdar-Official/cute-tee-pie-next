@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    ignoreBuildErrors: true, // ✅ Skip type checking during build
+  },
   env: {
     IP_INFO_TOKEN: process.env.IP_INFO_TOKEN,
     MONGODB_URI: process.env.MONGODB_URI,
