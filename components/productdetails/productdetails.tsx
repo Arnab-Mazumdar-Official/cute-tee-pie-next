@@ -80,9 +80,15 @@ export default function ProductDetails({ product }: { product: any }) {
         return;
       }
 
-      const orders = [product];
+      const orders = [{
+        ...product,
+        selectedColor,
+        selectedSize,
+      }];
+
       const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
       Cookies.set('user_order_data', JSON.stringify(orders), { expires: in15Minutes });
+
       router.push('/address');
 
     } catch (error) {

@@ -11,16 +11,32 @@ export async function POST(req: NextRequest) {
     console.log('✅ Database connected');
 
     const body = await req.json();
+    console.log("body------>>", body);
+
+    // Destructure correctly from nested response
+    const {
+      response,
+      user_id,
+      amount,
+      products = [],
+    } = body || {};
+
     const {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
+    } = response || {};
+
+    console.log('📦 Received payload:', {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
       user_id,
-      products = [],
-    } = body;
+      amount,
+      products
+    });
 
-    console.log('📦 Received payload:', body);
-
+    // Validate all required fields
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !user_id || !Array.isArray(products)) {
       console.warn('⚠️ Missing required fields in request body');
       return NextResponse.json(
@@ -44,6 +60,7 @@ export async function POST(req: NextRequest) {
       .createHmac('sha256', secret)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex');
+
     console.log('🧾 Generated Signature:', generatedSignature);
     console.log('🧾 Provided Signature:', razorpay_signature);
 
@@ -60,7 +77,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const source = products.length === 1 ? 'shop_page' : 'cart_page';
+    const source = products.length === 1 ? 'one_item' : 'multiple_item';
     console.log(`📚 Saving ${products.length} order(s) with source: ${source}`);
 
     const createdOrders = await Promise.all(products.map(async (item) => {
@@ -74,6 +91,7 @@ export async function POST(req: NextRequest) {
         size: item.size,
         color: item.color,
         source,
+        amount
       };
       const created = await Orders.create(orderDoc);
       console.log('✅ Order saved for product:', item.product_id);

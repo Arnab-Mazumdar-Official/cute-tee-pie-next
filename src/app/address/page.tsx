@@ -145,8 +145,8 @@ const PaymentPage: React.FC = () => {
       amount: order.amount,
       currency: order.currency,
       order_id: order.id,
-      name: "Test Store",
-      description: "Test Transaction",
+      name: "Prin Tee Pal",
+      description: "Prin Tee Pal Transaction",
       handler: async (response: any) => {
         const productDetails = orderData.map((item: any) => ({
           product_id: item._id,
@@ -158,8 +158,10 @@ const PaymentPage: React.FC = () => {
           response,
           user_id: userId,
           products: productDetails,
+          amount:amount_paied
         };
-    
+          console.log("Payload Payment-------->>",payload);
+          
         try {
           const verify = await fetch("/api/verify-payment", {
             method: "POST",
@@ -168,6 +170,7 @@ const PaymentPage: React.FC = () => {
           });
     
           const data = await verify.json();
+          console.log("data Payment-------->>",data);
           setSnackbarMessage(data.message);
           setSnackbarOpen(true);
           router.push("/");
@@ -306,8 +309,8 @@ const PaymentPage: React.FC = () => {
                 <Image src={item.thumbnail_url} alt={item.title} width={300} height={300} style={{ width: '100%', height: 'auto', borderRadius: 8 }} />
                 <Typography variant="h6" color="white" mt={1}>{item.title}</Typography>
                 <Typography variant="body2" color="#ccc" mb={1}>{item.description.slice(0, 80)}...</Typography>
-                <Typography variant="body2" color="#00ffff">Size: <strong>{item.sizes[0]}</strong></Typography>
-                <Typography variant="body2" color="#00ffff">Color: <strong>{item.colors[0]}</strong></Typography>
+                <Typography variant="body2" color="#00ffff">Size: <strong>{item.selectedSize}</strong></Typography>
+                <Typography variant="body2" color="#00ffff">Color: <strong>{item.selectedColor}</strong></Typography>
                 <Typography variant="subtitle1" color="#00ffff" fontWeight="bold" mt={1}>₹{item.price}</Typography>
               </Box>
             </Grid>
