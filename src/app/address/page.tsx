@@ -152,13 +152,14 @@ const PaymentPage: React.FC = () => {
           product_id: item._id,
           size: item.selectedSize,
           color: item.selectedColor,
+          quantity:item.quantity
         }));
     
         const payload = {
           response,
           user_id: userId,
           products: productDetails,
-          amount:amount_paied
+          amount:amount_paied,
         };
           console.log("Payload Payment-------->>",payload);
           
@@ -173,6 +174,32 @@ const PaymentPage: React.FC = () => {
           console.log("data Payment-------->>",data);
           setSnackbarMessage(data.message);
           setSnackbarOpen(true);
+          const cookieData = Cookies.get('user_order_data');
+
+          if (cookieData) {
+            try {
+              const orderData = JSON.parse(cookieData);
+
+              for (const item of orderData) {
+                if (item.source === 'cart') {
+                  const res = await fetch('/api/cart', {
+                    method: 'DELETE',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ _id: item._id }),
+                  });
+
+                  if (!res.ok) {
+                    console.error(`Failed to delete item with _id ${item._id}`);
+                  }
+                }
+              }
+            } catch (err) {
+              console.error('Failed to parse order data', err);
+            }
+          }
+
           router.push("/");
         } catch (error) {
           console.error("Payment verification error:", error);

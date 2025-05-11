@@ -109,7 +109,8 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
     const updatedCartItems = activeCartItems.map(item => ({
     ...item,
     selectedColor: item.color,
-    selectedSize: item.size
+    selectedSize: item.size,
+    source:'cart'
   }));
 
   console.log("Updated Cart Items with selectedColor and selectedSize:", updatedCartItems);

@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
       response,
       user_id,
       amount,
+      quantity,
       products = [],
     } = body || {};
 
@@ -33,7 +34,8 @@ export async function POST(req: NextRequest) {
       razorpay_signature,
       user_id,
       amount,
-      products
+      products,
+      quantity
     });
 
     // Validate all required fields
@@ -90,6 +92,7 @@ export async function POST(req: NextRequest) {
         product_id: item.product_id,
         size: item.size,
         color: item.color,
+        quantity: item.quantity,
         source,
         amount
       };
