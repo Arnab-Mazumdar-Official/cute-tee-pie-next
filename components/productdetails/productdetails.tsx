@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import {
   Box, Typography, Button, Chip, Grid, ToggleButton, ToggleButtonGroup, IconButton,
   Dialog, DialogTitle, DialogContent, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper,
-  Tooltip, Snackbar, Slide
+  Tooltip, Snackbar, Slide,
+  LinearProgress
 } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
@@ -24,6 +25,7 @@ import WelcomePage from '../welcomenote/welcomenote';
 import Footer from '../footer/footer';
 import Cookies from 'js-cookie';
 import Alert from '@mui/material/Alert'; 
+import CartDrawer from '../cart/cart';
 
 const Transition = React.forwardRef(function Transition(
     props: any,
@@ -44,6 +46,9 @@ export default function ProductDetails({ product }: { product: any }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'info' | 'warning' | 'error'>('info');
+  const [loading, setLoading] = useState(false);
+  const [openCart, setOpenCart] = useState(false);
+
 
 
   const handleSnackbarClose = () => {
@@ -84,6 +89,7 @@ export default function ProductDetails({ product }: { product: any }) {
         ...product,
         selectedColor,
         selectedSize,
+        quantity:quantity
       }];
 
       const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
@@ -98,6 +104,60 @@ export default function ProductDetails({ product }: { product: any }) {
       router.push('/login');
     }
   };
+  const addToCart = async () => {
+  const userLoginData = Cookies.get('user_login_data');
+  const parsedUser = userLoginData ? JSON.parse(userLoginData) : null;
+
+  if (!parsedUser || !parsedUser._id) {
+    setSnackbarMessage('You need to log in to proceed.');
+    setSnackbarSeverity('warning');
+    setSnackbarOpen(true);
+    router.push('/login');
+    return;
+  }
+
+  const payload = {
+    size: selectedSize,
+    color: selectedColor,
+    product_id: product._id,
+    description: product.description,
+    title: product.title,
+    price: product.price,
+    user_id: parsedUser._id,
+    quantity: quantity,
+    thumbnail_url:product.thumbnail_url,
+    save_for_letter:false
+  };
+  setLoading(true)
+  try {
+    const response = await fetch('/api/cart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      setSnackbarMessage('Product added to cart successfully.');
+      setSnackbarSeverity('success');
+      setOpenCart(true);
+    } else {
+      setSnackbarMessage(result.message || 'Failed to add to cart.');
+      setSnackbarSeverity('error');
+    }
+  } catch (error) {
+    setSnackbarMessage('An error occurred while adding to cart.');
+    setSnackbarSeverity('error');
+  }
+  finally{
+    setLoading(false)
+  }
+
+  setSnackbarOpen(true);
+};
 
   const handleCopyURL = async () => {
     try {
@@ -122,7 +182,9 @@ export default function ProductDetails({ product }: { product: any }) {
 
   return (
     <>
+    {loading && <LinearProgress />}
       <Header />
+
       <Box sx={{ backgroundColor: 'black', color: 'white', p: 4, position: 'relative' }}>
         <Box
           sx={{
@@ -308,6 +370,7 @@ export default function ProductDetails({ product }: { product: any }) {
                     variant="contained"
                     sx={{ bgcolor: '#FFD700', color: '#000', fontWeight: 600 }}
                     fullWidth
+                    onClick={addToCart} 
                   >
                     Add to Cart
                   </Button>
@@ -343,7 +406,7 @@ export default function ProductDetails({ product }: { product: any }) {
             TransitionComponent={Transition}
           >
             <DialogTitle sx={{ fontWeight: 'bold', textAlign: 'center' }}>
-              ROUND NECK MEN
+              SIZE CHART
             </DialogTitle>
             <DialogContent>
               <TableContainer component={Paper}>
@@ -393,6 +456,7 @@ export default function ProductDetails({ product }: { product: any }) {
       <TrendingProducts />
       <WelcomePage />
       <Footer />
+      <CartDrawer open={openCart} onClose={() => setOpenCart(false)} />
     </>
   );
 }

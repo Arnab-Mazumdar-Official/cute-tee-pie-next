@@ -293,7 +293,7 @@ const PaymentPage: React.FC = () => {
     }
   };
 
-  const subtotal = orderData.reduce((sum, item) => sum + item.price, 0);
+  const subtotal = orderData.reduce((sum, item) => sum + (item.price*item.quantity), 0);
   const shippingCharge = 49;
   const discount = shippingCharge;
   const totalPayable = subtotal;
@@ -311,6 +311,7 @@ const PaymentPage: React.FC = () => {
                 <Typography variant="body2" color="#ccc" mb={1}>{item.description.slice(0, 80)}...</Typography>
                 <Typography variant="body2" color="#00ffff">Size: <strong>{item.selectedSize}</strong></Typography>
                 <Typography variant="body2" color="#00ffff">Color: <strong>{item.selectedColor}</strong></Typography>
+                <Typography variant="body2" color="#00ffff">Quantity: <strong>{item.quantity}</strong></Typography>
                 <Typography variant="subtitle1" color="#00ffff" fontWeight="bold" mt={1}>₹{item.price}</Typography>
               </Box>
             </Grid>

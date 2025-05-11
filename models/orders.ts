@@ -27,6 +27,10 @@ const ordersSchema = new Schema(
       type: Number,
       required: true,
     },
+    quantity: {
+      type: Number,
+      required: true,
+    },
     source: {
       type: String,
       required: true,

@@ -17,6 +17,7 @@ import { motion } from "framer-motion"; // Import motion
 import { AccountCircle } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import ComingSoonModal from '../commingsoon/commingsoon';
+import CartDrawer from "../cart/cart";
 
 
 const MotionButtonNew = motion(Button); 
@@ -43,6 +44,7 @@ const MotionButton = ({ children, onClick }: { children: React.ReactNode, onClic
 export default function ResponsiveHeader() {
   // const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [openCart, setOpenCart] = useState(false);
   const [openModal, setOpenModal] = useState(false); 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -53,8 +55,24 @@ export default function ResponsiveHeader() {
     router.push("/login");
   };
   const  handelComingsoon = () => {
-    // setOpenModal(true);
+    setOpenModal(true);
+    // router.push("/admin-dashboard")
+  };
+  const  goToAdminDb = () => {
     router.push("/admin-dashboard")
+  };
+  const  openCartSection = () => {
+     const userLoginData = Cookies.get('user_login_data');
+    const parsedUser = userLoginData ? JSON.parse(userLoginData) : null;
+
+    if (!parsedUser || !parsedUser._id) {
+      // setSnackbarMessage('You need to log in to proceed.');
+      // setSnackbarSeverity('warning');
+      // setSnackbarOpen(true);
+      router.push('/login');
+      return;
+    }
+    setOpenCart(true)
   };
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -102,7 +120,7 @@ export default function ResponsiveHeader() {
               <Box sx={{ display: "flex", justifyContent: "center", width: "100%", mt: 2 }}>
                 <MotionButtonNew
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => handelComingsoon()}
+                  onClick={() => goToAdminDb()}
                   sx={{
                     backgroundColor: "black",
                     color: "white",
@@ -128,7 +146,7 @@ export default function ResponsiveHeader() {
         
           <Box sx={{ display: "flex", gap: isMobile ? 0 : 1 }}>
             
-            {/* Search Icon */}
+            {/* Search Icon
             <Tooltip
               title="Search"
               arrow
@@ -156,7 +174,7 @@ export default function ResponsiveHeader() {
                   <SearchIcon fontSize="large" />
                 </MotionButton>
               </motion.div>
-            </Tooltip>
+            </Tooltip> */}
 
             {/* Cart Icon */}
             <Tooltip
@@ -182,7 +200,7 @@ export default function ResponsiveHeader() {
               }}
             >
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <MotionButton onClick={() => handelComingsoon()}>
+                <MotionButton onClick={() => openCartSection()}>
                   <ShoppingBagOutlinedIcon fontSize="large" />
                 </MotionButton>
               </motion.div>
@@ -223,7 +241,9 @@ export default function ResponsiveHeader() {
                   onClose={handleCloseModal}
                 />
       </Toolbar>
+      <CartDrawer open={openCart} onClose={() => setOpenCart(false)} />
     </AppBar>
+    
     
   );
 }
