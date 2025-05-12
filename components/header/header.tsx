@@ -18,6 +18,8 @@ import { AccountCircle } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import ComingSoonModal from '../commingsoon/commingsoon';
 import CartDrawer from "../cart/cart";
+import ThemeToggle from '../theamtoggle/theamtoggle';
+
 
 
 const MotionButtonNew = motion(Button); 
@@ -98,7 +100,14 @@ export default function ResponsiveHeader() {
   }, []);
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "#000", boxShadow: "none" }}>
+    <AppBar
+        position="static"
+        sx={{
+          backgroundColor: theme.palette.mode === 'dark' ? '#000' : '#fcb900',
+          boxShadow: "none",
+        }}
+      >
+
       <Toolbar sx={{ px: isMobile ? 1 : 3, justifyContent: "space-between" }}>
         
         {/* Left: Hamburger Menu */}
@@ -130,6 +139,7 @@ export default function ResponsiveHeader() {
                     fontWeight: "bold",
                     fontSize: "16px",
                     textTransform: "none",
+                    mb:2,
                     boxShadow: "none",
                     "&:hover": {
                       backgroundColor: "black",
@@ -137,7 +147,7 @@ export default function ResponsiveHeader() {
                     },
                   }}
                 >
-                  Go To Admin Dashboard
+                  Admin Dash
                 </MotionButtonNew>
               </Box>
             )}
@@ -229,12 +239,14 @@ export default function ResponsiveHeader() {
                 },
               }}
             >
+             
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <MotionButton onClick={() => handleLoginClick()}>
                   <AccountCircle fontSize="large" />
                 </MotionButton>
               </motion.div>
             </Tooltip>
+             <ThemeToggle />
           </Box>
           <ComingSoonModal
                   open={openModal}

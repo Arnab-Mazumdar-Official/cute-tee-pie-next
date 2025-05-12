@@ -70,10 +70,33 @@ export async function POST(req: NextRequest) {
     console.log(`✅ Signature verification result: ${isValid ? 'VALID ✅' : 'INVALID ❌'}`);
 
     if (!isValid) {
+
+      const source = products.length === 1 ? 'one_item' : 'multiple_item';
+    console.log(`📚 Saving ${products.length} order(s) with source: ${source}`);
+
+    const createdOrders = await Promise.all(products.map(async (item) => {
+      const orderDoc = {
+        razorpay_order_id,
+        razorpay_payment_id,
+        status: 'failed',
+        verified: false,
+        user_id,
+        product_id: item.product_id,
+        size: item.size,
+        color: item.color,
+        quantity: item.quantity,
+        source,
+        amount
+      };
+      const created = await Orders.create(orderDoc);
+      console.log('✅ Order saved for product:', item.product_id);
+      return created;
+    }));
       return NextResponse.json(
         {
           success: false,
           message: 'Payment verification failed',
+          order_count: createdOrders.length,
         },
         { status: 400 }
       );

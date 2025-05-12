@@ -1,8 +1,21 @@
-// app/layout.tsx
 import './globals.css';
 import type { Metadata } from 'next';
-import Script from 'next/script'; // ✅ Import Google Analytics Script helper
+import Script from 'next/script';
 import WhatsAppButton from '../../components/whatsappbtn/whatsapp';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
+import ThemeProviderWrapper from '../../components/theamprovider/theamprovider';
+import RootLayoutInner from '../../components/rootlayout/rootlayout';
+
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+});
+
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
   title: 'Prin Tee Pal – Custom T-Shirts & Apparel',
@@ -58,12 +71,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {/* ✅ Google Analytics Script: Loads gtag.js */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-8W65Y0NRBP"
           strategy="afterInteractive"
         />
-        {/* ✅ Google Analytics Initialization Code */}
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
@@ -73,8 +84,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `}
         </Script>
       </head>
-      <body>
-        <main>{children}</main>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <ThemeProviderWrapper>
+          <RootLayoutInner>{children}</RootLayoutInner>
+        </ThemeProviderWrapper>
         <WhatsAppButton />
       </body>
     </html>

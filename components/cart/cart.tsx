@@ -10,9 +10,10 @@ import {
   IconButton,
   useMediaQuery,
   Alert,
-  Snackbar
+  Snackbar,
+  Collapse
 } from '@mui/material';
-import { DeleteOutline } from '@mui/icons-material';
+import { DeleteOutline, ExpandLess, ExpandMore } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
@@ -38,6 +39,8 @@ type CartDrawerProps = {
 export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const isSmallScreen = useMediaQuery('(max-width:578px)');
+  const [wishlistOpen, setWishlistOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(true);
   const router = useRouter();
   const [snackbar, setSnackbar] = useState<{
       open: boolean;
@@ -82,11 +85,11 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
       const cartRes = await fetch(`/api/cart?user_id=${userId}`);
       const cartData = await cartRes.json();
       setCartItems(cartData.data || []);
-      setSnackbar({
-        open: true,
-        message: 'Item deleted successfully',
-        severity: 'error',
-      });
+      // setSnackbar({
+      //   open: true,
+      //   message: 'Item deleted successfully',
+      //   severity: 'error',
+      // });
       // Optionally refetch cart items here
     } else {
       setSnackbar({
@@ -165,11 +168,11 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
       const cartRes = await fetch(`/api/cart?user_id=${userId}`);
       const cartData = await cartRes.json();
       setCartItems(cartData.data || []);
-      setSnackbar({
-        open: true,
-        message: 'Item save_for_letter toggled successfully',
-        severity: 'success',
-      });
+      // setSnackbar({
+      //   open: true,
+      //   message: 'Item save_for_letter toggled successfully',
+      //   severity: 'success',
+      // });
 
     } else {
       setSnackbar({
@@ -215,203 +218,245 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         height="100%"
       >
         <Box p={isSmallScreen ? 1 : 2} flexGrow={1} overflow="auto">
-          <Typography variant="h6" sx={{
-                color: 'black',
-                justifyContent:'center',
-                textAlign:'center',
-                fontFamily: '"Georgia", "Times New Roman", serif'
-                }}
-                >
-            Your Cart
-          </Typography>
-          {activeCartItems.length == 0 && (
-            <Typography variant="h6" sx={{
+          {activeCartItems.length > 0 && (
+  <>
+
+    {/* Cart Header with Toggle */}
+    <Box
+      onClick={() => setCartOpen(!cartOpen)}
+      sx={{
+        backgroundColor: 'black',
+        p: 2,
+        borderRadius: 2,
+        cursor: 'pointer',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 1,
+      }}
+    >
+      <Typography
+        variant="subtitle1"
+        sx={{
+          color: 'white',
+          textAlign: 'center',
+          fontFamily: '"Georgia", "Times New Roman", serif',
+        }}
+      >
+        Your Cart Items
+      </Typography>
+      {cartOpen ? (
+        <ExpandLess sx={{ color: 'white' }} />
+      ) : (
+        <ExpandMore sx={{ color: 'white' }} />
+      )}
+    </Box>
+
+    {/* Collapsible Cart Items */}
+    <Collapse in={cartOpen}>
+      <List>
+        {activeCartItems.map((item) => (
+          <Box
+            key={item._id}
+            sx={{
+              position: 'relative',
+              display: 'flex',
+              border: '1px solid #00FFFF',
+              borderRadius: 2,
+              p: isSmallScreen ? 1 : 2,
+              mb: 2,
+              backgroundColor: '#121212',
+              color: 'white',
+              alignItems: 'center',
+            }}
+          >
+            {/* Delete Icon */}
+            <IconButton
+              onClick={() => handleDelete(item._id)}
+              sx={{
+                position: 'absolute',
+                top: 8,
+                right: 8,
                 color: 'white',
-                bgcolor:'black',
-                borderRadius:20,
-                padding:4,
-                mt:5,
-                fontFamily: '"Georgia", "Times New Roman", serif'
+                border: '2px solid white',
+                borderRadius: '50%', 
+                padding: '4px'
+              }}
+            >
+              <DeleteOutline />
+            </IconButton>
+
+            {/* Image */}
+            <Box
+              sx={{
+                width: isSmallScreen ? 60 : 80,
+                height: isSmallScreen ? 60 : 80,
+                mr: 2,
+                flexShrink: 0,
+              }}
+            >
+              <img
+                src={item.thumbnail_url}
+                alt={item.title}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: 8,
                 }}
-                >
-            "Wishing you a day filled with calm moments, little wins, and unexpected smiles—because you deserve nothing less."
-          </Typography>
-          )}
-          <List>
-            {activeCartItems.map((item) => (
-              <Box
-                key={item._id}
-                sx={{
-                  position: 'relative',
-                  display: 'flex',
-                  border: '1px solid #00FFFF',
-                  borderRadius: 2,
-                  p: isSmallScreen ? 1 : 2,
-                  mb: 2,
-                  backgroundColor: '#121212',
-                  color: 'white',
-                  alignItems: 'center',
-                }}
+              />
+            </Box>
+
+            {/* Info Section */}
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography
+                fontWeight="bold"
+                fontSize={isSmallScreen ? '0.9rem' : '1rem'}
               >
-                {/* Delete Icon */}
-                <IconButton
-                  onClick={() => handleDelete(item._id)}
-                  sx={{
-                    position: 'absolute',
-                    top: 8,
-                    right: 8,
-                    color: 'white',
-                    border: '2px solid white',
-                    borderRadius: '50%', 
-                    padding: '4px'
-                    }}
-                >
-                  <DeleteOutline />
-                </IconButton>
+                {item.title}
+              </Typography>
+              <Typography variant="body2">Size: {item.size}</Typography>
+              <Typography variant="body2">Color: {item.color}</Typography>
+              <Typography variant="body2">Qty: {item.quantity}</Typography>
+              <Typography variant="body2" color="cyan">
+                ₹{item.price}
+              </Typography>
 
-                {/* Image */}
-                <Box
-                  sx={{
-                    width: isSmallScreen ? 60 : 80,
-                    height: isSmallScreen ? 60 : 80,
-                    mr: 2,
-                    flexShrink: 0,
-                  }}
-                >
-                  <img
-                    src={item.thumbnail_url}
-                    alt={item.title}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      borderRadius: 8,
-                    }}
-                  />
-                </Box>
-
-                {/* Info Section */}
-                <Box sx={{ flexGrow: 1 }}>
-                  <Typography
-                    fontWeight="bold"
-                    fontSize={isSmallScreen ? '0.9rem' : '1rem'}
-                  >
-                    {item.title}
-                  </Typography>
-                  {/* <Typography variant="body2">{item.description}</Typography> */}
-                  <Typography variant="body2">Size: {item.size}</Typography>
-                  <Typography variant="body2">Color: {item.color}</Typography>
-                  <Typography variant="body2">Qty: {item.quantity}</Typography>
-                  <Typography variant="body2" color="cyan">
-                    ₹{item.price}
-                  </Typography>
-
-                  <Button
-                    size="small"
-                    variant="text"
-                    onClick={() => toggleSaveForLater(item._id)}
-                    sx={{ mt: 1, color: 'cyan', border: '1px solid white' }}
-                  >
-                    Save for Later
-                  </Button>
-                </Box>
-              </Box>
-            ))}
-          </List>
+              <Button
+                size="small"
+                variant="text"
+                onClick={() => toggleSaveForLater(item._id)}
+                sx={{ mt: 1, color: 'cyan', border: '1px solid white' }}
+              >
+                Save As Wishlisted Items
+              </Button>
+            </Box>
+          </Box>
+        ))}
+      </List>
+    </Collapse>
+  </>
+)}
+          {/* </List> */}
 
           {savedItems.length > 0 && (
             <>
               <Divider sx={{ my: 3 }} />
-              <Typography variant="subtitle1" sx={{
-                color: 'black',
-                justifyContent:'center',
-                textAlign:'center',
-                fontFamily: '"Georgia", "Times New Roman", serif'
-                }}
-                >
-                Saved for Later
-              </Typography>
-              <List>
-            {savedItems.map((item) => (
+
+              {/* Wishlist Header with Toggle */}
               <Box
-                key={item._id}
+                onClick={() => setWishlistOpen(!wishlistOpen)}
                 sx={{
-                  position: 'relative',
-                  display: 'flex',
-                  border: '1px solid #00FFFF',
+                  backgroundColor: 'black',
+                  p: 2,
                   borderRadius: 2,
-                  p: isSmallScreen ? 1 : 2,
-                  mb: 2,
-                  backgroundColor: '#121212',
-                  color: 'white',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  justifyContent: 'center',
                   alignItems: 'center',
+                  gap: 1,
                 }}
               >
-                {/* Delete Icon */}
-                <IconButton
-                  onClick={() => handleDelete(item._id)}
+                <Typography
+                  variant="subtitle1"
                   sx={{
-                    position: 'absolute',
-                    top: 8,
-                    right: 8,
                     color: 'white',
-                    border: '2px solid white',
-                    borderRadius: '50%', 
-                    padding: '4px'
-                    }}
-                >
-                  <DeleteOutline />
-                </IconButton>
-
-                {/* Image */}
-                <Box
-                  sx={{
-                    width: isSmallScreen ? 60 : 80,
-                    height: isSmallScreen ? 60 : 80,
-                    mr: 2,
-                    flexShrink: 0,
+                    textAlign: 'center',
+                    fontFamily: '"Georgia", "Times New Roman", serif',
                   }}
                 >
-                  <img
-                    src={item.thumbnail_url}
-                    alt={item.title}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      borderRadius: 8,
-                    }}
-                  />
-                </Box>
-
-                {/* Info Section */}
-                <Box sx={{ flexGrow: 1 }}>
-                  <Typography
-                    fontWeight="bold"
-                    fontSize={isSmallScreen ? '0.9rem' : '1rem'}
-                  >
-                    {item.title}
-                  </Typography>
-                  {/* <Typography variant="body2">{item.description}</Typography> */}
-                  <Typography variant="body2">Size: {item.size}</Typography>
-                  <Typography variant="body2">Color: {item.color}</Typography>
-                  <Typography variant="body2">Qty: {item.quantity}</Typography>
-                  <Typography variant="body2" color="cyan">
-                    ₹{item.price}
-                  </Typography>
-
-                  <Button
-                    size="small"
-                    variant="text"
-                    onClick={() => toggleSaveForLater(item._id)}
-                    sx={{ mt: 1, color: 'cyan', border: '1px solid white' }}
-                  >
-                    MOVE IT TO CART
-                  </Button>
-                </Box>
+                  Your Wishlisted Items
+                </Typography>
+                {wishlistOpen ? (
+                  <ExpandLess sx={{ color: 'white' }} />
+                ) : (
+                  <ExpandMore sx={{ color: 'white' }} />
+                )}
               </Box>
-            ))}
-          </List>
+
+              {/* Collapsible Wishlist Items */}
+              <Collapse in={wishlistOpen}>
+                <List>
+                  {savedItems.map((item) => (
+                    <Box
+                      key={item._id}
+                      sx={{
+                        position: 'relative',
+                        display: 'flex',
+                        border: '1px solid #00FFFF',
+                        borderRadius: 2,
+                        p: isSmallScreen ? 1 : 2,
+                        mb: 2,
+                        backgroundColor: '#121212',
+                        color: 'white',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {/* Delete Icon */}
+                      <IconButton
+                        onClick={() => handleDelete(item._id)}
+                        sx={{
+                          position: 'absolute',
+                          top: 8,
+                          right: 8,
+                          color: 'white',
+                          border: '2px solid white',
+                          borderRadius: '50%',
+                          padding: '4px',
+                        }}
+                      >
+                        <DeleteOutline />
+                      </IconButton>
+
+                      {/* Image */}
+                      <Box
+                        sx={{
+                          width: isSmallScreen ? 60 : 80,
+                          height: isSmallScreen ? 60 : 80,
+                          mr: 2,
+                          flexShrink: 0,
+                        }}
+                      >
+                        <img
+                          src={item.thumbnail_url}
+                          alt={item.title}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            borderRadius: 8,
+                          }}
+                        />
+                      </Box>
+
+                      {/* Info Section */}
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Typography
+                          fontWeight="bold"
+                          fontSize={isSmallScreen ? '0.9rem' : '1rem'}
+                        >
+                          {item.title}
+                        </Typography>
+                        <Typography variant="body2">Size: {item.size}</Typography>
+                        <Typography variant="body2">Color: {item.color}</Typography>
+                        <Typography variant="body2">Qty: {item.quantity}</Typography>
+                        <Typography variant="body2" color="cyan">
+                          ₹{item.price}
+                        </Typography>
+
+                        <Button
+                          size="small"
+                          variant="text"
+                          onClick={() => toggleSaveForLater(item._id)}
+                          sx={{ mt: 1, color: 'cyan', border: '1px solid white' }}
+                        >
+                          MOVE IT TO CART
+                        </Button>
+                      </Box>
+                    </Box>
+                  ))}
+                </List>
+              </Collapse>
             </>
           )}
         </Box>
