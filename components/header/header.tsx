@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -7,33 +7,38 @@ import {
   Tooltip,
   useTheme,
   useMediaQuery,
-  Button,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion"; // Import motion
-import { AccountCircle } from "@mui/icons-material";
-import Cookies from "js-cookie";
-import ComingSoonModal from '../commingsoon/commingsoon';
-import CartDrawer from "../cart/cart";
+  Menu,
+  MenuItem,
+  IconButton,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import Cookies from 'js-cookie';
+import CartDrawer from '../cart/cart';
 import ThemeToggle from '../theamtoggle/theamtoggle';
+import ComingSoonModal from '../commingsoon/commingsoon';
+import Image from 'next/image';
 
 
-
-const MotionButtonNew = motion(Button); 
-const MotionButton = ({ children, onClick }: { children: React.ReactNode, onClick?: () => void }) => (
+const MotionButton = ({
+  children,
+  onClick,
+}: {
+  children: React.ReactNode;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+}) => (
   <motion.button
     whileTap={{ scale: 0.8 }}
     style={{
-      background: "none",
-      border: "none",
-      color: "inherit",
-      cursor: "pointer",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
+      background: 'none',
+      border: 'none',
+      color: 'inherit',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       padding: 8,
     }}
     onClick={onClick}
@@ -42,220 +47,112 @@ const MotionButton = ({ children, onClick }: { children: React.ReactNode, onClic
   </motion.button>
 );
 
-
 export default function ResponsiveHeader() {
-  // const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [openCart, setOpenCart] = useState(false);
-  const [openModal, setOpenModal] = useState(false); 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [openModal, setOpenModal] = useState(false);
+
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
 
-  const handleLoginClick = () => {
-    // setLoading(true);
-    router.push("/login");
-  };
-  const  handelComingsoon = () => {
-    setOpenModal(true);
-    // router.push("/admin-dashboard")
-  };
-  const  goToAdminDb = () => {
-    router.push("/admin-dashboard")
-  };
-  const  openCartSection = () => {
-     const userLoginData = Cookies.get('user_login_data');
-    const parsedUser = userLoginData ? JSON.parse(userLoginData) : null;
-
-    if (!parsedUser || !parsedUser._id) {
-      // setSnackbarMessage('You need to log in to proceed.');
-      // setSnackbarSeverity('warning');
-      // setSnackbarOpen(true);
-      router.push('/login');
-      return;
-    }
-    setOpenCart(true)
-  };
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
   useEffect(() => {
-    const cookieData = Cookies.get('user_login_data');
-    if (cookieData) {
+    const cookie = Cookies.get('user_login_data');
+    if (cookie) {
       try {
-        const parsedData = JSON.parse(cookieData);
-        console.log("Cookie Data:",parsedData);
-        
-
-        if (parsedData?.role === 'is_admin') {
-          console.log("Set to admin");
-          
-          setIsAdmin(true);
-        }
-      } catch (error) {
-        console.error("Error parsing cookie data:", error);
-      }
+        const user = JSON.parse(cookie);
+        if (user.role === 'is_admin') setIsAdmin(true);
+      } catch {}
     }
   }, []);
 
+  const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+  const navigate = (path: string) => {
+    handleMenuClose();
+    router.push(path);
+  };
+
+  const openCartSection = () => {
+    const cookie = Cookies.get('user_login_data');
+    const user = cookie ? JSON.parse(cookie) : null;
+    if (!user?._id) return router.push('/login');
+    setOpenCart(true);
+  };
+
   return (
-    <AppBar
+    <>
+      <AppBar
         position="static"
         sx={{
-          backgroundColor: theme.palette.mode === 'dark' ? '#000' : '#fcb900',
-          boxShadow: "none",
+          // backgroundColor: theme.palette.mode === 'dark' ? '#000' : '#fcb900',
+          backgroundColor: theme.palette.mode === 'dark' ? '#000' : '#000',
+          boxShadow: 'none',
         }}
       >
+        <Toolbar sx={{ px: isMobile ? 1 : 3, justifyContent: 'space-between' }}>
+          {/* Left Side: Menu + Cart */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {/* Menu Dropdown */}
+            <MotionButton onClick={handleMenuOpen}>
+              <MenuIcon fontSize="large" />
+            </MotionButton>
 
-      <Toolbar sx={{ px: isMobile ? 1 : 3, justifyContent: "space-between" }}>
-        
-        {/* Left: Hamburger Menu */}
-        <MotionButton onClick={() => handelComingsoon()}>
-          <MenuIcon />
-        </MotionButton>
-
-        {/* Center: Logo */}
-        {/* {!isAdmin &&(<Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
-          <Image
-            src="https://cuteteepie.myshopify.com/cdn/shop/files/3F7FMK1hTpy-0nMPCtuwLQ-removebg-preview.png?v=1745130189&width=600"
-            width={600}
-            height={400} // Estimate or set an appropriate height
-            alt="Cute Tee Pie"
-          />
-        </Box>)} */}
-
-        {isAdmin && (
-              <Box sx={{ display: "flex", justifyContent: "center", width: "100%", mt: 2 }}>
-                <MotionButtonNew
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => goToAdminDb()}
-                  sx={{
-                    backgroundColor: "black",
-                    color: "white",
-                    border: "1px solid white",
-                    borderRadius: "9999px",
-                    padding: "10px 24px",
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    textTransform: "none",
-                    mb:2,
-                    boxShadow: "none",
-                    "&:hover": {
-                      backgroundColor: "black",
-                      boxShadow: "0 0 10px rgba(255, 255, 255, 0.3)",
-                    },
-                  }}
-                >
-                  Admin Dash
-                </MotionButtonNew>
-              </Box>
-            )}
-
-        {/* Right: Search, Cart, and Login Icons */}
-        
-          <Box sx={{ display: "flex", gap: isMobile ? 0 : 1 }}>
-            
-            {/* Search Icon
-            <Tooltip
-              title="Search"
-              arrow
-              placement="bottom"
-              componentsProps={{
-                tooltip: {
-                  sx: {
-                    backgroundColor: "#fff",
-                    color: "#000",
-                    fontSize: "0.85rem",
-                    padding: "6px 12px",
-                    borderRadius: "8px",
-                    boxShadow: 2,
-                  },
-                },
-                arrow: {
-                  sx: {
-                    color: "#fff",
-                  },
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              PaperProps={{
+                sx: {
+                  backgroundColor: theme.palette.mode === 'dark' ? '#121212' : '#fff',
+                  color: theme.palette.mode === 'dark' ? '#fff' : '#000',
+                  border: `1px solid ${theme.palette.mode === 'dark' ? '#444' : '#ddd'}`,
                 },
               }}
             >
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <MotionButton onClick={() => handelComingsoon()}>
-                  <SearchIcon fontSize="large" />
-                </MotionButton>
-              </motion.div>
-            </Tooltip> */}
+              <MenuItem onClick={() => navigate('/sign-up')}>Sign Up</MenuItem>
+              <MenuItem onClick={() => navigate('/login')}>Log In</MenuItem>
+              {isAdmin && (
+                <MenuItem onClick={() => navigate('/admin-dashboard')}>Admin Dashboard</MenuItem>
+              )}
+            </Menu>
 
-            {/* Cart Icon */}
-            <Tooltip
-              title="Cart"
-              arrow
-              placement="bottom"
-              componentsProps={{
-                tooltip: {
-                  sx: {
-                    backgroundColor: "#fff",
-                    color: "#000",
-                    fontSize: "0.85rem",
-                    padding: "6px 12px",
-                    borderRadius: "8px",
-                    boxShadow: 2,
-                  },
-                },
-                arrow: {
-                  sx: {
-                    color: "#fff",
-                  },
-                },
-              }}
-            >
+            {/* Cart Button */}
+            <Tooltip title="Cart" arrow>
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <MotionButton onClick={() => openCartSection()}>
+                <MotionButton onClick={openCartSection}>
                   <ShoppingBagOutlinedIcon fontSize="large" />
                 </MotionButton>
               </motion.div>
             </Tooltip>
-
-            {/* Log In Icon */}
-            <Tooltip
-              title="Log In"
-              arrow
-              placement="bottom"
-              componentsProps={{
-                tooltip: {
-                  sx: {
-                    backgroundColor: "#fff",
-                    color: "#000",
-                    fontSize: "0.85rem",
-                    padding: "6px 12px",
-                    borderRadius: "8px",
-                    boxShadow: 2,
-                  },
-                },
-                arrow: {
-                  sx: {
-                    color: "#fff",
-                  },
-                },
-              }}
-            >
-             
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <MotionButton onClick={() => handleLoginClick()}>
-                  <AccountCircle fontSize="large" />
-                </MotionButton>
-              </motion.div>
-            </Tooltip>
-             <ThemeToggle />
           </Box>
-          <ComingSoonModal
-                  open={openModal}
-                  onClose={handleCloseModal}
-                />
-      </Toolbar>
+
+          {/* Center: Logo */}
+          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+            <Box
+              onClick={() => router.push('/')}
+              sx={{ cursor: 'pointer', display: 'inline-block' }}
+            >
+              <Image
+                src="/images/27250cb0-6277-43fb-9fce-ba82a97cc364-removebg-preview-removebg-preview.png" // Replace with your actual logo path
+                alt="PrinteepaL Logo"
+                width={50}
+                height={20}
+                priority
+              />
+            </Box>
+          </Box>
+
+          {/* Right Side: Theme Toggle */}
+          <Box>
+            <ThemeToggle />
+          </Box>
+        </Toolbar>
+        <ComingSoonModal open={openModal} onClose={() => setOpenModal(false)} />
+      </AppBar>
+
       <CartDrawer open={openCart} onClose={() => setOpenCart(false)} />
-    </AppBar>
-    
-    
+    </>
   );
 }

@@ -8,14 +8,20 @@ import {
   Snackbar,
   TextField,
   Typography,
-  Link
+  Link,
+  useTheme
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import ResponsiveHeader from '../../../components/header/header';
+import AnnouncementBar from '../../../components/anouncement/announcement';
 
 export default function LoginPage() {
   const router = useRouter();
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -31,18 +37,15 @@ export default function LoginPage() {
       setPasswordError(!password);
       return;
     }
-  
+
     setEmailError(false);
     setPasswordError(false);
     setLoading(true);
-  
+
     try {
       const ipInfoRes = await fetch(`https://ipinfo.io?token=${process.env.IP_INFO_TOKEN}`);
       const ipInfo = await ipInfoRes.json();
 
-      console.log("Ip Info --------->>",ipInfo);
-      
-  
       const response = await fetch('/api/login', {
         method: 'POST',
         headers: {
@@ -54,9 +57,9 @@ export default function LoginPage() {
           ipInfo,
         }),
       });
-  
+
       const data = await response.json();
-  
+
       if (data?.success === true) {
         Cookies.set('user_login_data', JSON.stringify(data.data), { expires: 5 });
         setTimeout(() => {
@@ -73,15 +76,22 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
-  
-  
-  
 
   return (
+    <Box 
+      sx={{
+        minHeight: '100vh',
+        backgroundColor: isDarkMode ? '#0A0A0A' : '#ffffff',
+        color: isDarkMode ? '#ffffff' : '#000000',
+      }}
+    >
+      <AnnouncementBar/>
+      <ResponsiveHeader />
+    
     <Box
       sx={{
         minHeight: '100vh',
-        backgroundColor: '#0A0A0A',
+        backgroundColor: isDarkMode ? '#0A0A0A' : '#fff',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -89,6 +99,7 @@ export default function LoginPage() {
         overflow: 'hidden',
       }}
     >
+      
       {/* Background Circles */}
       <Box
         sx={{
@@ -100,7 +111,7 @@ export default function LoginPage() {
           top: 50,
           left: 50,
           zIndex: 1,
-          opacity: 0.7,
+          opacity: 0.5,
         }}
       />
       <Box
@@ -113,7 +124,7 @@ export default function LoginPage() {
           bottom: 50,
           right: 50,
           zIndex: 1,
-          opacity: 0.7,
+          opacity: 0.5,
         }}
       />
 
@@ -124,7 +135,9 @@ export default function LoginPage() {
           p: 4,
           width: '100%',
           maxWidth: 600,
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : '#f9f9f9',
+          border: `1px solid ${isDarkMode ? '#fff' : '#000'}`,
+          color: isDarkMode ? '#fff' : '#000',
           backdropFilter: 'blur(10px)',
           borderRadius: 2,
           zIndex: 2,
@@ -133,7 +146,7 @@ export default function LoginPage() {
           },
         }}
       >
-        <Typography variant="h5" align="center" gutterBottom color="white">
+        <Typography variant="h5" align="center" gutterBottom>
           Login Here
         </Typography>
 
@@ -148,16 +161,13 @@ export default function LoginPage() {
             error={emailError}
             helperText={emailError ? "*Email is required" : ""}
             InputProps={{
-              style: { backgroundColor: '#1C1C1C', color: '#fff' },
-              sx: {
-                '& input:-webkit-autofill': {
-                  boxShadow: '0 0 0 1000px #1C1C1C inset',
-                  WebkitTextFillColor: '#fff',
-                },
+              style: {
+                backgroundColor: isDarkMode ? '#1C1C1C' : '#fff',
+                color: isDarkMode ? '#fff' : '#000',
               },
             }}
             InputLabelProps={{
-              style: { color: '#ccc' },
+              style: { color: isDarkMode ? '#ccc' : '#000' },
             }}
           />
 
@@ -172,13 +182,16 @@ export default function LoginPage() {
             error={passwordError}
             helperText={passwordError ? "*Password is required" : ""}
             InputProps={{
-              style: { backgroundColor: '#1C1C1C', color: '#fff' },
+              style: {
+                backgroundColor: isDarkMode ? '#1C1C1C' : '#fff',
+                color: isDarkMode ? '#fff' : '#000',
+              },
               endAdornment: (
                 <Button
                   onClick={() => setShowPassword(!showPassword)}
                   sx={{
                     minWidth: 'auto',
-                    color: 'white',
+                    color: isDarkMode ? 'white' : 'black',
                     fontSize: '0.8rem',
                     textTransform: 'none',
                     backgroundColor: 'transparent',
@@ -188,15 +201,9 @@ export default function LoginPage() {
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </Button>
               ),
-              sx: {
-                '& input:-webkit-autofill': {
-                  boxShadow: '0 0 0 1000px #1C1C1C inset',
-                  WebkitTextFillColor: '#fff',
-                },
-              },
             }}
             InputLabelProps={{
-              style: { color: '#ccc' },
+              style: { color: isDarkMode ? '#ccc' : '#000' },
             }}
           />
 
@@ -205,10 +212,10 @@ export default function LoginPage() {
             variant="contained"
             sx={{
               mt: 3,
-              backgroundColor: 'white',
-              color: 'black',
+              backgroundColor: isDarkMode ? 'white' : 'yellow',
+              color: isDarkMode ? 'black' : 'black',
               '&:hover': {
-                backgroundColor: '#e0e0e0',
+                backgroundColor: isDarkMode ? '#e0e0e0' : '#ffeb3b',
               },
             }}
             onClick={handleLogin}
@@ -222,23 +229,30 @@ export default function LoginPage() {
 
         {/* Links and Button */}
         <Box sx={{ textAlign: 'center', mt: 3 }}>
-          <Typography variant="body2" color="white" sx={{ lineHeight: 3.43 }}>
+          <Typography variant="body2" sx={{ color: isDarkMode ? '#fff' : '#000', lineHeight: 3.43 }}>
             New user?{' '}
-            <Link href="/register" underline="hover" color="primary">
+            <Link href="/sign-up" underline="hover" sx={{ color: theme.palette.mode === 'dark' ? 'white' : 'black' }}>
               Create Account
             </Link>
           </Typography>
-          <Typography variant="body2" color="white">
+          <Typography variant="body2" sx={{ color: isDarkMode ? '#fff' : '#000' }}>
             Forget Password?{' '}
-            <Link href="/register" underline="hover" color="primary">
+            <Link href="/register" underline="hover" sx={{color: theme.palette.mode === 'dark' ? 'white' : 'black', }}>
               Click Here
             </Link>
           </Typography>
 
           <Button
             variant="outlined"
-            color="primary"
-            sx={{ mt: 3 }}
+            sx={{
+              mt: 3,
+              color: isDarkMode ? 'white' : 'black',
+              borderColor: isDarkMode ? 'white' : 'black',
+              '&:hover': {
+                borderColor: isDarkMode ? '#ddd' : 'red',
+                color: isDarkMode ? '#ddd' : 'red',
+              },
+            }}
             onClick={() => router.push('/')}
           >
             Go To User Dashboard
@@ -254,6 +268,7 @@ export default function LoginPage() {
         message={snackbarMessage}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       />
+    </Box>
     </Box>
   );
 }

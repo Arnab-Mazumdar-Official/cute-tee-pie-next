@@ -217,9 +217,35 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         flexDirection="column"
         height="100%"
       >
+
+      {
+        activeCartItems.length === 0 && (
+          <Box
+            sx={{
+              backgroundColor: 'black',
+              color: 'white',
+              borderRadius: 2,
+              padding: 4,
+              textAlign: 'center',
+              maxWidth: 500,
+              margin: 2,
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              Your cart is empty!
+            </Typography>
+            <Typography variant="body1">
+              "Style is a way to say who you are without having to speak. Add a t-shirt that speaks for you!"
+            </Typography>
+          </Box>
+        )
+      }
+
         <Box p={isSmallScreen ? 1 : 2} flexGrow={1} overflow="auto">
           {activeCartItems.length > 0 && (
   <>
+  
+        
 
     {/* Cart Header with Toggle */}
     <Box
@@ -235,6 +261,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         gap: 1,
       }}
     >
+      
       <Typography
         variant="subtitle1"
         sx={{

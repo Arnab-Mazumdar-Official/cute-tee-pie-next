@@ -11,6 +11,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@mui/material/styles';
 import ResponsiveHeader from '../../../components/header/header';
+import AnnouncementBar from '../../../components/anouncement/announcement';
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -370,7 +371,7 @@ const PaymentPage: React.FC = () => {
   animate={{ opacity: 1 }}
   transition={{ duration: 1 }}
 >
-  
+  <AnnouncementBar/>
   <ResponsiveHeader/>
   <Container>
     <Typography variant="h5" color={textColor} gutterBottom>Your Order</Typography>
@@ -555,6 +556,7 @@ const PaymentPage: React.FC = () => {
           fontWeight: 'bold',
           fontSize: '1.1rem',
           borderRadius: '10px',
+          mb:2,
           '&:hover': {
             backgroundColor: isDarkMode ? '#00e6e6' : '#FFC400',
           },

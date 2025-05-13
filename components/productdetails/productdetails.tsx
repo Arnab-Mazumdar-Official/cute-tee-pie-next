@@ -27,6 +27,7 @@ import Cookies from 'js-cookie';
 import Alert from '@mui/material/Alert'; 
 import CartDrawer from '../cart/cart';
 import { useTheme } from '@mui/material/styles';
+import AnnouncementBar from '../anouncement/announcement';
 
 const Transition = React.forwardRef(function Transition(
     props: any,
@@ -186,6 +187,7 @@ export default function ProductDetails({ product }: { product: any }) {
   return (
     <>
     {loading && <LinearProgress />}
+    <AnnouncementBar/>
       <Header />
 
       <Box
@@ -209,12 +211,12 @@ export default function ProductDetails({ product }: { product: any }) {
           }}
         >
           <Tooltip title="Share">
-            <IconButton onClick={handleShare} sx={{ color: 'white' }}>
+            <IconButton onClick={handleShare} sx={{ color: isDarkMode ? 'white' : 'black' }}>
               <ShareIcon />
             </IconButton>
           </Tooltip>
           <Tooltip title="Copy URL">
-            <IconButton onClick={handleCopyURL} sx={{ color: 'white' }}>
+            <IconButton onClick={handleCopyURL} sx={{ color: isDarkMode ? 'white' : 'black' }}>
               <ContentCopyIcon />
             </IconButton>
           </Tooltip>
@@ -271,7 +273,7 @@ export default function ProductDetails({ product }: { product: any }) {
                 <Typography fontWeight={600} fontSize="1.25rem" color="primary">
                   Get Ready for Something Big!
                 </Typography>
-                <Typography fontSize="1rem" color="textSecondary">
+                <Typography fontSize="1rem" color="black">
                   Our exclusive collection is coming soon—be the first to get your hands on the latest trends!
                 </Typography>
                 <Chip label="VIP Early Access" color="primary" sx={{ mt: 1 }} />
@@ -324,8 +326,8 @@ export default function ProductDetails({ product }: { product: any }) {
                       value={color}
                       size="small"
                       sx={{
-                        color: 'white',
-                        borderColor: 'white',
+                        color: isDarkMode ? 'white' : 'black',
+                        borderColor:  isDarkMode ? 'white' : 'black',
                         '&.Mui-selected': {
                           backgroundColor: '#555',
                           color: '#fff'
