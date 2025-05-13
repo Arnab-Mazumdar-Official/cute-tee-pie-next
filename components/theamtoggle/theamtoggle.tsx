@@ -16,7 +16,7 @@ export default function ThemeToggle() {
         display: 'flex',
         alignItems: 'center',
         gap: 1,
-        color: mode === 'light' ? 'black' : 'white',
+        color: mode === 'light' ? 'white' : 'white',
       }}
     >
       <Typography variant="body2">

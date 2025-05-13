@@ -9,6 +9,8 @@ import Cookies from 'js-cookie';
 import Image from 'next/image';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useRouter } from 'next/navigation';
+import { useTheme } from '@mui/material/styles';
+import ResponsiveHeader from '../../../components/header/header';
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -85,6 +87,15 @@ const PaymentPage: React.FC = () => {
   const [loadingAddresses, setLoadingAddresses] = useState(true);
   const isMobile = useMediaQuery('(max-width:594px)');
   const router = useRouter();
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+
+
+  const primaryAccent = isDarkMode ? '#00ffff' : '#FFD700';
+  const secondaryAccent = isDarkMode ? '#00ff00' : '#FF0000';
+  const bgColor = isDarkMode ? '#111' : '#fff';
+  const textColor = isDarkMode ? 'white' : 'black';
+  const borderColor = isDarkMode ? '#00ffff' : 'black';
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -326,95 +337,230 @@ const PaymentPage: React.FC = () => {
   const totalPayable = subtotal;
 
   return (
-    <MotionBox sx={{ backgroundColor: '#000', minHeight: '100vh', py: 2, mt: -2 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-      <Container>
-        <Typography variant="h5" color="white" gutterBottom>Your Order</Typography>
-        <Grid container spacing={2} mb={4}>
-          {orderData.map((item) => (
-            <Grid item xs={12} sm={6} md={isMobile ? 12 : 4} key={item._id}>
-              <Box border="1px solid #00ffff" borderRadius={2} p={2} sx={{ backgroundColor: '#111', boxShadow: '0 0 10px #00ffff55', height: '100%' }}>
-                <Image src={item.thumbnail_url} alt={item.title} width={300} height={300} style={{ width: '100%', height: 'auto', borderRadius: 8 }} />
-                <Typography variant="h6" color="white" mt={1}>{item.title}</Typography>
-                <Typography variant="body2" color="#ccc" mb={1}>{item.description.slice(0, 80)}...</Typography>
-                <Typography variant="body2" color="#00ffff">Size: <strong>{item.selectedSize}</strong></Typography>
-                <Typography variant="body2" color="#00ffff">Color: <strong>{item.selectedColor}</strong></Typography>
-                <Typography variant="body2" color="#00ffff">Quantity: <strong>{item.quantity}</strong></Typography>
-                <Typography variant="subtitle1" color="#00ffff" fontWeight="bold" mt={1}>₹{item.price}</Typography>
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
+    
+    <MotionBox
+  sx={{
+    bgcolor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    border: `1px solid ${theme.palette.text.primary}`,
+    // p: 3,
+    borderRadius: 2,
+  }}
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 1 }}
+>
+  
+  <ResponsiveHeader/>
+  <Container>
+    <Typography variant="h5" color={textColor} gutterBottom>Your Order</Typography>
 
-        {loadingAddresses ? <CircularProgress color="inherit" /> : (
-          previousAddresses.length > 0 && (
-            <Box mb={4}>
-              <Typography color="white" variant="h6" gutterBottom>Select a Previous Address:</Typography>
-              {previousAddresses.map((addr) => (
-                <Box key={addr._id} sx={{ border: '1px solid #00ffff', borderRadius: 2, p: 2, mb: 2, color: 'white', backgroundColor: '#111' }}>
-                  <FormControlLabel
-                    control={<Checkbox checked={selectedAddressId === addr._id} onChange={() => handleSelectAddress(addr, addr._id)} />}
-                    label={
-                      <Box>
-                        <div>{addr.shipping_data.address_first}</div>
-                        <div>{addr.shipping_data.address_secoend}</div>
-                        <div>{addr.shipping_data.city}, {addr.shipping_data.state} - {addr.shipping_data.pincode}</div>
-                      </Box>
-                    }
-                  />
-                </Box>
-              ))}
-            </Box>
-          )
-        )}
-
-        <Box mb={3}>
-          <Button variant="outlined" onClick={() => setShowForm(true)} sx={{ color: '#00ffff', borderColor: '#00ffff' }}>
-            Add a New Address
-          </Button>
-        </Box>
-
-        {showForm && (
-          <>
-            <MotionBox border="1px solid white" p={3} borderRadius={2} mb={3} sx={{ boxShadow: '0 0 10px #00ffff55', backgroundColor: '#111' }}>
-              <Typography variant="h6" color="white" gutterBottom>Shipping Address</Typography>
-              <AddressFields formData={shippingData} setFormData={setShippingData} />
-            </MotionBox>
-
-            <FormControlLabel
-              control={<Checkbox checked={sameAsShipping} onChange={(e) => setSameAsShipping(e.target.checked)} sx={{ color: 'white' }} />}
-              label={<Typography sx={{ color: 'white' }}>Same as Shipping Address</Typography>}
+    <Grid container spacing={2} mb={4}>
+      {orderData.map((item) => (
+        <Grid item xs={12} sm={6} md={isMobile ? 12 : 4} key={item._id}>
+          <Box
+            border={`1px solid ${primaryAccent}`}
+            borderRadius={2}
+            p={2}
+            sx={{
+              backgroundColor: bgColor,
+              boxShadow: `0 0 10px ${primaryAccent}55`,
+              height: '100%',
+              color: textColor,
+            }}
+          >
+            <Image
+              src={item.thumbnail_url}
+              alt={item.title}
+              width={300}
+              height={300}
+              style={{ width: '100%', height: 'auto', borderRadius: 8 }}
             />
+            <Typography variant="h6" color={textColor} mt={1}>{item.title}</Typography>
+            <Typography variant="body2" color={isDarkMode ? '#ccc' : 'gray'} mb={1}>
+              {item.description.slice(0, 80)}...
+            </Typography>
+            <Typography variant="body2" color={primaryAccent}>
+              Size: <strong>{item.selectedSize}</strong>
+            </Typography>
+            <Typography variant="body2" color={primaryAccent}>
+              Color: <strong>{item.selectedColor}</strong>
+            </Typography>
+            <Typography variant="body2" color={primaryAccent}>
+              Quantity: <strong>{item.quantity}</strong>
+            </Typography>
+            <Typography variant="subtitle1" color={primaryAccent} fontWeight="bold" mt={1}>
+              ₹{item.price}
+            </Typography>
+          </Box>
+        </Grid>
+      ))}
+    </Grid>
 
-            {!sameAsShipping && (
-              <MotionBox border="1px solid white" p={3} borderRadius={2} mb={4} sx={{ boxShadow: '0 0 10px #00ffff55', backgroundColor: '#111' }}>
-                <Typography variant="h6" color="white" gutterBottom>Billing Address</Typography>
-                <AddressFields formData={billingData} setFormData={setBillingData} />
-              </MotionBox>
-            )}
-          </>
+    {loadingAddresses ? (
+      <CircularProgress color="inherit" />
+    ) : (
+      previousAddresses.length > 0 && (
+        <Box mb={4}>
+          <Typography color={textColor} variant="h6" gutterBottom>
+            Select a Previous Address:
+          </Typography>
+          {previousAddresses.map((addr) => (
+            <Box
+              key={addr._id}
+              sx={{
+                border: `1px solid ${primaryAccent}`,
+                borderRadius: 2,
+                p: 2,
+                mb: 2,
+                color: textColor,
+                backgroundColor: bgColor,
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectedAddressId === addr._id}
+                    onChange={() => handleSelectAddress(addr, addr._id)}
+                    sx={{ color: textColor }}
+                  />
+                }
+                label={
+                  <Box>
+                    <div>{addr.shipping_data.address_first}</div>
+                    <div>{addr.shipping_data.address_secoend}</div>
+                    <div>
+                      {addr.shipping_data.city}, {addr.shipping_data.state} - {addr.shipping_data.pincode}
+                    </div>
+                  </Box>
+                }
+              />
+            </Box>
+          ))}
+        </Box>
+      )
+    )}
+
+    <Box mb={3}>
+      <Button
+        variant="outlined"
+        onClick={() => setShowForm(true)}
+        sx={{ color: primaryAccent, borderColor: primaryAccent }}
+      >
+        Add a New Address
+      </Button>
+    </Box>
+
+    {showForm && (
+      <>
+        <MotionBox
+          border={`1px solid ${textColor}`}
+          p={3}
+          borderRadius={2}
+          mb={3}
+          sx={{ boxShadow: `0 0 10px ${primaryAccent}55`, backgroundColor: bgColor, color: textColor }}
+        >
+          <Typography variant="h6" color={textColor} gutterBottom>Shipping Address</Typography>
+          <AddressFields formData={shippingData} setFormData={setShippingData} />
+        </MotionBox>
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={sameAsShipping}
+              onChange={(e) => setSameAsShipping(e.target.checked)}
+              sx={{ color: textColor }}
+            />
+          }
+          label={<Typography sx={{ color: textColor }}>Same as Shipping Address</Typography>}
+        />
+
+        {!sameAsShipping && (
+          <MotionBox
+            border={`1px solid ${textColor}`}
+            p={3}
+            borderRadius={2}
+            mb={4}
+            sx={{ boxShadow: `0 0 10px ${primaryAccent}55`, backgroundColor: bgColor, color: textColor }}
+          >
+            <Typography variant="h6" color={textColor} gutterBottom>Billing Address</Typography>
+            <AddressFields formData={billingData} setFormData={setBillingData} />
+          </MotionBox>
         )}
+      </>
+    )}
 
-        <Box sx={{ border: '1px solid #00ffff', borderRadius: 2, p: 3, backgroundColor: '#111', boxShadow: '0 0 10px #00ffff55', mb: 4 }}>
-          <Typography variant="h6" color="white" gutterBottom>Invoice Summary</Typography>
-          <Divider sx={{ borderColor: 'gray', mb: 2 }} />
-          <Box display="flex" justifyContent="space-between" color="white" mb={1}><span>Subtotal</span><span>₹{subtotal}</span></Box>
-          <Box display="flex" justifyContent="space-between" color="white" mb={1}><span>Shipping</span><span style={{ textDecoration: 'line-through' }}>₹{shippingCharge}</span></Box>
-          <Box display="flex" justifyContent="space-between" color="#00ff00" mb={1}><span>Discount</span><span>- ₹{discount}</span></Box>
-          <Divider sx={{ borderColor: 'gray', my: 2 }} />
-          <Box display="flex" justifyContent="space-between" color="#00ffff" fontWeight="bold"><span>Total to Pay</span><span>₹{totalPayable}</span></Box>
-        </Box>
+    <Box
+      sx={{
+        border: `1px solid ${primaryAccent}`,
+        borderRadius: 2,
+        p: 3,
+        backgroundColor: bgColor,
+        boxShadow: `0 0 10px ${primaryAccent}55`,
+        mb: 4,
+        color: textColor,
+      }}
+    >
+      <Typography variant="h6" color={textColor} gutterBottom>Invoice Summary</Typography>
+      <Divider sx={{ borderColor: isDarkMode ? 'gray' : 'black', mb: 2 }} />
+      <Box display="flex" justifyContent="space-between" mb={1}><span>Subtotal</span><span>₹{subtotal}</span></Box>
+      <Box display="flex" justifyContent="space-between" mb={1}>
+        <span>Shipping</span>
+        <span style={{ textDecoration: 'line-through' }}>₹{shippingCharge}</span>
+      </Box>
+      <Box display="flex" justifyContent="space-between" color={secondaryAccent} mb={1}>
+        <span>Discount</span>
+        <span>- ₹{discount}</span>
+      </Box>
+      <Divider sx={{ borderColor: isDarkMode ? 'gray' : 'black', my: 2 }} />
+      <Box display="flex" justifyContent="space-between" color={primaryAccent} fontWeight="bold">
+        <span>Total to Pay</span><span>₹{totalPayable}</span>
+      </Box>
+    </Box>
 
-        <Box textAlign="center" mt={6}>
-          <MotionButton variant="contained" size="large" onClick={handlePayment} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} sx={{ backgroundColor: '#00ffff', color: '#000', border: 'none', transition: 'all 0.3s ease', px: 6, py: 1.5, fontWeight: 'bold', fontSize: '1.1rem', borderRadius: '10px', '&:hover': { backgroundColor: '#00e6e6' } }}>
-          Proceed to Payment
-          </MotionButton>
-        </Box>
+    <Box textAlign="center" mt={6}>
+      <MotionButton
+        variant="contained"
+        size="large"
+        onClick={handlePayment}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.98 }}
+        sx={{
+          backgroundColor: primaryAccent,
+          color: isDarkMode ? '#000' : '#000',
+          border: 'none',
+          transition: 'all 0.3s ease',
+          px: 6,
+          py: 1.5,
+          fontWeight: 'bold',
+          fontSize: '1.1rem',
+          borderRadius: '10px',
+          '&:hover': {
+            backgroundColor: isDarkMode ? '#00e6e6' : '#FFC400',
+          },
+        }}
+      >
+        Proceed to Payment
+      </MotionButton>
+    </Box>
 
-        <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-          <Alert onClose={handleCloseSnackbar} severity="warning" sx={{ width: '100%' }}>{snackbarMessage}</Alert>
-        </Snackbar>
-      </Container>
-    </MotionBox>
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={3000}
+      onClose={handleCloseSnackbar}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+    >
+      <Alert
+        onClose={handleCloseSnackbar}
+        severity="warning"
+        sx={{ width: '100%', backgroundColor: secondaryAccent, color: '#fff' }}
+      >
+        {snackbarMessage}
+      </Alert>
+    </Snackbar>
+  </Container>
+</MotionBox>
+
   );
 };
 

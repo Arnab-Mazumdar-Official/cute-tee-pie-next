@@ -26,6 +26,7 @@ import Footer from '../footer/footer';
 import Cookies from 'js-cookie';
 import Alert from '@mui/material/Alert'; 
 import CartDrawer from '../cart/cart';
+import { useTheme } from '@mui/material/styles';
 
 const Transition = React.forwardRef(function Transition(
     props: any,
@@ -48,6 +49,8 @@ export default function ProductDetails({ product }: { product: any }) {
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'info' | 'warning' | 'error'>('info');
   const [loading, setLoading] = useState(false);
   const [openCart, setOpenCart] = useState(false);
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
 
 
 
@@ -185,7 +188,15 @@ export default function ProductDetails({ product }: { product: any }) {
     {loading && <LinearProgress />}
       <Header />
 
-      <Box sx={{ backgroundColor: 'black', color: 'white', p: 4, position: 'relative' }}>
+      <Box
+        sx={{
+          backgroundColor: isDarkMode ? 'black' : 'white',
+          color: isDarkMode ? 'white' : 'black',
+          p: 4,
+          position: 'relative',
+        }}
+      >
+
         <Box
           sx={{
             position: 'absolute',
@@ -256,7 +267,7 @@ export default function ProductDetails({ product }: { product: any }) {
               <Chip label="Limited: 5 Left" color="warning" size="small" sx={{ mt: 1 }} />
 
               {/* Promo Box */}
-              <Box bgcolor="#fef1e6" p={2} mt={3} borderRadius={2} color="black">
+              <Box bgcolor={isDarkMode ? '#fef1e6' : '#fffbe6'} p={2} mt={3} borderRadius={2} color={isDarkMode ? 'black' : 'black'}>
                 <Typography fontWeight={600} fontSize="1.25rem" color="primary">
                   Get Ready for Something Big!
                 </Typography>
@@ -271,7 +282,7 @@ export default function ProductDetails({ product }: { product: any }) {
 
               {/* Sizes */}
               <Box mt={3}>
-                <Typography sx={{ color: 'white' }}>Size: {selectedSize}</Typography>
+                <Typography sx={{ color: isDarkMode ? 'white' : 'black' }}>Size: {selectedSize}</Typography>
                 <ToggleButtonGroup
                   value={selectedSize}
                   exclusive
@@ -280,18 +291,18 @@ export default function ProductDetails({ product }: { product: any }) {
                 >
                   {product.sizes.map((size: string) => (
                     <ToggleButton
-                      key={size}
-                      value={size}
-                      size="small"
-                      sx={{
-                        color: 'white',
-                        borderColor: 'white',
-                        '&.Mui-selected': {
-                          backgroundColor: '#555',
-                          color: '#fff'
-                        }
-                      }}
-                    >
+                        key={size}
+                        value={size}
+                        size="small"
+                        sx={{
+                          color: isDarkMode ? 'white' : 'black',
+                          borderColor: isDarkMode ? 'white' : 'black',
+                          '&.Mui-selected': {
+                            backgroundColor: isDarkMode ? '#555' : '#e0e0e0',
+                            color: isDarkMode ? 'white' : 'black',
+                          }
+                        }}
+                      >
                       {size}
                     </ToggleButton>
                   ))}
@@ -300,7 +311,7 @@ export default function ProductDetails({ product }: { product: any }) {
 
               {/* Colors */}
               <Box mt={3}>
-                <Typography sx={{ color: 'white' }}>Color: {selectedColor}</Typography>
+                <Typography sx={{ color: isDarkMode ? 'white' : 'black' }}>Color: {selectedColor}</Typography>
                 <ToggleButtonGroup
                   value={selectedColor}
                   exclusive
@@ -329,13 +340,13 @@ export default function ProductDetails({ product }: { product: any }) {
 
               {/* Quantity */}
               <Box mt={3}>
-                <Typography sx={{ color: 'white' }}>Quantity:</Typography>
+                <Typography sx={{ color: isDarkMode ? 'white' : 'black' }}>Quantity:</Typography>
                 <Box display="flex" alignItems="center" gap={1} mt={1}>
-                  <IconButton onClick={() => setQuantity(Math.max(1, quantity - 1))} sx={{ color: 'white' }}>
+                  <IconButton onClick={() => setQuantity(Math.max(1, quantity - 1))} sx={{ color: isDarkMode ? 'white' : 'black' }}>
                     <RemoveIcon />
                   </IconButton>
-                  <Typography sx={{ color: 'white' }}>{quantity}</Typography>
-                  <IconButton onClick={() => setQuantity(quantity + 1)} sx={{ color: 'white' }}>
+                  <Typography sx={{ color: isDarkMode ? 'white' : 'black' }}>{quantity}</Typography>
+                  <IconButton onClick={() => setQuantity(quantity + 1)} sx={{ color: isDarkMode ? 'white' : 'black' }}>
                     <AddIcon />
                   </IconButton>
                 </Box>
@@ -367,11 +378,18 @@ export default function ProductDetails({ product }: { product: any }) {
               <Box mt={3} display="flex" gap={2}>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} style={{ flex: 1 }}>
                   <Button
-                    variant="contained"
-                    sx={{ bgcolor: '#FFD700', color: '#000', fontWeight: 600 }}
-                    fullWidth
-                    onClick={addToCart} 
-                  >
+                      variant="contained"
+                      sx={{
+                        bgcolor: '#FFD700',
+                        color: '#000',
+                        fontWeight: 600,
+                        '&:hover': {
+                          bgcolor: '#e6c200',
+                        }
+                      }}
+                      fullWidth
+                      onClick={addToCart}
+                    >
                     Add to Cart
                   </Button>
                 </motion.div>
@@ -379,17 +397,17 @@ export default function ProductDetails({ product }: { product: any }) {
                 <Button
                     variant="contained"
                     sx={{
-                        bgcolor: '#FF3131',
-                        color: '#fff',
-                        fontWeight: 600,
-                        boxShadow: '0 0 10px rgba(255,49,49,0.5)',
-                        '&:hover': {
+                      bgcolor: '#FF3131',
+                      color: '#fff',
+                      fontWeight: 600,
+                      boxShadow: '0 0 10px rgba(255,49,49,0.5)',
+                      '&:hover': {
                         boxShadow: '0 0 20px rgba(255,49,49,0.8)',
-                        },
+                      }
                     }}
                     fullWidth
-                    onClick={buyItNow} 
-                    >
+                    onClick={buyItNow}
+                  >
                     Buy it Now
                     </Button>
                 </motion.div>
@@ -405,7 +423,7 @@ export default function ProductDetails({ product }: { product: any }) {
             fullWidth
             TransitionComponent={Transition}
           >
-            <DialogTitle sx={{ fontWeight: 'bold', textAlign: 'center' }}>
+            <DialogTitle sx={{ fontWeight: 'bold', textAlign: 'center', color: isDarkMode ? 'white' : 'black' }}>
               SIZE CHART
             </DialogTitle>
             <DialogContent>
