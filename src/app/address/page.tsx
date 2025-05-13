@@ -35,39 +35,59 @@ const AddressFields = ({ formData, setFormData }: { formData: Record<string, str
     { label: 'State', key: 'state' },
     { label: 'Country', key: 'country' },
   ];
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
 
   return (
     <Grid container spacing={1.5}>
-      {fields.map(({ label, key }, idx) => (
-        <Grid item xs={12} sm={6} key={idx}>
-          <TextField
-            label={label}
-            value={formData[key] || ''}
-            onChange={(e) => setFormData(prev => ({ ...prev, [key]: e.target.value }))}
-            InputLabelProps={{ style: { color: 'white', fontSize: '14px' } }}
-            InputProps={{
-              style: { color: 'white', fontSize: '14px' },
-              autoComplete: 'off',
-            }}
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': { borderColor: 'white' },
-                '&:hover fieldset': { borderColor: '#00ffff' },
-                '&.Mui-focused fieldset': { borderColor: '#00ffff' },
-                '& input:-webkit-autofill': {
-                  WebkitBoxShadow: '0 0 0 1000px black inset',
-                  WebkitTextFillColor: 'white',
-                },
-              },
-              mb: 1.5,
-            }}
-            fullWidth
-            variant="outlined"
-            size="small"
-          />
-        </Grid>
-      ))}
+  {fields.map(({ label, key }, idx) => (
+    <Grid item xs={12} sm={6} key={idx}>
+      <TextField
+        label={label}
+        value={formData[key] || ''}
+        onChange={(e) =>
+          setFormData((prev) => ({ ...prev, [key]: e.target.value }))
+        }
+        InputLabelProps={{
+          style: {
+            color: isDarkMode ? 'white' : 'black',
+            fontSize: '14px',
+          },
+        }}
+        InputProps={{
+          style: {
+            color: isDarkMode ? 'white' : 'black',
+            fontSize: '14px',
+          },
+          autoComplete: 'off',
+        }}
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: isDarkMode ? 'white' : 'black',
+            },
+            '&:hover fieldset': {
+              borderColor: isDarkMode ? '#00ffff' : 'red',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: isDarkMode ? '#00ffff' : 'yellow',
+            },
+            '& input:-webkit-autofill': {
+              WebkitBoxShadow: `0 0 0 1000px ${
+                isDarkMode ? 'black' : 'white'
+              } inset`,
+              WebkitTextFillColor: isDarkMode ? 'white' : 'black',
+            },
+          },
+          mb: 1.5,
+        }}
+        fullWidth
+        variant="outlined"
+        size="small"
+      />
     </Grid>
+  ))}
+</Grid>
   );
 };
 
