@@ -181,11 +181,12 @@ const PaymentPage: React.FC = () => {
       description: "Prin Tee Pal Transaction",
       handler: async (response: any) => {
         const productDetails = orderData.map((item: any) => ({
-          product_id: item._id,
-          size: item.selectedSize,
-          color: item.selectedColor,
-          quantity:item.quantity
-        }));
+            product_id: item.source === "cart" ? item.product_id : item._id,
+            size: item.selectedSize,
+            color: item.selectedColor,
+            quantity: item.quantity
+          }));
+
     
         const payload = {
           response,

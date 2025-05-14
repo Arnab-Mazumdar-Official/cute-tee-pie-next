@@ -150,7 +150,7 @@ const handleGoBack = () => {
   
 
   const allSizes = ['Ex','S', 'M', 'L', 'XL','2XL','3Xl','4XL','5XL','6XL'];
-  const allColors = ['Red','Cherry Red',"Maroon", 'Black', 'White', 'Gray','Beige','Royal Blue',"Navy Blue","Turquoise Blue","Olive green","Army Green","Bottle Green","Mastared Yellow", 'Yellow','Pink','Chocolate Brown'];
+  const allColors = ['Red','Cherry Red',"Maroon", 'Black', 'White', 'Gray','Beige','Royal Blue',"Navy Blue","Turquoise Blue","Olive green","Army Green","Bottle Green","Mustard Yellow", 'Yellow','Pink','Chocolate Brown'];
 
 
   const handleImageChange = (e: any) => {
