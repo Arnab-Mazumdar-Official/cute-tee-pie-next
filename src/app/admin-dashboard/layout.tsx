@@ -3,6 +3,8 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { Box } from '@mui/material';
+import ThemeToggle from '../../../components/theamtoggle/theamtoggle';
 
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -20,15 +22,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <div className="sticky top-0 w-full h-14 bg-gray-900 text-white flex items-center justify-center px-6 shadow z-50">
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="absolute left-4 bg-gray-900 p-2 rounded"
-        >
-          ☰
-        </button>
-        <h1 className="text-xl font-bold">Prin Tee Pal Admin Dashboard</h1>
-      </div>
+      <div className="sticky top-0 w-full h-14 bg-gray-900 text-white flex items-center justify-center px-6 shadow z-50 relative">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="absolute left-4 bg-gray-900 p-2 rounded"
+          >
+            ☰
+          </button>
+          <h1 className="text-xl font-bold">Admin</h1>
+          <div className="absolute right-4">
+            <Box>
+              <ThemeToggle />
+            </Box>
+          </div>
+        </div>
+
 
 
       {/* Body with Sidebar and Main Content */}
@@ -68,9 +76,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
               <motion.button
                 whileTap={{ scale: 0.95 }}
+                onClick={() => router.push('/admin-dashboard/order-list')}
                 className="w-full p-3 mb-4 bg-gray-700 rounded hover:bg-gray-600 text-white transition-all"
               >
                 Orders
+              </motion.button>
+
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                className="w-full p-3 mb-4 bg-gray-700 rounded hover:bg-gray-600 text-white transition-all"
+              >
+                cart Lists
+              </motion.button>
+
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                className="w-full p-3 mb-4 bg-gray-700 rounded hover:bg-gray-600 text-white transition-all"
+              >
+                User's List
               </motion.button>
             </motion.div>
           )}

@@ -26,9 +26,9 @@ const usersSchema = new mongoose.Schema(
       index: -1,
     },
     
-    address: {
-      type:String,
-    },
+    // address: {
+    //   type:String,
+    // },
 
     created_on: {
       type: Number,
@@ -38,15 +38,15 @@ const usersSchema = new mongoose.Schema(
       type: Number,
       default: moment().valueOf(),
     },
-    state: {
-      type: String,
-    },
-    city: {
-      type: String,
-    },
-    zip: {
-      type: String,
-    },
+    // state: {
+    //   type: String,
+    // },
+    // city: {
+    //   type: String,
+    // },
+    // zip: {
+    //   type: String,
+    // },
   },
 
   {

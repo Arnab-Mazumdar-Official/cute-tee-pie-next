@@ -114,7 +114,7 @@ export async function login(data: any): Promise<any> {
 
 export async function savedata(data:any): Promise<any> {
 
-    const { name, email, password,role, phone, address,state,city,zip } = data
+    const { name, email, password,role, phone } = data
 
     if (!name || !email || !password || !role) {
         return { message: 'Name, email,role and password are required'} ;
@@ -134,9 +134,7 @@ export async function savedata(data:any): Promise<any> {
         email,
         password: hashedPassword,
         phone,
-        role,
-        address,
-        state,city,zip
+        role
     });
 
     await newUser.save();

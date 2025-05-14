@@ -58,7 +58,7 @@ const TshirtCategoryForm = () => {
   const [loading, setLoading] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width:454px)');
   const [errors, setErrors] = useState({ title: '', active: '', priority: '', image: '' });
-  const tshirtTypes = ['Men Round Neck Half Sleev', 'Female Round Neck Half Sleev', 'Uinsex Over Size T-Shirts', 'Work Ware Polo', 'Round Neck Full Sleev T-Shirts','Sweatshirt','Hoodie'];
+  const tshirtTypes = ['Men Round Neck Half Sleeve', 'Female Round Neck Half Sleeve', 'Uinsex Over Size T-Shirts', 'Work Ware Polo', 'Round Neck Full Sleeve T-Shirts','Sweatshirt','Hoodie'];
 
   useEffect(() => {
     const controller = new AbortController();
@@ -150,7 +150,7 @@ const handleGoBack = () => {
   
 
   const allSizes = ['Ex','S', 'M', 'L', 'XL','2XL','3Xl','4XL','5XL','6XL'];
-  const allColors = ['Red','Cherry Red',"Maroon", 'Black', 'White', 'Gray','Beige','Royal Blue',"Navy Blue","Durcoise Blue","Olive green","Army Green","Bottle Green","Mastered Yellow", 'Yellow'];
+  const allColors = ['Red','Cherry Red',"Maroon", 'Black', 'White', 'Gray','Beige','Royal Blue',"Navy Blue","Turquoise Blue","Olive green","Army Green","Bottle Green","Mastared Yellow", 'Yellow','Pink','Chocolate Brown'];
 
 
   const handleImageChange = (e: any) => {

@@ -28,6 +28,7 @@ import Alert from '@mui/material/Alert';
 import CartDrawer from '../cart/cart';
 import { useTheme } from '@mui/material/styles';
 import AnnouncementBar from '../anouncement/announcement';
+import LoginNeeded from '../loginneed/loginneed';
 
 const Transition = React.forwardRef(function Transition(
     props: any,
@@ -50,6 +51,7 @@ export default function ProductDetails({ product }: { product: any }) {
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'info' | 'warning' | 'error'>('info');
   const [loading, setLoading] = useState(false);
   const [openCart, setOpenCart] = useState(false);
+  const [openLogineed, setOpenLogineed] = useState(false);
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
 
@@ -85,7 +87,7 @@ export default function ProductDetails({ product }: { product: any }) {
         setSnackbarMessage('You need to log in to proceed.');
         setSnackbarSeverity('warning');
         setSnackbarOpen(true);
-        router.push('/login');
+        setOpenLogineed(true); // Show modal if not logged in
         return;
       }
 
@@ -116,7 +118,7 @@ export default function ProductDetails({ product }: { product: any }) {
     setSnackbarMessage('You need to log in to proceed.');
     setSnackbarSeverity('warning');
     setSnackbarOpen(true);
-    router.push('/login');
+    setOpenLogineed(true); // Show modal if not logged in
     return;
   }
 
@@ -226,35 +228,59 @@ export default function ProductDetails({ product }: { product: any }) {
           {/* Image Section */}
           <Grid item xs={12} md={6}>
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <Swiper
-                modules={[Navigation, Pagination, Autoplay]}
-                navigation
-                pagination={{ clickable: true }}
-                autoplay={{ delay: 3000, disableOnInteraction: false }}
-                loop
-                style={{ borderRadius: 10 }}
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
               >
-                {product.image_urls.map((img: string, idx: number) => (
-                  <SwiperSlide key={idx}>
-                    <Box
-                      component="img"
-                      src={img}
-                      alt={`slide-${idx}`}
-                      sx={{
-                        width: '100%',
-                        height: 450,
-                        objectFit: 'contain',
-                        borderRadius: 2,
-                      }}
-                    />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </motion.div>
+                {/* Swiper container */}
+                <Box sx={{ width: '100%', maxWidth: 600, margin: '0 auto' }}>
+                  {/* Image slider */}
+                  <Swiper
+                    modules={[Pagination, Autoplay]}
+                    pagination={{
+                      clickable: true,
+                      el: '.custom-swiper-pagination',
+                    }}
+                    autoplay={{ delay: 3000, disableOnInteraction: false }}
+                    loop
+                    style={{ borderRadius: 10 }}
+                  >
+                    {product.image_urls.map((img: string, idx: number) => (
+                      <SwiperSlide key={idx}>
+                        <Box
+                          component="img"
+                          src={img}
+                          alt={`slide-${idx}`}
+                          sx={{
+                            width: '100%',
+                            height: 450,
+                            objectFit: 'contain',
+                            borderRadius: 2,
+                          }}
+                        />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+
+                  {/* Pagination container placed BELOW the image */}
+                  <Box
+                    className="custom-swiper-pagination"
+                    sx={{ textAlign: 'center', mt: 2 }}
+                  />
+                </Box>
+
+                {/* Custom pagination bullet styles */}
+                <style jsx global>{`
+                  .custom-swiper-pagination .swiper-pagination-bullet {
+                    background-color: #999;
+                    opacity: 1;
+                    margin: 0 4px;
+                  }
+                  .custom-swiper-pagination .swiper-pagination-bullet-active {
+                    background-color: ${isDarkMode ? 'blue' : 'black'};
+                  }
+                `}</style>
+              </motion.div>
           </Grid>
 
           {/* Info Section */}
@@ -454,6 +480,7 @@ export default function ProductDetails({ product }: { product: any }) {
             </DialogContent>
           </Dialog>
         </Grid>
+        <LoginNeeded open={openLogineed} onClose={() => setOpenLogineed(false)} />
       </Box>
 
       <Snackbar

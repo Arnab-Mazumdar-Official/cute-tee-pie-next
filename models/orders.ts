@@ -61,6 +61,10 @@ const ordersSchema = new Schema(
       default: () => moment().valueOf(),
       index: -1,
     },
+    desposition: {
+      type: String,
+      index: -1,
+    },
   },
   {
     timestamps: true,

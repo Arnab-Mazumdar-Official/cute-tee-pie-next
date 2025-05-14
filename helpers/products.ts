@@ -1,6 +1,7 @@
 import mongoose, { Types } from "mongoose";
 import dbConnect from "../db/dbConnect";
 import products from "../models/products";
+import Orders from "../models/orders";
 import moment from "moment";
 import slugifyLib from 'slugify';
 
@@ -108,6 +109,95 @@ export async function collectionList() {
   console.log("product List Debug 1");
 
   return { message: 'Category created', category };
+}
+
+
+export async function orderList() {
+
+  console.log("product List Debug 1");
+  
+  await dbConnect();
+  console.log("product List Debug 1");
+  const orders = await Orders.aggregate([
+    {
+      '$sort':{'_id':-1}
+    },
+  {
+    '$addFields': {
+      'product_id_obj': {
+        '$toObjectId': '$product_id'
+      }, 
+      'user_id_obj': {
+        '$toObjectId': '$user_id'
+      }
+    }
+  }, {
+    '$lookup': {
+      'from': 'products', 
+      'localField': 'product_id_obj', 
+      'foreignField': '_id', 
+      'as': 'product_details'
+    }
+  }, {
+    '$lookup': {
+      'from': 'users', 
+      'localField': 'user_id_obj', 
+      'foreignField': '_id', 
+      'as': 'users_details'
+    }
+  }, {
+    '$lookup': {
+      'from': 'address_collcetions', 
+      'let': {
+        'userId': '$user_id'
+      }, 
+      'pipeline': [
+        {
+          '$match': {
+            '$expr': {
+              '$and': [
+                {
+                  '$eq': [
+                    '$user_id', '$$userId'
+                  ]
+                }, {
+                  '$eq': [
+                    '$selected', true
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ], 
+      'as': 'address_details'
+    }
+  }, {
+    '$addFields': {
+      'product_name': {
+        '$ifNull': [
+          {
+            '$arrayElemAt': [
+              '$product_details.title', 0
+            ]
+          }, 'Not Found'
+        ]
+      }, 
+      'user_name': {
+        '$ifNull': [
+          {
+            '$arrayElemAt': [
+              '$users_details.name', 0
+            ]
+          }, 'Not Found'
+        ]
+      }
+    }
+  }
+]);
+  console.log("product List Debug 1");
+
+  return { message: 'orders found', orders };
 }
 
 

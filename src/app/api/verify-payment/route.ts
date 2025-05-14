@@ -86,7 +86,8 @@ export async function POST(req: NextRequest) {
         color: item.color,
         quantity: item.quantity,
         source,
-        amount
+        amount,
+        desposition:'On Hold'
       };
       const created = await Orders.create(orderDoc);
       console.log('✅ Order saved for product:', item.product_id);
@@ -117,7 +118,8 @@ export async function POST(req: NextRequest) {
         color: item.color,
         quantity: item.quantity,
         source,
-        amount
+        amount,
+        desposition:'Received'
       };
       const created = await Orders.create(orderDoc);
       console.log('✅ Order saved for product:', item.product_id);

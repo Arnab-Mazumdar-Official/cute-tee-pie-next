@@ -21,10 +21,10 @@ import AnnouncementBar from '../../../components/anouncement/announcement';
   email: string;
   password: string;
   phone: string;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
+  // address: string;
+  // city: string;
+  // state: string;
+  // zip: string;
 };
 export default function SignupPage() {
   const theme = useTheme();
@@ -36,10 +36,10 @@ export default function SignupPage() {
   email: '',
   password: '',
   phone: '',
-  address: '',
-  city: '',
-  state: '',
-  zip: '',
+  // address: '',
+  // city: '',
+  // state: '',
+  // zip: '',
 });
 
 
@@ -80,25 +80,25 @@ export default function SignupPage() {
       valid = false;
     }
 
-    if (!form.address.trim()) {
-      newErrors.address = 'Address is required';
-      valid = false;
-    }
+    // if (!form.address.trim()) {
+    //   newErrors.address = 'Address is required';
+    //   valid = false;
+    // }
 
-    if (!form.city.trim()) {
-      newErrors.city = 'City is required';
-      valid = false;
-    }
+    // if (!form.city.trim()) {
+    //   newErrors.city = 'City is required';
+    //   valid = false;
+    // }
 
-    if (!form.state.trim()) {
-      newErrors.state = 'State is required';
-      valid = false;
-    }
+    // if (!form.state.trim()) {
+    //   newErrors.state = 'State is required';
+    //   valid = false;
+    // }
 
-    if (!form.zip.trim() || !/^\d{6}$/.test(form.zip)) {
-      newErrors.zip = 'Zip must be 6 digits';
-      valid = false;
-    }
+    // if (!form.zip.trim() || !/^\d{6}$/.test(form.zip)) {
+    //   newErrors.zip = 'Zip must be 6 digits';
+    //   valid = false;
+    // }
 
     setErrors(newErrors);
     if (!valid) return;
@@ -196,10 +196,10 @@ export default function SignupPage() {
   { name: 'email', label: 'Email Address' },
   { name: 'password', label: 'Password' },
   { name: 'phone', label: 'Phone Number' },
-  { name: 'address', label: 'Address' },
-  { name: 'city', label: 'City' },
-  { name: 'state', label: 'State' },
-  { name: 'zip', label: 'Zip Code' },
+  // { name: 'address', label: 'Address' },
+  // { name: 'city', label: 'City' },
+  // { name: 'state', label: 'State' },
+  // { name: 'zip', label: 'Zip Code' },
 ].map(({ name, label }) => {
   return name === 'password' ? (
     <TextField

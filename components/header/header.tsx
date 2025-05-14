@@ -9,7 +9,6 @@ import {
   useMediaQuery,
   Menu,
   MenuItem,
-  IconButton,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
@@ -19,6 +18,7 @@ import Cookies from 'js-cookie';
 import CartDrawer from '../cart/cart';
 import ThemeToggle from '../theamtoggle/theamtoggle';
 import ComingSoonModal from '../commingsoon/commingsoon';
+import LoginNeeded from '../loginneed/loginneed';
 import Image from 'next/image';
 
 
@@ -52,6 +52,7 @@ export default function ResponsiveHeader() {
   const [openCart, setOpenCart] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openModal, setOpenModal] = useState(false);
+  const [openLogineed, setOpenLogineed] = useState(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -77,7 +78,10 @@ export default function ResponsiveHeader() {
   const openCartSection = () => {
     const cookie = Cookies.get('user_login_data');
     const user = cookie ? JSON.parse(cookie) : null;
-    if (!user?._id) return router.push('/login');
+     if (!user?._id) {
+    setOpenLogineed(true); // Show modal if not logged in
+    return;
+    }
     setOpenCart(true);
   };
 
@@ -150,9 +154,11 @@ export default function ResponsiveHeader() {
           </Box>
         </Toolbar>
         <ComingSoonModal open={openModal} onClose={() => setOpenModal(false)} />
+        <LoginNeeded open={openLogineed} onClose={() => setOpenLogineed(false)} />
       </AppBar>
 
       <CartDrawer open={openCart} onClose={() => setOpenCart(false)} />
+
     </>
   );
 }
