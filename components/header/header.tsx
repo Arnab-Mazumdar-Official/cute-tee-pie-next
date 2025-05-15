@@ -117,6 +117,7 @@ export default function ResponsiveHeader() {
             >
               <MenuItem onClick={() => navigate('/sign-up')}>Sign Up</MenuItem>
               <MenuItem onClick={() => navigate('/login')}>Log In</MenuItem>
+              <MenuItem onClick={() => navigate('/orders')}>Your Orders</MenuItem>
               {isAdmin && (
                 <MenuItem onClick={() => navigate('/admin-dashboard')}>Admin Dashboard</MenuItem>
               )}
