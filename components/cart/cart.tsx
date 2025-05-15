@@ -11,12 +11,14 @@ import {
   useMediaQuery,
   Alert,
   Snackbar,
-  Collapse
+  Collapse,
+  LinearProgress
 } from '@mui/material';
 import { DeleteOutline, ExpandLess, ExpandMore } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
+import CartNotice from '../cartnotice/cartnotice';
 
 type CartItem = {
   _id: string;
@@ -42,6 +44,8 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(true);
   const router = useRouter();
+  const [noticemodal, setNoticemodal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState<{
       open: boolean;
       message: string;
@@ -68,6 +72,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 
   const handleDelete = async (_id: string) => {
   try {
+    setLoading(true);
     const res = await fetch('/api/cart', {
       method: 'DELETE',
       headers: {
@@ -85,6 +90,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
       const cartRes = await fetch(`/api/cart?user_id=${userId}`);
       const cartData = await cartRes.json();
       setCartItems(cartData.data || []);
+      setLoading(false);
       // setSnackbar({
       //   open: true,
       //   message: 'Item deleted successfully',
@@ -92,6 +98,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
       // });
       // Optionally refetch cart items here
     } else {
+      setLoading(false);
       setSnackbar({
         open: true,
         message: 'Failed to delete item',
@@ -117,6 +124,11 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   }));
 
   console.log("Updated Cart Items with selectedColor and selectedSize:", updatedCartItems);
+
+  if(updatedCartItems.length > 3){
+    setNoticemodal(true);
+    return;
+  }
   const userLoginData = Cookies.get('user_login_data');
   
   try {
@@ -133,6 +145,9 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
     }
 
     const orders = updatedCartItems;
+
+    // console.log("Orders--------->>",orders);
+    
 
     const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
     Cookies.set('user_order_data', JSON.stringify(orders), { expires: in15Minutes });
@@ -151,6 +166,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 
   const toggleSaveForLater = async (_id: string) => {
   try {
+    setLoading(true);
     const response = await fetch('/api/toggle-save-for-later', {
       method: 'POST',
       headers: {
@@ -162,6 +178,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
     const result = await response.json();
 
     if (result.success) {
+      setLoading(false)
       const userId = getUserIdFromCookie();
       if (!userId) return;
 
@@ -175,6 +192,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
       // });
 
     } else {
+      setLoading(false)
       setSnackbar({
         open: true,
         message: 'Failed to toggle save_for_letter',
@@ -182,6 +200,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
       });
     }
   } catch (error) {
+    setLoading(false)
     console.error(error);
     setSnackbar({
         open: true,
@@ -210,6 +229,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
+      
       <Box
         width={isSmallScreen ? 300 : 400}
         role="presentation"
@@ -217,7 +237,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         flexDirection="column"
         height="100%"
       >
-
+        {/* {loading && <LinearProgress />} */}
       {
         activeCartItems.length === 0 && (
           <Box
@@ -506,12 +526,15 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             variant="contained"
             color="primary"
             fullWidth
-            sx={{ mt: 2 }}
+            sx={{ mt: 2,mb:2 }}
             onClick={handelCheckOut}
           >
             Proceed to Checkout
           </Button>
+          {loading && <LinearProgress />}
+          <CartNotice open={noticemodal} onClose={() => setNoticemodal(false)} />
         </Box>
+        
       </Box>
       <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar({ ...snackbar, open: false })} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
                 <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })} variant="filled">{snackbar.message}</Alert>

@@ -25,6 +25,8 @@ import {
   InputLabel,
   Select,
   DialogActions,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Visibility } from "@mui/icons-material";
 import PersonIcon from '@mui/icons-material/Person';
@@ -165,6 +167,11 @@ export default function OrderListPage() {
   const [deliveryDateDialogOpen, setDeliveryDateDialogOpen] = useState(false);
   const [selectedOrderForDate, setSelectedOrderForDate] = useState<Order | null>(null);
   const [newDeliveryDate, setNewDeliveryDate] = useState<string>('');
+  const [snackbar, setSnackbar] = useState<{
+      open: boolean;
+      message: string;
+      severity: 'success' | 'error';
+    }>({ open: false, message: '', severity: 'success' });
 
 
   const [search, setSearch] = useState({
@@ -181,7 +188,7 @@ export default function OrderListPage() {
   const [dialogData, setDialogData] = useState(null);
   const [dialogType, setDialogType] = useState(null);
 
-  const openDespositionDialog = (order: Order) => {
+  const openDespositionDialog = (order: order) => {
   setSelectedOrder(order);
   setNewDesposition(order.desposition);
   setDespositionDialogOpen(true);
@@ -205,41 +212,106 @@ export default function OrderListPage() {
     setListVisible((prev) => !prev);
   };
 
-  const handleUpdateDesposition = () => {
+  const handleUpdateDesposition = async () => {
   if (!selectedOrder) return;
 
-  // Optional: Call API to update backend
-  // await axios.post("/api/update-desposition", {
-  //   orderId: selectedOrder._id,
-  //   desposition: newDesposition
-  // });
+  setLoading(true);
 
-  const updatedOrders = filteredOrders.map((order) =>
-    order._id === selectedOrder._id ? { ...order, desposition: newDesposition } : order
-  );
+  try {
+    const response = await fetch('/api/update-desposition', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: selectedOrder._id,
+        desposition: newDesposition,
+      }),
+    });
 
-  setFilteredOrders(updatedOrders);
-  setDespositionDialogOpen(false);
+    const data = await response.json();
+
+    if (response.ok) {
+      const updatedOrders = filteredOrders.map((order) =>
+        order._id === selectedOrder._id
+          ? { ...order, desposition: newDesposition }
+          : order
+      );
+
+      setFilteredOrders(updatedOrders);
+      setDespositionDialogOpen(false);
+
+      setSnackbar({
+        open: true,
+        message: 'Desposition updated successfully!',
+        severity: 'success',
+      });
+    } else {
+      setSnackbar({
+        open: true,
+        message: data.error || 'Failed to update desposition.',
+        severity: 'error',
+      });
+    }
+  } catch (error) {
+    console.error('Error updating desposition:', error);
+    setSnackbar({
+      open: true,
+      message: 'An unexpected error occurred.',
+      severity: 'error',
+    });
+  } finally {
+    setLoading(false);
+  }
 };
+
+
 
 const handleUpdateDeliveryDate = async () => {
   if (!selectedOrderForDate) return;
 
-  // Call API to update backend with the new delivery date
-  await axios.post("/api/update-delivery-date", {
-    orderId: selectedOrderForDate._id,
-    deliveryDate: newDeliveryDate,
-  });
+  setLoading(true);
 
-  // Update the local state after successful API call
-  const updatedOrders = filteredOrders.map((order) =>
-    order._id === selectedOrderForDate._id ? { ...order, delivery_date: newDeliveryDate } : order
-  );
-  setFilteredOrders(updatedOrders);
+  try {
+    const response = await axios.post("/api/update-delivery-date", {
+      orderId: selectedOrderForDate._id,
+      deliveryDate: newDeliveryDate,
+    });
 
-  // Close the dialog
-  setDeliveryDateDialogOpen(false);
+    if (response.status === 200) {
+      const updatedOrders = filteredOrders.map((order) =>
+        order._id === selectedOrderForDate._id
+          ? { ...order, delivery_date: newDeliveryDate }
+          : order
+      );
+
+      setFilteredOrders(updatedOrders);
+      setDeliveryDateDialogOpen(false);
+
+      setSnackbar({
+        open: true,
+        message: 'Delivery date updated successfully!',
+        severity: 'success',
+      });
+    } else {
+      setSnackbar({
+        open: true,
+        message: 'Failed to update delivery date.',
+        severity: 'error',
+      });
+    }
+  } catch (error) {
+    console.error('Error updating delivery date:', error);
+    setSnackbar({
+      open: true,
+      message: 'An unexpected error occurred.',
+      severity: 'error',
+    });
+  } finally {
+    setLoading(false);
+  }
 };
+
 
 
 
@@ -548,6 +620,9 @@ const handleUpdateDeliveryDate = async () => {
 
         </>
       )}
+      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar({ ...snackbar, open: false })} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+                <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })} variant="filled">{snackbar.message}</Alert>
+              </Snackbar>
     </Box>
   );
 }

@@ -65,6 +65,10 @@ const ordersSchema = new Schema(
       type: String,
       index: -1,
     },
+    delivery_date: {
+      type: String,
+      index: -1,
+    },
   },
   {
     timestamps: true,
