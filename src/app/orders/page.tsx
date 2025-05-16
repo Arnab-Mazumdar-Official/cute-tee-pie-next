@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box, Typography, useTheme, Grid, Paper, Avatar, useMediaQuery,
+  LinearProgress,
+  Button,
 } from '@mui/material';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import { styled } from '@mui/material/styles';
@@ -9,6 +11,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import AnnouncementBar from '../../../components/anouncement/announcement';
 import Header from '../../../components/header/header';
+import { useRouter } from 'next/navigation';
 
 const OrderStep = [
   'On Hold',
@@ -114,9 +117,12 @@ const UserOrderPage = () => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
   const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchOrders = async () => {
+      setLoading(true);
       const userData = Cookies.get('user_login_data');
       if (userData) {
         const userId = JSON.parse(userData)._id;
@@ -124,12 +130,49 @@ const UserOrderPage = () => {
           params: { userId },
         });
         if (res.data.success) {
+          setLoading(false);
           setOrders(res.data.data.orders);
+        }
+        else{
+          setLoading(false);
         }
       }
     };
     fetchOrders();
   }, []);
+
+  const handleProductClick = async (product_id: String) => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/fetch-product', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ product_id }),
+      });
+
+      if (!response.ok) {
+        
+        setLoading(false)
+        throw new Error('Failed to fetch product')
+      }
+      
+      setLoading(false)
+      const data = await response.json();
+      console.log("Fetching Slug data",data);
+      
+      if (data.data.slug) {
+        // window.location.href = `/blog/${data.data.slug}`;
+      const route = `/blog/${data.data.slug}`;
+      router.push(route);
+      } else {
+        console.error('Slug not found in response');
+      }
+    } catch (error) {
+      console.error('Error fetching product:', error);
+    }
+  };
 
   return (
     <Box sx={{
@@ -139,6 +182,7 @@ const UserOrderPage = () => {
     }}>
       <AnnouncementBar />
       <Header />
+      {loading && <LinearProgress sx={{mt:2}} />}
       <Box sx={{ p: { xs: 2, md: 4 } }}>
         <Typography
             variant="h4"
@@ -192,6 +236,16 @@ const UserOrderPage = () => {
                         </Typography>
                       </Box>
                     </Box>
+                    <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                          <Button
+                            size="small"
+                            variant="text"
+                            onClick={() => handleProductClick(order.product_id)}
+                            sx={{ color: isDarkMode ? 'cyan':'black', border:  isDarkMode ? '1px solid white' : '3px solid Yellow', minWidth: 'auto', px: 1, py: 0.5, fontSize: '0.75rem' }}
+                          >
+                            View Product
+                          </Button>
+                        </Box>
                   </Grid>
                   <Grid item xs={12}>
                     <OrderProgress currentStop={order.desposition} />

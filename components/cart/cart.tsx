@@ -31,6 +31,7 @@ type CartItem = {
   price: number;
   thumbnail_url: string;
   save_for_letter: boolean;
+  product_id:string;
 };
 
 type CartDrawerProps = {
@@ -210,17 +211,58 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   }
 };
 
-  useEffect(() => {
-    if (open) {
-      const userId = getUserIdFromCookie();
-      if (!userId) return;
+const handleProductClick = async (product_id: String) => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/fetch-product', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ product_id }),
+      });
 
-      fetch(`/api/cart?user_id=${userId}`)
-        .then(res => res.json())
-        .then(data => setCartItems(data.data || []))
-        .catch(console.error);
+      if (!response.ok) {
+        
+        setLoading(false)
+        throw new Error('Failed to fetch product')
+      }
+      
+      setLoading(false)
+      const data = await response.json();
+      console.log("Fetching Slug data",data);
+      
+      if (data.data.slug) {
+        // window.location.href = `/blog/${data.data.slug}`;
+      const route = `/blog/${data.data.slug}`;
+      router.push(route);
+      } else {
+        console.error('Slug not found in response');
+      }
+    } catch (error) {
+      console.error('Error fetching product:', error);
     }
-  }, [open]);
+  };
+
+  useEffect(() => {
+  if (open) {
+    const userId = getUserIdFromCookie();
+    if (!userId) return;
+
+    setLoading(true);
+
+    fetch(`/api/cart?user_id=${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        setCartItems(data.data || []);
+      })
+      .catch(console.error)
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+}, [open]);
+
 
   const activeCartItems = cartItems.filter(item => !item.save_for_letter);
   const savedItems = cartItems.filter(item => item.save_for_letter);
@@ -369,14 +411,26 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 ₹{item.price}
               </Typography>
 
-              <Button
+              
+              <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                <Button
+                  size="small"
+                  variant="text"
+                  onClick={() => handleProductClick(item.product_id)}
+                  sx={{ color: 'cyan', border: '1px solid white', minWidth: 'auto', px: 1, py: 0.5, fontSize: '0.75rem' }}
+                >
+                  View Product
+                </Button>
+
+                <Button
                 size="small"
                 variant="text"
                 onClick={() => toggleSaveForLater(item._id)}
-                sx={{ mt: 1, color: 'cyan', border: '1px solid white' }}
+                sx={{ color: 'cyan', border: '1px solid white', minWidth: 'auto', px: 1, py: 0.5, fontSize: '0.75rem' }}
               >
-                Save As Wishlisted Items
+                Save As Wishlist
               </Button>
+              </Box>
             </Box>
           </Box>
         ))}
@@ -490,15 +544,26 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                         <Typography variant="body2" color="cyan">
                           ₹{item.price}
                         </Typography>
+                        <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                          <Button
+                            size="small"
+                            variant="text"
+                            onClick={() => handleProductClick(item.product_id)}
+                            sx={{ color: 'cyan', border: '1px solid white', minWidth: 'auto', px: 1, py: 0.5, fontSize: '0.75rem' }}
+                          >
+                            View Product
+                          </Button>
 
-                        <Button
-                          size="small"
-                          variant="text"
-                          onClick={() => toggleSaveForLater(item._id)}
-                          sx={{ mt: 1, color: 'cyan', border: '1px solid white' }}
-                        >
-                          MOVE IT TO CART
-                        </Button>
+                          <Button
+                            size="small"
+                            variant="text"
+                            onClick={() => toggleSaveForLater(item._id)}
+                            sx={{ color: 'cyan', border: '1px solid white', minWidth: 'auto', px: 1, py: 0.5, fontSize: '0.75rem' }}
+                          >
+                            Move to Cart
+                          </Button>
+                        </Box>
+
                       </Box>
                     </Box>
                   ))}
@@ -531,14 +596,26 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           >
             Proceed to Checkout
           </Button>
-          {loading && <LinearProgress />}
+          {loading && <LinearProgress sx={{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 1200 }} />}
           <CartNotice open={noticemodal} onClose={() => setNoticemodal(false)} />
         </Box>
         
       </Box>
-      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar({ ...snackbar, open: false })} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-                <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })} variant="filled">{snackbar.message}</Alert>
-              </Snackbar>
+      <Snackbar
+          open={snackbar.open}
+          autoHideDuration={4000}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert
+            severity={snackbar.severity}
+            onClose={() => setSnackbar({ ...snackbar, open: false })}
+            sx={{ width: '100%' }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+
     </Drawer>
   );
 }

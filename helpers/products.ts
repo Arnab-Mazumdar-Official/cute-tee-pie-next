@@ -259,6 +259,19 @@ export async function getProductByName(productname: string) {
     return "Not Found";
   }
 }
+export async function getProductByid(product_id: string) {
+  await dbConnect();
+  const productDetails = await products.findById(product_id);
+  console.log("Product Details--------->>",productDetails);
+  
+
+  if(productDetails){
+    return productDetails;
+  }
+  else{
+    return "Not Found";
+  }
+}
 
 
 
