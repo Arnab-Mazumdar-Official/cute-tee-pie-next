@@ -49,6 +49,7 @@ const MotionButton = ({
 
 export default function ResponsiveHeader() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openModal, setOpenModal] = useState(false);
@@ -59,14 +60,29 @@ export default function ResponsiveHeader() {
   const router = useRouter();
 
   useEffect(() => {
-    const cookie = Cookies.get('user_login_data');
-    if (cookie) {
-      try {
-        const user = JSON.parse(cookie);
-        if (user.role === 'is_admin') setIsAdmin(true);
-      } catch {}
+  const cookie = Cookies.get('user_login_data');
+  if (cookie) {
+    try {
+      const user = JSON.parse(cookie);
+      setIsLogin(true); // ✅ Set login true if cookie exists and is valid
+      if (user.role === 'is_admin') {
+        setIsAdmin(true);
+      }
+    } catch (error) {
+      console.error('Failed to parse user_login_data cookie:', error);
     }
-  }, []);
+  }
+}, []);
+
+  const handleLogout = () => {
+    document.cookie.split(";").forEach(cookie => {
+      const name = cookie.split("=")[0].trim();
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    });
+     localStorage.clear();
+    sessionStorage.clear();
+    window.location.reload();
+  };
 
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
@@ -118,9 +134,16 @@ export default function ResponsiveHeader() {
               <MenuItem onClick={() => navigate('/sign-up')}>Sign Up</MenuItem>
               <MenuItem onClick={() => navigate('/login')}>Log In</MenuItem>
               <MenuItem onClick={() => navigate('/orders')}>Your Orders</MenuItem>
+              <MenuItem onClick={() => navigate('/round-neck-t-shirt')}>Customise Your Round neck Men</MenuItem>
+              
               {isAdmin && (
                 <MenuItem onClick={() => navigate('/admin-dashboard')}>Admin Dashboard</MenuItem>
               )}
+              {isLogin && (
+                <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+              )}
+              
+            
             </Menu>
 
             {/* Cart Button */}

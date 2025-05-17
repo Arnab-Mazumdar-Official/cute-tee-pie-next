@@ -29,3 +29,4 @@ export default function AdminDashboardHome() {
     </div>
   );
 }
+// backgroundImage: `url(/tshirts/${color.toLowerCase()}_${frontBack}.png)`,

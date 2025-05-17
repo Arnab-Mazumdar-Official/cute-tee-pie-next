@@ -130,7 +130,7 @@ const PaymentPage: React.FC = () => {
 
   
   useEffect(() => {
-    const cookieData = Cookies.get('user_order_data');
+    const cookieData = Cookies.get('user_customise_order_data');
     if (cookieData) {
       try {
         setOrderData(JSON.parse(cookieData));
@@ -157,95 +157,73 @@ const PaymentPage: React.FC = () => {
   }, []);
 
   const makePayment = async (amount_paied: number) => {
-    const res = await fetch("api/create-payment-order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: amount_paied }),
-    });
-  
-    const { order } = await res.json();
-    const userCookie = Cookies.get('user_login_data');
-    const userId = userCookie ? JSON.parse(userCookie)._id : null;
-    if (!userId) {
-      setSnackbarMessage('Please Log In First!, And Try Again');
-      setSnackbarOpen(true);
-      return;
-    }
-  
-    const options = {
-      key: process.env.RAZORPAY_PAYMENT_TOKEN,
-      amount: order.amount,
-      currency: order.currency,
-      order_id: order.id,
-      name: "Prin Tee Pal",
-      description: "Prin Tee Pal Transaction",
-      handler: async (response: any) => {
-        const productDetails = orderData.map((item: any) => ({
-            product_id: item.source === "cart" ? item.product_id : item._id,
-            size: item.selectedSize,
-            color: item.selectedColor,
-            quantity: item.quantity
-          }));
+  const res = await fetch("api/create-payment-order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ amount: amount_paied }),
+  });
 
-    
+  const { order } = await res.json();
+
+  const userCookie = Cookies.get('user_login_data');
+  const userId = userCookie ? JSON.parse(userCookie)._id : null;
+
+  if (!userId) {
+    setSnackbarMessage('Please Log In First!, And Try Again');
+    setSnackbarOpen(true);
+    return;
+  }
+
+  const options = {
+    key: process.env.RAZORPAY_PAYMENT_TOKEN,
+    amount: order.amount,
+    currency: order.currency,
+    order_id: order.id,
+    name: "Prin Tee Pal",
+    description: "Prin Tee Pal Transaction",
+    handler: async (response: any) => {
+      try {
+        const frontDesign = orderData?.order_images.find(
+          (img: any) => img.type === 'front-design'
+        );
+
         const payload = {
           response,
           user_id: userId,
-          products: productDetails,
-          amount:amount_paied,
+          size: frontDesign?.size || '',
+          color: frontDesign?.color || '',
+          quantity: 1,
+          product: orderData?.order_images || [],
+          amount: amount_paied,
         };
-          console.log("Payload Payment-------->>",payload);
-          
-        try {
-          const verify = await fetch("/api/verify-payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-    
-          const data = await verify.json();
-          console.log("data Payment-------->>",data);
-          setSnackbarMessage(data.message);
-          setSnackbarOpen(true);
-          const cookieData = Cookies.get('user_order_data');
 
-          if (cookieData) {
-            try {
-              const orderData = JSON.parse(cookieData);
+        console.log("Payload Payment-------->>", payload);
 
-              for (const item of orderData) {
-                if (item.source === 'cart') {
-                  const res = await fetch('/api/cart', {
-                    method: 'DELETE',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ _id: item._id }),
-                  });
+        const verify = await fetch("/api/verify-customise-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
 
-                  if (!res.ok) {
-                    console.error(`Failed to delete item with _id ${item._id}`);
-                  }
-                }
-              }
-            } catch (err) {
-              console.error('Failed to parse order data', err);
-            }
-          }
+        const data = await verify.json();
+        console.log("data Payment-------->>", data);
 
-          router.push("/");
-        } catch (error) {
-          console.error("Payment verification error:", error);
-          setSnackbarMessage("Something went wrong during payment verification.");
-          setSnackbarOpen(true);
-        }
-      },
-    };
-    
-  
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+        setSnackbarMessage(data.message);
+        setSnackbarOpen(true);
+
+        router.push("/");
+      } catch (error) {
+        console.error("Payment verification error:", error);
+        setSnackbarMessage("Something went wrong during payment verification.");
+        setSnackbarOpen(true);
+      }
+    },
   };
+
+  const rzp = new window.Razorpay(options);
+  rzp.open();
+};
+
 
   const handleSelectAddress = (address: any, id: string) => {
     setSelectedAddressId(id);
@@ -326,14 +304,15 @@ const PaymentPage: React.FC = () => {
         return;
       }
 
-      makePayment(subtotal);
+    //   makePayment(subtotal);
+      makePayment(1);
     } catch (err) {
       console.error(err);
       alert('Something went wrong while processing your request.');
     }
   };
 
-  const subtotal = orderData.reduce((sum, item) => sum + (item.price*item.quantity), 0);
+  const subtotal = orderData?.order_images?.[0]?.price * (orderData?.order_images?.[0]?.quantity || 1) || 0;
   const shippingCharge = 49;
   const discount = shippingCharge;
   const totalPayable = subtotal;
@@ -358,46 +337,47 @@ const PaymentPage: React.FC = () => {
     <Typography variant="h5" color={textColor} gutterBottom>Your Order</Typography>
 
     <Grid container spacing={2} mb={4}>
-      {orderData.map((item) => (
-        <Grid item xs={12} sm={6} md={isMobile ? 12 : 4} key={item._id}>
-          <Box
-            border={`1px solid ${primaryAccent}`}
-            borderRadius={2}
-            p={2}
-            sx={{
-              backgroundColor: bgColor,
-              boxShadow: `0 0 10px ${primaryAccent}55`,
-              height: '100%',
-              color: textColor,
-            }}
-          >
-            <Image
-              src={item.thumbnail_url}
-              alt={item.title}
-              width={300}
-              height={300}
-              style={{ width: '100%', height: 'auto', borderRadius: 8 }}
-            />
-            <Typography variant="h6" color={textColor} mt={1}>{item.title}</Typography>
-            <Typography variant="body2" color={isDarkMode ? '#ccc' : 'gray'} mb={1}>
-              {item.description.slice(0, 80)}...
-            </Typography>
-            <Typography variant="body2" color={primaryAccent}>
-              Size: <strong>{item.selectedSize}</strong>
-            </Typography>
-            <Typography variant="body2" color={primaryAccent}>
-              Color: <strong>{item.selectedColor}</strong>
-            </Typography>
-            <Typography variant="body2" color={primaryAccent}>
-              Quantity: <strong>{item.quantity}</strong>
-            </Typography>
-            <Typography variant="subtitle1" color={primaryAccent} fontWeight="bold" mt={1}>
-              ₹{item.price}
-            </Typography>
-          </Box>
+        {(orderData?.order_images || [])
+            .filter((item: any) => item.type === "front-mockup" || item.type === "back-mockup")
+            .map((item: any) => (
+            <Grid item xs={12} sm={6} md={isMobile ? 12 : 4} key={item.url?.key || item.type}>
+                <Box
+                border={`1px solid ${primaryAccent}`}
+                borderRadius={2}
+                p={2}
+                sx={{
+                    backgroundColor: bgColor,
+                    boxShadow: `0 0 10px ${primaryAccent}55`,
+                    height: '100%',
+                    color: textColor,
+                }}
+                >
+                <Image
+                    src={item.url.url}
+                    alt={item.url.key}
+                    width={300}
+                    height={300}
+                    style={{ width: '100%', height: 'auto', borderRadius: 8 }}
+                />
+                <Typography variant="h6" color={textColor} mt={1}>{item.type}</Typography>
+                <Typography variant="body2" color={primaryAccent}>
+                    Size: <strong>{item.size}</strong>
+                </Typography>
+                <Typography variant="body2" color={primaryAccent}>
+                    Color: <strong>{item.color}</strong>
+                </Typography>
+                <Typography variant="body2" color={primaryAccent}>
+                    Quantity: <strong>{item?.quantity || 1}</strong>
+                </Typography>
+                <Typography variant="subtitle1" color={primaryAccent} fontWeight="bold" mt={1}>
+                    ₹{item.price}
+                </Typography>
+                </Box>
+            </Grid>
+            ))
+        }
         </Grid>
-      ))}
-    </Grid>
+
 
     {loadingAddresses ? (
       <CircularProgress color="inherit" />
