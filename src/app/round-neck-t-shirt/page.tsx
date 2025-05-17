@@ -79,11 +79,14 @@ export default function TshirtCustomizerPage() {
   const setCurrentDesignImage = frontBack === 'front' ? setDesignImageFront : setDesignImageBack;
 
   // Price calculation
-  const basePrice = 300;
-  const price =
+  const basePrice = 250;
+  const rawPrice =
   basePrice +
-  (designImageFront ? frontDesignSize * 2 : 0) +
-  (designImageBack ? backDesignSize * 2 : 0);
+  (designImageFront ? frontDesignSize * 0.9 : 0) +
+  (designImageBack ? backDesignSize * 0.9 : 0);
+
+  const price = parseFloat(rawPrice.toFixed(2));
+
 
   // Handle design upload
   const handleDesignUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
