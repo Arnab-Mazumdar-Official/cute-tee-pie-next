@@ -395,32 +395,33 @@ export default function TshirtCustomizerPage() {
 
           {/* Resize Slider */}
           {currentDesignImage && (
-            <>
-              <Typography gutterBottom>Resize Design</Typography>
-              <Slider
-                value={designSize}
-                min={50}
-                max={250}
-                onChange={(e, val) => setDesignSize(val as number)}
-                sx={{
-                  color: 'yellow',
-                  '& .MuiSlider-thumb': {
-                    borderColor: 'blue',
-                  },
+              <img
+                src={currentDesignImage}
+                alt="Design"
+                style={{
+                  position: 'absolute',
+                  top: designPos.top,
+                  left: designPos.left,
+                  width: `${designSize}px`,
+                  height: `${designSize}px`,
+                  cursor: 'grab',
+                  touchAction: 'none', // Prevents page scrolling during touch-drag
+                }}
+                onMouseDown={onMouseDown}
+                onTouchStart={(e) => {
+                  setDragging(true);
+                  const rect = tshirtRef.current?.getBoundingClientRect();
+                  if (rect) {
+                    const touch = e.touches[0];
+                    dragOffset.current = {
+                      x: touch.clientX - rect.left - designPos.left,
+                      y: touch.clientY - rect.top - designPos.top,
+                    };
+                  }
                 }}
               />
+            )}
 
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={handleDeleteDesign}
-                fullWidth
-                sx={{ mt: 2 }}
-              >
-                Delete Design
-              </Button>
-            </>
-          )}
 
           {/* Price */}
           <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
@@ -454,30 +455,29 @@ export default function TshirtCustomizerPage() {
             mx: 'auto',
             position: 'relative',
             border: `1px solid ${isDarkMode ? 'white' : 'black'}`,
-            backgroundImage:  `url(/round-neck-men-tshirts/${color.toLowerCase().replace(/\s+/g, '_')}_${frontBack}.png)`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            userSelect: 'none',
+            backgroundImage: `url(/round-neck-${color.toLowerCase().replace(/ /g, '-')}.png)`,
+            backgroundSize: 'cover',
           }}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onTouchMove={(e) => {
+            if (!dragging || !tshirtRef.current) return;
+            const touch = e.touches[0];
+            const rect = tshirtRef.current.getBoundingClientRect();
+            const x = touch.clientX - rect.left - dragOffset.current.x;
+            const y = touch.clientY - rect.top - dragOffset.current.y;
+
+            const maxLeft = 300 - designSize;
+            const maxTop = 400 - designSize;
+
+            setDesignPos({
+              left: Math.max(0, Math.min(x, maxLeft)),
+              top: Math.max(0, Math.min(y, maxTop)),
+            });
+          }}
+          onTouchEnd={() => setDragging(false)}
         >
-          {currentDesignImage && (
-            <img
-              src={currentDesignImage}
-              alt="Design"
-              onMouseDown={onMouseDown}
-              style={{
-                width: designSize,
-                position: 'absolute',
-                top: designPos.top,
-                left: designPos.left,
-                cursor: 'grab',
-                userSelect: 'none',
-                pointerEvents: 'all',
-              }}
-            />
-          )}
-        </Box>
+
         <LoginNeeded open={openLogineed} onClose={() => setOpenLogineed(false)} />
       </Box>
       <Snackbar
