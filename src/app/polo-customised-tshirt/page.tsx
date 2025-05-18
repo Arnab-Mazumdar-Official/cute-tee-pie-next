@@ -230,7 +230,7 @@ const onTouchEnd = () => setDragging(false);
         return;
       }
 
-      const dateStr = moment().format('DD-MM-YYYY');
+      const dateStr = moment().format('DD-MM-YYYY-HH:mm:ss');
       const uploadTasks: Promise<void>[] = [];
       const orderImages: {
         type: string;
