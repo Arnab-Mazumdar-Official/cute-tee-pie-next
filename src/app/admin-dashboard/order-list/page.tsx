@@ -36,6 +36,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import BuildIcon from "@mui/icons-material/Build";
 import EventIcon from "@mui/icons-material/Event";
+import { styled } from '@mui/material/styles';
 
 
 
@@ -183,6 +184,8 @@ export default function OrderListPage() {
     amount: "",
     paymentId: "",
     orderId: "",
+    fromDate: '',
+    toDate: '',
   });
 
   const [dialogData, setDialogData] = useState(null);
@@ -211,6 +214,19 @@ export default function OrderListPage() {
     }
     setListVisible((prev) => !prev);
   };
+
+  const StyledDateInput = styled('input')(({ theme }) => ({
+  border: '1px solid',
+  borderColor: theme.palette.divider,
+  borderRadius: '4px',
+  padding: '6px 10px',
+  backgroundColor: 'transparent',
+  color: theme.palette.text.primary,
+  // Style the calendar icon
+  '::-webkit-calendar-picker-indicator': {
+    filter: theme.palette.mode === 'dark' ? 'invert(1)' : 'none',
+  },
+}));
 
   const handleUpdateDesposition = async () => {
   if (!selectedOrder) return;
@@ -325,28 +341,58 @@ const handleUpdateDeliveryDate = async () => {
     amount: "",
     paymentId: "",
     orderId: "",
+    fromDate: '',
+    toDate: '',
   });
   setFilteredOrders(orders);
 };
 
-  const handleSearchChange = (field:any) => (e:any) => {
-    const value = e.target.value;
-    const updatedSearch = { ...search, [field]: value };
-    setSearch(updatedSearch);
-    const filtered = orders.filter((order) => {
-      return (
-        order.product_name.toLowerCase().includes(updatedSearch.product.toLowerCase()) &&
-        order.user_name.toLowerCase().includes(updatedSearch.user.toLowerCase()) &&
-        (updatedSearch.type ? order.source === updatedSearch.type : true) &&
-        (updatedSearch.size ? order.size === updatedSearch.size : true) &&
-        (updatedSearch.color ? order.color === updatedSearch.color : true) &&
-        order.amount.toString().includes(updatedSearch.amount) &&
-        order.razorpay_payment_id.toLowerCase().includes(updatedSearch.paymentId.toLowerCase()) &&
-        order.razorpay_order_id.toLowerCase().includes(updatedSearch.orderId.toLowerCase())
-      );
-    });
-    setFilteredOrders(filtered);
-  };
+  const handleSearchChange = (field: any) => (e: any) => {
+  const value = e.target.value;
+  const updatedSearch = { ...search, [field]: value };
+  setSearch(updatedSearch);
+
+  const filtered = orders.filter((order) => {
+    const createdDate = new Date(order.created_on);
+
+    const fromMatch = updatedSearch.fromDate
+      ? createdDate >= new Date(updatedSearch.fromDate)
+      : true;
+
+    const toMatch = updatedSearch.toDate
+      ? createdDate <= new Date(updatedSearch.toDate)
+      : true;
+
+    return (
+      order.product_name.toLowerCase().includes(updatedSearch.product.toLowerCase()) &&
+      order.user_name.toLowerCase().includes(updatedSearch.user.toLowerCase()) &&
+      (updatedSearch.type ? order.source === updatedSearch.type : true) &&
+      (updatedSearch.size ? order.size === updatedSearch.size : true) &&
+      (updatedSearch.color ? order.color === updatedSearch.color : true) &&
+      order.amount.toString().includes(updatedSearch.amount) &&
+      order.razorpay_payment_id.toLowerCase().includes(updatedSearch.paymentId.toLowerCase()) &&
+      order.razorpay_order_id.toLowerCase().includes(updatedSearch.orderId.toLowerCase()) &&
+      fromMatch &&
+      toMatch
+    );
+  });
+
+  setFilteredOrders(filtered);
+};
+
+const formatCustomDate = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  let hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12 || 12;
+  return `${day}.${month}.${year}, ${hours}.${minutes} ${ampm}`;
+};
+
+
 
   const openDeliveryDateDialog = (order: order) => {
   setSelectedOrderForDate(order);
@@ -415,12 +461,21 @@ const handleUpdateDeliveryDate = async () => {
             <TextField label="Amount" size="small" value={search.amount} onChange={handleSearchChange("amount")} />
             <TextField label="Payment ID" size="small" value={search.paymentId} onChange={handleSearchChange("paymentId")} />
             <TextField label="Order ID" size="small" value={search.orderId} onChange={handleSearchChange("orderId")} />
+            <StyledDateInput
+              type="date"
+              value={search.fromDate}
+              onChange={handleSearchChange('fromDate')}
+            />
 
+            <StyledDateInput
+              type="date"
+              value={search.toDate}
+              onChange={handleSearchChange('toDate')}
+            />
             <Button variant="outlined" color="secondary" onClick={resetFilters}>
                 Reset
             </Button>
             </Box>
-
 
           {/* Table */}
           {isMobileView ? (
@@ -437,6 +492,7 @@ const handleUpdateDeliveryDate = async () => {
         <Typography><strong>Type:</strong> {order.source === "one_item" ? "One Item" : "Multiple"}</Typography>
         <Typography><strong>Payment ID:</strong> {order.razorpay_payment_id}</Typography>
         <Typography><strong>Order ID:</strong> {order.razorpay_order_id}</Typography>
+        <Typography><strong>Ordered Date:</strong> {formatCustomDate(order.created_on)}</Typography>
         <Typography><strong>Order Desposition:</strong> {order.desposition}</Typography>
         <Typography><strong>Order Delivery date:</strong> {order.delivery_date || "Not Fixed"}</Typography>
         <Box mt={1}>
@@ -483,6 +539,7 @@ const handleUpdateDeliveryDate = async () => {
                 <TableCell>Type</TableCell>
                 <TableCell>Payment ID</TableCell>
                 <TableCell>Order ID</TableCell>
+                <TableCell>Ordered Date</TableCell>
                 <TableCell>Desposition</TableCell>
                 <TableCell>Delivery Date</TableCell>
                 <TableCell>Actions</TableCell>
@@ -500,6 +557,7 @@ const handleUpdateDeliveryDate = async () => {
                 <TableCell>{order.source === "one_item" ? "One Item" : "Multiple"}</TableCell>
                 <TableCell>{order.razorpay_payment_id}</TableCell>
                 <TableCell>{order.razorpay_order_id}</TableCell>
+                <TableCell>{formatCustomDate(order.created_on)}</TableCell>
                 <TableCell>{order.desposition}</TableCell>
                 <TableCell>{order.delivery_date || "Not Fixed"}</TableCell>
                 <TableCell>

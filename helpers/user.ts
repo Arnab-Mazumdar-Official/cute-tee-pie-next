@@ -367,7 +367,7 @@ async function sendSuccessNotification(
         );
     
         // Create password reset link
-        const resetLink = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
+        const resetLink = `https://prin-tee-pal.d28tf79avao1gk.amplifyapp.com/reset-password?token=${token}`;
 
         const modified_data = {
             user_name: user?.name ,
