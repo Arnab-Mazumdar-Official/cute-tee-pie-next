@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
         const orderDoc = {
         razorpay_order_id,
         razorpay_payment_id,
-        status: 'Success',
+        status: 'success',
         verified: true,
         user_id,
         product,

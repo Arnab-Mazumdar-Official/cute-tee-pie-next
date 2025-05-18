@@ -325,7 +325,7 @@ const onTouchEnd = () => setDragging(false);
       <Box sx={{ p: 3, backgroundColor: isDarkMode ? '#121212' : '#fff', minHeight: '100vh' }}>
         <Box display="flex" justifyContent="center" width="100%">
           <Typography variant="h4" gutterBottom>
-            Design Your T-shirt
+            Design Your Polo T-shirt
           </Typography>
         </Box>
 

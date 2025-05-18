@@ -173,58 +173,97 @@ export default function ResponsiveHeader() {
         }}
       >
         <Box sx={{ p: 2 }}>
-          <List>
-            <Typography variant="h6" sx={{ px: 2, p: 2,bgcolor:'black',borderRadius: 5,display:'flex',justifyContent:'center',textAlign:'center',color:'white' }}>
-              Your Menu
-            </Typography>
-            <Divider sx={{ my: 1 }} />
+              <List>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    px: 2,
+                    p: 2,
+                    bgcolor: 'black',
+                    borderRadius: 5,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    color: 'white',
+                  }}
+                >
+                  Your Menu
+                </Typography>
+                <Divider sx={{ my: 1 }} />
 
-            <ListItem button onClick={() => navigate('/sign-up')}>
-              <ListItemText primary="Sign Up" />
-            </ListItem>
-            <Divider sx={{ my: 1 }} />
-            <ListItem button onClick={() => navigate('/login')}>
-              <ListItemText primary="Log In" />
-            </ListItem>
-            <Divider sx={{ my: 1 }} />
-            <ListItem button onClick={() => navigate('/orders')}>
-              <ListItemText primary="Your Orders" />
-            </ListItem>
-            <Divider sx={{ my: 1 }} />
-            <ListItem button onClick={() => navigate('/customised-t-shirt-orders')}>
-              <ListItemText primary="Your Customised T-shirt Orders" />
-            </ListItem>
-            <Divider sx={{ my: 1 }} />
-            <ListItem button onClick={() => navigate('/round-neck-t-shirt')}>
-              <ListItemText primary="Customise Your Round Neck Men" />
-            </ListItem>
-            <Divider sx={{ my: 1 }} />
-            <ListItem button onClick={() => navigate('/female-round-neck-tshirt')}>
-              <ListItemText primary="Customise Your Round Neck Women" />
-            </ListItem>
-            <Divider sx={{ my: 1 }} />
-            <ListItem button onClick={() => navigate('/polo-customised-tshirt')}>
-              <ListItemText primary="Customise Your Work Wear Polo" />
-            </ListItem>
-            <Divider sx={{ my: 1 }} />
+                <ListItem button onClick={() => navigate('/sign-up')}>
+                  <ListItemText primary="Sign Up" />
+                </ListItem>
+                <Divider sx={{ my: 1 }} />
 
-            {isAdmin && (
-              <><ListItem button onClick={() => navigate('/admin-dashboard')}>
-                <ListItemText primary="Admin Dashboard" />
-              </ListItem><Divider sx={{ my: 1 }} /></>
-            )}
-            
+                <ListItem button onClick={() => navigate('/login')}>
+                  <ListItemText primary="Log In" />
+                </ListItem>
+                <Divider sx={{ my: 1 }} />
 
-            {isLogin && (
-              <><ListItem button onClick={handleLogout}>
-                <ListItemText primary="Log Out" />
-              </ListItem><Divider sx={{ my: 1 }} /></>
-            )}
-          </List>
+                <ListItem
+                  button
+                  onClick={() => {
+                    if (isLogin) {
+                      navigate('/orders');
+                    } else {
+                      setOpenLogineed(true);
+                    }
+                  }}
+                >
+                  <ListItemText primary="Your Orders" />
+                </ListItem>
+                <Divider sx={{ my: 1 }} />
 
+                <ListItem
+                  button
+                  onClick={() => {
+                    if (isLogin) {
+                      navigate('/customised-t-shirt-orders');
+                    } else {
+                      setOpenLogineed(true);
+                    }
+                  }}
+                >
+                  <ListItemText primary="Your Customised T-shirt Orders" />
+                </ListItem>
+                <Divider sx={{ my: 1 }} />
 
+                <ListItem button onClick={() => navigate('/round-neck-t-shirt')}>
+                  <ListItemText primary="Customise Your Round Neck Men" />
+                </ListItem>
+                <Divider sx={{ my: 1 }} />
 
-        </Box>
+                <ListItem button onClick={() => navigate('/female-round-neck-tshirt')}>
+                  <ListItemText primary="Customise Your Round Neck Women" />
+                </ListItem>
+                <Divider sx={{ my: 1 }} />
+
+                <ListItem button onClick={() => navigate('/polo-customised-tshirt')}>
+                  <ListItemText primary="Customise Your Work Wear Polo" />
+                </ListItem>
+                <Divider sx={{ my: 1 }} />
+
+                {isAdmin && (
+                  <>
+                    <ListItem button onClick={() => navigate('/admin-dashboard')}>
+                      <ListItemText primary="Admin Dashboard" />
+                    </ListItem>
+                    <Divider sx={{ my: 1 }} />
+                  </>
+                )}
+
+                {isLogin && (
+                  <>
+                    <ListItem button onClick={handleLogout}>
+                      <ListItemText primary="Log Out" />
+                    </ListItem>
+                    <Divider sx={{ my: 1 }} />
+                  </>
+                )}
+              </List>
+            </Box>
+
       </Drawer>
     </>
   );
