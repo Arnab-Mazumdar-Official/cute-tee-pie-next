@@ -192,7 +192,7 @@ const PaymentPage: React.FC = () => {
           user_id: userId,
           size: frontDesign?.size || '',
           color: frontDesign?.color || '',
-          quantity: 1,
+          quantity: frontDesign?.quantity || 1,
           product: orderData?.order_images || [],
           amount: amount_paied,
         };

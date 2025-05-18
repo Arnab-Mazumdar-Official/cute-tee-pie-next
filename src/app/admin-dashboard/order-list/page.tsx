@@ -372,6 +372,12 @@ const handleUpdateDeliveryDate = async () => {
     <Box sx={{ p: 3, bgcolor: theme.palette.mode === "dark" ? "#000" : "#fff", color: theme.palette.mode === "dark" ? "#fff" : "#000" }}>
       {/* <CssBaseline /> */}
       {loading && <LinearProgress />}
+
+      <Box display="flex" justifyContent="center" width="100%">
+                      <Typography variant="h4" gutterBottom>
+                        Readymade T-shirt Orders
+                      </Typography>
+                    </Box>
       <Stack
         direction={isAbove716 ? 'row' : 'column'}
         spacing={2}
@@ -426,6 +432,7 @@ const handleUpdateDeliveryDate = async () => {
         <Typography><strong>User:</strong> {order.user_name}</Typography>
         <Typography><strong>Size:</strong> {order.size}</Typography>
         <Typography><strong>Color:</strong> {order.color}</Typography>
+        <Typography><strong>Quantity:</strong> {order.quantity}</Typography>
         <Typography><strong>Amount:</strong> ₹{order.amount}</Typography>
         <Typography><strong>Type:</strong> {order.source === "one_item" ? "One Item" : "Multiple"}</Typography>
         <Typography><strong>Payment ID:</strong> {order.razorpay_payment_id}</Typography>
@@ -471,6 +478,7 @@ const handleUpdateDeliveryDate = async () => {
                 <TableCell>User</TableCell>
                 <TableCell>Size</TableCell>
                 <TableCell>Color</TableCell>
+                <TableCell>Quantity</TableCell>
                 <TableCell>Amount</TableCell>
                 <TableCell>Type</TableCell>
                 <TableCell>Payment ID</TableCell>
@@ -487,6 +495,7 @@ const handleUpdateDeliveryDate = async () => {
                 <TableCell>{order.user_name}</TableCell>
                 <TableCell>{order.size}</TableCell>
                 <TableCell>{order.color}</TableCell>
+                <TableCell>{order.quantity}</TableCell>
                 <TableCell>₹{order.amount}</TableCell>
                 <TableCell>{order.source === "one_item" ? "One Item" : "Multiple"}</TableCell>
                 <TableCell>{order.razorpay_payment_id}</TableCell>

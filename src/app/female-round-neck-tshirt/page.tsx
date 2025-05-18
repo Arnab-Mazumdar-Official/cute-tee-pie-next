@@ -28,7 +28,7 @@ import moment from 'moment';
 import { letterSpacing } from 'html2canvas/dist/types/css/property-descriptors/letter-spacing';
 
 // Constants
-const tshirtColors = ['White', 'Black', 'Navy Blue', 'Royal Blue', 'Red', 'Maroon', 'Chocolate Brown', 'Army Green'];
+const tshirtColors = ['White', 'Black', 'Navy Blue', 'Royal Blue', 'Red'];
 const tshirtSizes = ['Ex', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'];
 const frontBackOptions = ['front', 'back'];
 
@@ -357,7 +357,7 @@ const onTouchEnd = () => setDragging(false);
                 sx={{
                   width: '100%',
                   height: '100%',
-                  backgroundImage: `url(/round-neck-men-tshirts/${color.toLowerCase().replace(/\s+/g, '_')}_front.png)`,
+                  backgroundImage: `url(/round-neck-women-tshirts/${color.toLowerCase().replace(/\s+/g, '_')}_front.png)`,
                   backgroundSize: 'contain',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center',
@@ -407,7 +407,7 @@ const onTouchEnd = () => setDragging(false);
                 sx={{
                   width: '100%',
                   height: '100%',
-                  backgroundImage: `url(/round-neck-men-tshirts/${color.toLowerCase().replace(/\s+/g, '_')}_back.png)`,
+                  backgroundImage: `url(/round-neck-women-tshirts/${color.toLowerCase().replace(/\s+/g, '_')}_back.png)`,
                   backgroundSize: 'contain',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center',

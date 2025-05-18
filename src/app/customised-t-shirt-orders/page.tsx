@@ -126,7 +126,7 @@ const UserOrderPage = () => {
       const userData = Cookies.get('user_login_data');
       if (userData) {
         const userId = JSON.parse(userData)._id;
-        const res = await axios.get(`/api/get-user-order`, {
+        const res = await axios.get(`/api/get-user-customised-order`, {
           params: { userId },
         });
         if (res.data.success) {
@@ -140,39 +140,6 @@ const UserOrderPage = () => {
     };
     fetchOrders();
   }, []);
-
-  const handleProductClick = async (product_id: String) => {
-    try {
-      setLoading(true)
-      const response = await fetch('/api/fetch-product', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ product_id }),
-      });
-
-      if (!response.ok) {
-        
-        setLoading(false)
-        throw new Error('Failed to fetch product')
-      }
-      
-      setLoading(false)
-      const data = await response.json();
-      console.log("Fetching Slug data",data);
-      
-      if (data.data.slug) {
-        // window.location.href = `/blog/${data.data.slug}`;
-      const route = `/blog/${data.data.slug}`;
-      router.push(route);
-      } else {
-        console.error('Slug not found in response');
-      }
-    } catch (error) {
-      console.error('Error fetching product:', error);
-    }
-  };
 
   return (
     <Box sx={{
@@ -189,7 +156,7 @@ const UserOrderPage = () => {
             gutterBottom
             sx={{ color: 'primary.main', textAlign: 'center', width: '100%' }}
             >
-            My Orders
+            My Customise T-shirt Orders
         </Typography>
 
         {orders.length === 0 ? (
@@ -215,21 +182,52 @@ const UserOrderPage = () => {
               }}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <Box display="flex" gap={2} alignItems="center">
-                      <Avatar
-                        variant="rounded"
-                        src={order.product_details[0]?.thumbnail_url}
-                        sx={{ width: 120, height: 120 }}
-                      />
+                    <Box
+                      display="flex"
+                      gap={2}
+                      alignItems="center"
+                      flexDirection={{ xs: 'column', sm: 'row' }} // Responsive direction
+                    >
+                      <Box
+                        display="flex"
+                        gap={2}
+                        flexDirection={{ xs: 'column', sm: 'row' }} // Stack images vertically on small screens
+                      >
+                        {order.product
+                          .filter(
+                            (p) => p.type === 'front-mockup' || p.type === 'back-mockup'
+                          )
+                          .map((mockup, index) => (
+                            <Avatar
+                              key={index}
+                              variant="rounded"
+                              src={mockup.url?.url}
+                              sx={{ width: 120, height: 120 }}
+                            />
+                          ))}
+                      </Box>
+
                       <Box>
-                        <Typography variant="h6" color="info.main">{order.product_name}</Typography>
-                        <Typography>Size: <strong>{order.size}</strong></Typography>
-                        <Typography>Color: <strong>{order.color}</strong></Typography>
-                        <Typography>Quantity: <strong>{order.quantity}</strong></Typography>
-                        <Typography>Status: <strong>{order.desposition}</strong></Typography>
+                        <Typography variant="h6" color="info.main">
+                          {order.product_name}
+                        </Typography>
+                        <Typography>
+                          Size: <strong>{order.size}</strong>
+                        </Typography>
+                        <Typography>
+                          Color: <strong>{order.color}</strong>
+                        </Typography>
+                        <Typography>
+                          Quantity: <strong>{order.product[0]?.quantity}</strong>
+                        </Typography>
+                        <Typography>
+                          Status: <strong>{order.desposition}</strong>
+                        </Typography>
                         <Typography>
                           Delivery Date:{' '}
-                          {order.delivery_date ? order.delivery_date : (
+                          {order.delivery_date ? (
+                            order.delivery_date
+                          ) : (
                             <span style={{ color: 'orange' }}>
                               Update soon, product is in factory for making
                             </span>
@@ -237,17 +235,9 @@ const UserOrderPage = () => {
                         </Typography>
                       </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                          <Button
-                            size="small"
-                            variant="text"
-                            onClick={() => handleProductClick(order.product_id)}
-                            sx={{ color: isDarkMode ? 'cyan':'black', border:  isDarkMode ? '1px solid white' : '3px solid Yellow', minWidth: 'auto', px: 1, py: 0.5, fontSize: '0.75rem' }}
-                          >
-                            View Product
-                          </Button>
-                        </Box>
                   </Grid>
+
+
                   <Grid item xs={12}>
                     <OrderProgress currentStop={order.desposition} />
                   </Grid>
