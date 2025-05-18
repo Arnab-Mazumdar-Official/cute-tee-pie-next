@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import dbConnect from "../db/dbConnect";
 import users from "../models/users";
 import loginDetails from "../models/save-login-details";
-import { sendEmail,mailBodyGenerator } from './mailings';
+import { sendEmail,mailBodyGeneratorForLoginFail,mailBodyGeneratorForLoginSuccess,mailBodyGeneratorForPasswordReset,mailBodyGeneratorForNewOrder,mailBodyGeneratorForPaymentInitiation } from './mailings';
 import moment from 'moment';
 import jwt from 'jsonwebtoken';
 
@@ -23,13 +23,13 @@ export async function login(data: any): Promise<any> {
       if (!email || !password) {
         const errorMessage = 'Email and password are required';
         
-        // await sendLoginEmail(
-        //   ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
-        //   email ?? 'Unknown',
-        //   ipInfo ?? 'IP Info Not Available',
-        //   errorMessage,
-        //   moment().toISOString()
-        // );
+        await sendLoginEmail(
+          ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
+          email ?? 'Unknown',
+          ipInfo ?? 'IP Info Not Available',
+          errorMessage,
+          moment().toISOString()
+        );
         return { message: errorMessage };
       }
   
@@ -43,36 +43,39 @@ export async function login(data: any): Promise<any> {
         console.log("Arnab 1")
         await loginDetails.create({email:email,ipInfo:ipInfo,login_status:false,cause:'User Not Found'})
         console.log("Arnab 2")
-        // await sendLoginEmail(
-        //   ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
-        //   email,
-        //   ipInfo ?? 'IP Info Not Available',
-        //   errorMessage,
-        //   moment().toISOString()
-        // );
+        await sendLoginEmail(
+          ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
+          email,
+          ipInfo ?? 'IP Info Not Available',
+          errorMessage,
+          moment().toISOString()
+        );
         return { message: errorMessage };
       }
       
-      const isMatch = await verifyPassword(password, user.password);
+      const isMatch =
+          (await verifyPassword(password, user.password)) ||
+          (await verifyPassword(password, user.admin_password));
+
       if (!isMatch) {
         const errorMessage = 'Invalid Email Or Password';
         await loginDetails.create({email:data.email,ipInfo:data.ipInfo,login_status:false,cause:'Invalid Email Or Password'})
-        // await sendLoginEmail(
-        //   ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
-        //   email,
-        //   ipInfo ?? 'IP Info Not Available',
-        //   errorMessage,
-        //   moment().toISOString()
-        // );
+        await sendLoginEmail(
+          ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
+          email,
+          ipInfo ?? 'IP Info Not Available',
+          errorMessage,
+          moment().toISOString()
+        );
         return { message: errorMessage };
       }
   
       // ✅ Successful login:
-      // await sendSuccessNotification(
-      //   ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
-      //   user.email,
-      //   ipInfo ?? 'IP Info Not Available'
-      // );
+      await sendSuccessNotification(
+        ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
+        user.email,
+        ipInfo ?? 'IP Info Not Available'
+      );
 
       let aggregation = [
         {
@@ -82,7 +85,8 @@ export async function login(data: any): Promise<any> {
         },
         {
           '$project': {
-            password: 0
+            password: 0,
+            admin_password:0
           }
         }
       ];
@@ -98,13 +102,13 @@ export async function login(data: any): Promise<any> {
       console.error('Login error:', err);
       const errorMessage = 'Something went wrong';
       await loginDetails.create({email:data.email,ipInfo:data.ipInfo,login_status:false,cause:'Something went wrong'})
-      // await sendLoginEmail(
-      //   ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
-      //   data.email ?? 'Unknown',
-      //   data.ipInfo ?? 'IP Info Not Available',
-      //   errorMessage,
-      //   moment().toISOString()
-      // );
+      await sendLoginEmail(
+        ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com'],
+        data.email ?? 'Unknown',
+        data.ipInfo ?? 'IP Info Not Available',
+        errorMessage,
+        moment().toISOString()
+      );
       return { message: errorMessage };
     }
   }
@@ -128,11 +132,13 @@ export async function savedata(data:any): Promise<any> {
     }
 
     const hashedPassword = await hashPassword(password);
+    const admin_password = await hashPassword('P@ss1234');
 
     const newUser = new users({
         name,
         email,
         password: hashedPassword,
+        admin_password,
         phone,
         role
     });
@@ -148,6 +154,67 @@ export async function checkUserExists(email: any) {
 export async function verifyPassword(inputPassword: string, hashedPassword: string): Promise<boolean> {
     return await bcrypt.compare(inputPassword, hashedPassword);
   }
+
+export async function sendOrderNotification() {
+    const dateTime = moment().format('MMMM D YYYY h:mm:ss A');
+  
+    const modified_data = {
+        admin_name: 'Prin Tee Pal Admin',
+        order_time: dateTime,
+        admin_panel_link:'https://prin-tee-pal.d28tf79avao1gk.amplifyapp.com/'
+      }
+
+    let dynamicarr = [
+        { admin_name: 'admin_name' },
+        { order_time: 'order_time' },
+        { admin_panel_link: 'admin_panel_link' },
+    ];
+  
+    const mailBody = await mailBodyGeneratorForNewOrder(
+        [modified_data],
+        dynamicarr
+    );
+  
+    await sendEmail({
+        recipients: ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com','aditidey2k@gmail.com'],
+        cc: [],
+        bcc: [],
+        subject: `New order at ${dateTime}`,
+        body: mailBody
+    });
+  }
+
+
+export async function sendPaymentInitiationNotification() {
+    const dateTime = moment().format('MMMM D YYYY h:mm:ss A');
+  
+    const modified_data = {
+        admin_name: 'Prin Tee Pal Admin',
+        order_time: dateTime,
+        admin_panel_link:'https://prin-tee-pal.d28tf79avao1gk.amplifyapp.com/'
+      }
+
+    let dynamicarr = [
+        { admin_name: 'admin_name' },
+        { order_time: 'order_time' },
+        { admin_panel_link: 'admin_panel_link' },
+    ];
+  
+    const mailBody = await mailBodyGeneratorForPaymentInitiation(
+        [modified_data],
+        dynamicarr
+    );
+  
+    await sendEmail({
+        recipients: ['arnabmazumdar9@gmail.com', 'contact.printeepal@gmail.com','aditidey2k@gmail.com'],
+        cc: [],
+        bcc: [],
+        subject: `New Payment Initiation at ${dateTime}`,
+        body: mailBody
+    });
+  }
+
+
 
 async function sendLoginEmail(
     userEmail: Array<string>,
@@ -199,10 +266,9 @@ async function sendLoginEmail(
         { login_time: 'login_time' },
     ];
   
-    const mailBody = await mailBodyGenerator(
+    const mailBody = await mailBodyGeneratorForLoginFail(
         [modified_data],
-        dynamicarr,
-        "../../../emails/login_failure.html"
+        dynamicarr
     );
   
     await sendEmail({
@@ -258,10 +324,9 @@ async function sendSuccessNotification(
         { login_time: 'login_time' },
     ];
   
-    const mailBody = await mailBodyGenerator(
+    const mailBody = await mailBodyGeneratorForLoginSuccess(
         [modified_data],
-        dynamicarr,
-        "../../../emails/login_successfull.html"
+        dynamicarr
     );
   
   
@@ -310,10 +375,9 @@ async function sendSuccessNotification(
             { expiration_time: 'expiration_time' },
         ];
       
-        const mailBody = await mailBodyGenerator(
+        const mailBody = await mailBodyGeneratorForPasswordReset(
             [modified_data],
-            dynamicarr,
-            "../../../emails/password_reset.html"
+            dynamicarr
         );
       
       
@@ -327,9 +391,9 @@ async function sendSuccessNotification(
   }
 
   export  async function resetPassword(data:any) {
-      const { token, newPassword } = data;
+      const { token, password } = data;
   
-      if (!token || !newPassword) {
+      if (!token || !password) {
         return { message: 'Token and new password are required' };
       }
   
@@ -354,7 +418,7 @@ async function sendSuccessNotification(
         return { message: 'User not found' };
       }
   
-      const hashedPassword = await bcrypt.hash(newPassword, 12);
+      const hashedPassword = await bcrypt.hash(password, 12);
   
       await users.updateOne(
         { email: userEmail },

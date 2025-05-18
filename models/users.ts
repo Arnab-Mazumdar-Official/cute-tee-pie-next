@@ -14,6 +14,12 @@ const usersSchema = new mongoose.Schema(
 
       index: -1,
     },
+    admin_password: {
+      type: String,
+      required: true,
+
+      index: -1,
+    },
     email: {
       type: String
     },

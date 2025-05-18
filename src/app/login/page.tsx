@@ -237,7 +237,7 @@ export default function LoginPage() {
           </Typography>
           <Typography variant="body2" sx={{ color: isDarkMode ? '#fff' : '#000' }}>
             Forget Password?{' '}
-            <Link href="/register" underline="hover" sx={{color: theme.palette.mode === 'dark' ? 'white' : 'black', }}>
+            <Link href="/reset-password" underline="hover" sx={{color: theme.palette.mode === 'dark' ? 'white' : 'black', }}>
               Click Here
             </Link>
           </Typography>

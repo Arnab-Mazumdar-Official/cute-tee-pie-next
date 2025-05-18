@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import dbConnect from '../../../../db/dbConnect';
 import Orders from '../.././../../models/orders';
+import {sendOrderNotification} from '../../../../helpers/user'
 
 export async function POST(req: NextRequest) {
   try {
@@ -93,6 +94,7 @@ export async function POST(req: NextRequest) {
       console.log('✅ Order saved for product:', item.product_id);
       return created;
     }));
+    await sendOrderNotification();
       return NextResponse.json(
         {
           success: false,
@@ -125,7 +127,7 @@ export async function POST(req: NextRequest) {
       console.log('✅ Order saved for product:', item.product_id);
       return created;
     }));
-
+    await sendOrderNotification();
     return NextResponse.json(
       {
         success: true,

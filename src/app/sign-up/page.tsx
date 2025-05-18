@@ -116,7 +116,7 @@ export default function SignupPage() {
       if (data.success) {
         setSnackbarMessage('Signup successful!');
         setSnackbarOpen(true);
-        setTimeout(() => router.push('/login'), 2000);
+        setTimeout(() => router.push('/'), 2000);
       } else {
         setSnackbarMessage(data.message || 'Signup failed');
         setSnackbarOpen(true);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { saveaddress_collcetion,address_collcetionList } from '../../../../helpers/address';
+import {sendPaymentInitiationNotification} from '../../../../helpers/user'
 
 export const POST = async (request: NextRequest) => {
   try {
@@ -45,7 +46,7 @@ export const GET = async (req: Request) => {
     const response = await address_collcetionList(user_id);
   
     console.log("product List Debug 5");
-  
+    await sendPaymentInitiationNotification();
     return NextResponse.json({
       success: true,
       status: 200,
