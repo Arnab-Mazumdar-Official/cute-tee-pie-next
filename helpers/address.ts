@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import dbConnect from "../db/dbConnect";
 import address_collcetion from "../models/address";
 import moment from "moment";
+import { sendPaymentInitiationNotification } from "./user";
 
 
 export async function saveaddress_collcetion(body: any) {
@@ -9,6 +10,9 @@ export async function saveaddress_collcetion(body: any) {
     console.log("address_collcetion Body---------->>", body);
   
     const { shipping_data, billinging_data, user_id, selected } = body;
+    const fullname = `${shipping_data.first_name} ${shipping_data.last_name}`
+    
+    await sendPaymentInitiationNotification(fullname,shipping_data.email,shipping_data.phone_number);
   
     const shippingPincode = shipping_data?.["pincode"];
     const billingPincode = billinging_data?.["pincode"];
@@ -19,8 +23,12 @@ export async function saveaddress_collcetion(body: any) {
       "shipping_data.pincode": shippingPincode,
       "billinging_data.pincode": billingPincode,
     });
+
   
     let result;
+
+    
+    
   
     if (existingAddress) {
       // Update the matched document

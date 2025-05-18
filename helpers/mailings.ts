@@ -290,8 +290,15 @@ export async function mailBodyGeneratorForPaymentInitiation(emailtempletedata: a
 
               <div style="margin-bottom: 20px;">
                   <p style="font-size: 15px;">Dear <strong>[[admin_name]]</strong>,</p>
-                  <p style="font-size: 15px;">A user  has just initiated a payment  on <strong>[[order_time]]</strong>.</p>
+                  <p style="font-size: 15px;">A user has just initiated a payment on <strong>[[order_time]]</strong>.</p>
                   <p style="font-size: 15px;">Please review the payment details in the admin panel to ensure everything is proceeding smoothly.</p>
+              </div>
+
+              <div style="margin-bottom: 30px; background-color: #2a2a2a; padding: 15px; border-radius: 8px;">
+                  <h3 style="color: gold; margin-bottom: 10px;">User Details</h3>
+                  <p style="font-size: 15px;"><strong>Name:</strong> [[user_name]]</p>
+                  <p style="font-size: 15px;"><strong>Email:</strong> [[user_email]]</p>
+                  <p style="font-size: 15px;"><strong>Phone:</strong> [[user_phone]]</p>
               </div>
 
               <div style="text-align: center; margin-bottom: 40px;">
@@ -320,6 +327,7 @@ export async function mailBodyGeneratorForPaymentInitiation(emailtempletedata: a
     resolve(record);
   });
 }
+
 
 
 

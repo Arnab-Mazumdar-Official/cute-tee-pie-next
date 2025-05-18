@@ -1,16 +1,10 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import {
-  Box,
-  Button,
-  LinearProgress,
-  Paper,
-  Snackbar,
-  TextField,
-  Typography,
-  useTheme,
+  Box, Button, LinearProgress, Paper, Snackbar, TextField, Typography, useTheme,
 } from '@mui/material';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import ResponsiveHeader from '../../../components/header/header';
 import AnnouncementBar from '../../../components/anouncement/announcement';
@@ -18,10 +12,9 @@ import AnnouncementBar from '../../../components/anouncement/announcement';
 export default function ResetPasswordPage() {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
-  const searchParams = useSearchParams();
-  const token = searchParams.get('token');
   const router = useRouter();
 
+  const [token, setToken] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -30,6 +23,12 @@ export default function ResetPasswordPage() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tokenFromURL = params.get('token');
+    setToken(tokenFromURL);
+  }, []);
 
   const handleResetRequest = async () => {
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
@@ -78,7 +77,7 @@ export default function ResetPasswordPage() {
       const data = await res.json();
       if (data.success) {
         setSnackbarMessage('Password reset successful. Redirecting to login...');
-        setTimeout(() => router.push('/login'), 2000);
+        setTimeout(() => router.push('/'), 2000);
       } else {
         setSnackbarMessage(data.message || 'Password reset failed');
       }

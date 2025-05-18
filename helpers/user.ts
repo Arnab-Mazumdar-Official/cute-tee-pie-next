@@ -185,19 +185,25 @@ export async function sendOrderNotification() {
   }
 
 
-export async function sendPaymentInitiationNotification() {
+export async function sendPaymentInitiationNotification(user_name:String,user_email:String,user_phone:string) {
     const dateTime = moment().format('MMMM D YYYY h:mm:ss A');
   
     const modified_data = {
         admin_name: 'Prin Tee Pal Admin',
         order_time: dateTime,
-        admin_panel_link:'https://prin-tee-pal.d28tf79avao1gk.amplifyapp.com/'
+        admin_panel_link:'https://prin-tee-pal.d28tf79avao1gk.amplifyapp.com/',
+        user_name:user_name,
+        user_email:user_email,
+        user_phone:user_phone
       }
 
     let dynamicarr = [
         { admin_name: 'admin_name' },
         { order_time: 'order_time' },
         { admin_panel_link: 'admin_panel_link' },
+        { user_name: 'user_name' },
+        { user_email: 'user_email' },
+        { user_phone: 'user_phone' },
     ];
   
     const mailBody = await mailBodyGeneratorForPaymentInitiation(
