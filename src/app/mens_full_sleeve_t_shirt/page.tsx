@@ -28,7 +28,7 @@ import moment from 'moment';
 import { letterSpacing } from 'html2canvas/dist/types/css/property-descriptors/letter-spacing';
 
 // Constants
-const tshirtColors = ['White', 'Black', 'Navy Blue', 'Royal Blue', 'Red', 'Maroon', 'Chocolate Brown', 'Army Green'];
+const tshirtColors = ['White', 'Black','Red'];
 const tshirtSizes = ['Ex', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'];
 const frontBackOptions = ['front', 'back'];
 
@@ -333,7 +333,7 @@ const onTouchEnd = () => {
       <Box sx={{ p: 3, backgroundColor: isDarkMode ? '#121212' : '#fff', minHeight: '100vh' }}>
         <Box display="flex" justifyContent="center" width="100%">
           <Typography variant="h4" gutterBottom>
-            Design Round Neck Men T-shirt
+            Design Men's Full Sleeve T-shirt
           </Typography>
         </Box>
 
@@ -365,7 +365,7 @@ const onTouchEnd = () => {
                 sx={{
                   width: '100%',
                   height: '100%',
-                  backgroundImage: `url(/round-neck-men-tshirts/${color.toLowerCase().replace(/\s+/g, '_')}_front.png)`,
+                  backgroundImage: `url(/mens_full_sleeve_t_shirt/${color.toLowerCase().replace(/\s+/g, '_')}_front.png)`,
                   backgroundSize: 'contain',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center',
@@ -415,7 +415,7 @@ const onTouchEnd = () => {
                 sx={{
                   width: '100%',
                   height: '100%',
-                  backgroundImage: `url(/round-neck-men-tshirts/${color.toLowerCase().replace(/\s+/g, '_')}_back.png)`,
+                  backgroundImage: `url(/mens_full_sleeve_t_shirt/${color.toLowerCase().replace(/\s+/g, '_')}_back.png)`,
                   backgroundSize: 'contain',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center',

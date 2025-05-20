@@ -472,7 +472,7 @@ const onTouchEnd = () => setDragging(false);
               <Box>
                 <Typography gutterBottom>Design Size: {getCurrentDesignSize()}px</Typography>
                 <Slider
-                  min={50}
+                  min={40}
                   max={200}
                   value={getCurrentDesignSize()}
                   onChange={(e, val) => setCurrentDesignSize(val as number)}

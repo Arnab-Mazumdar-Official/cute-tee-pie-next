@@ -244,6 +244,16 @@ export default function ResponsiveHeader() {
                 </ListItem>
                 <Divider sx={{ my: 1 }} />
 
+                <ListItem button onClick={() => navigate('/unisex-oversize-tshirt')}>
+                  <ListItemText primary="Customise Your Unisex Over Size T-shirt" />
+                </ListItem>
+                <Divider sx={{ my: 1 }} />
+
+                <ListItem button onClick={() => navigate('/mens_full_sleeve_t_shirt')}>
+                  <ListItemText primary="Customise Your Full Sleeve(Men) T-shirt" />
+                </ListItem>
+                <Divider sx={{ my: 1 }} />
+
                 {isAdmin && (
                   <>
                     <ListItem button onClick={() => navigate('/admin-dashboard')}>

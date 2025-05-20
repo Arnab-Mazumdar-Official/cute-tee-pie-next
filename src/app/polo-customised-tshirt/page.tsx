@@ -142,7 +142,9 @@ const onMouseUp = () => setDragging(false);
 
 // Touch handlers
 const onTouchStart = (e: React.TouchEvent<HTMLImageElement>) => {
+  e.preventDefault(); // Prevent touchstart from triggering scroll
   setDragging(true);
+
   const activeRef = getCurrentRef();
   if (!activeRef.current) return;
 
@@ -157,9 +159,12 @@ const onTouchStart = (e: React.TouchEvent<HTMLImageElement>) => {
 };
 
 const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+  if (!dragging) return;
+
   const activeRef = getCurrentRef();
-  if (!dragging || !activeRef.current) return;
-  e.preventDefault();
+  if (!activeRef.current) return;
+
+  e.preventDefault(); // Critical to disable scroll while dragging
 
   const rect = activeRef.current.getBoundingClientRect();
   const touch = e.touches[0];
@@ -176,7 +181,10 @@ const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
   });
 };
 
-const onTouchEnd = () => setDragging(false);
+const onTouchEnd = () => {
+  setDragging(false);
+};
+
 
   // Capture tshirt preview as image blob
   const captureImage = async (ref: React.RefObject<HTMLDivElement>): Promise<Blob> => {
@@ -472,7 +480,7 @@ const onTouchEnd = () => setDragging(false);
               <Box>
                 <Typography gutterBottom>Design Size: {getCurrentDesignSize()}px</Typography>
                 <Slider
-                  min={50}
+                  min={40}
                   max={200}
                   value={getCurrentDesignSize()}
                   onChange={(e, val) => setCurrentDesignSize(val as number)}

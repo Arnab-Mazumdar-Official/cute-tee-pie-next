@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from '@mui/material/styles';
 import ResponsiveHeader from '../../../components/header/header';
 import AnnouncementBar from '../../../components/anouncement/announcement';
+import axios from 'axios';
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -106,6 +107,12 @@ const PaymentPage: React.FC = () => {
   const [previousAddresses, setPreviousAddresses] = useState<any[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const [loadingAddresses, setLoadingAddresses] = useState(true);
+  const [referralCode, setReferralCode] = useState('');
+  const [referralVerified, setReferralVerified] = useState(false);
+  const [referralError, setReferralError] = useState('');
+  const [reffereldiscount, setDiscount] = useState(0);
+  const [subtotal, setsubtotal] = useState(0);
+  const [totalPayable, setTotalPayable] = useState(0);
   const isMobile = useMediaQuery('(max-width:594px)');
   const router = useRouter();
   const theme = useTheme();
@@ -117,6 +124,11 @@ const PaymentPage: React.FC = () => {
   const bgColor = isDarkMode ? '#111' : '#fff';
   const textColor = isDarkMode ? 'white' : 'black';
   const borderColor = isDarkMode ? '#00ffff' : 'black';
+
+  
+  const shippingCharge = 49;
+  const discount = shippingCharge;
+  // const totalPayable = subtotal;
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -130,13 +142,19 @@ const PaymentPage: React.FC = () => {
 
   
   useEffect(() => {
+    
     const cookieData = Cookies.get('user_order_data');
     if (cookieData) {
       try {
+        const parsedData = JSON.parse(cookieData)
         setOrderData(JSON.parse(cookieData));
+        const subtotal = parsedData.reduce((sum, item) => sum + (item.price*item.quantity), 0);
+        setsubtotal(subtotal)
+        setTotalPayable(subtotal)
       } catch (err) {
         console.error('Failed to parse order data', err);
       }
+      
     }
 
     const userCookie = Cookies.get('user_login_data');
@@ -155,6 +173,34 @@ const PaymentPage: React.FC = () => {
         setShowForm(true);
       });
   }, []);
+
+  const verifyReferral = async () => {
+    try {
+      const res = await axios.post('/api/verify-referral', { code: referralCode });
+
+      if (res.data.success) {
+        setReferralVerified(true);
+        setReferralError('');
+        setDiscount(30);
+        // onDiscountApply(30); // Pass discount up to parent
+        const Payable = subtotal - 30
+        setTotalPayable(Payable)
+      } else {
+        setReferralVerified(false);
+        setReferralError("Referral code didn't match.");
+        setDiscount(0);
+        setTotalPayable(subtotal)
+      }
+    } catch (error) {
+      setReferralError('Something went wrong while verifying referral.');
+    }
+  };
+
+  const handleKeyPress = (e:any) => {
+    if (e.key === 'Enter') {
+      verifyReferral();
+    }
+  };
 
   const makePayment = async (amount_paied: number) => {
     const res = await fetch("api/create-payment-order", {
@@ -333,10 +379,7 @@ const PaymentPage: React.FC = () => {
     }
   };
 
-  const subtotal = orderData.reduce((sum, item) => sum + (item.price*item.quantity), 0);
-  const shippingCharge = 49;
-  const discount = shippingCharge;
-  const totalPayable = subtotal;
+  
 
   return (
     
@@ -492,6 +535,79 @@ const PaymentPage: React.FC = () => {
       </>
     )}
 
+     <Grid
+      container
+      spacing={2}
+      alignItems="center"
+      sx={{
+        mb:2,
+        backgroundColor: bgColor,
+        color: textColor,
+        // border: `1px solid ${borderColor}`,
+        borderRadius: '8px',
+        p: 2,
+      }}
+    >
+      <Grid item xs={8}>
+        <TextField
+          fullWidth
+          label="Enter Referral Code (Optional)"
+          variant="outlined"
+          value={referralCode}
+          onChange={(e) => setReferralCode(e.target.value)}
+          onKeyPress={handleKeyPress}
+          disabled={referralVerified}
+          sx={{
+            input: { color: textColor },
+            label: { color: textColor },
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: borderColor,
+              },
+              '&:hover fieldset': {
+                borderColor: primaryAccent,
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: primaryAccent,
+              },
+            },
+          }}
+        />
+      </Grid>
+      <Grid item xs={4}>
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={verifyReferral}
+          disabled={referralVerified}
+          sx={{
+            backgroundColor: referralVerified ? secondaryAccent : primaryAccent,
+            color: isDarkMode ? 'black' : 'white',
+            '&:hover': {
+              backgroundColor: referralVerified ? secondaryAccent : primaryAccent,
+              opacity: 0.85,
+            },
+          }}
+        >
+          {referralVerified ? 'Verified' : 'Verify'}
+        </Button>
+      </Grid>
+      {referralError && (
+        <Grid item xs={12}>
+          <Alert severity="error" sx={{ backgroundColor: isDarkMode ? '#330000' : '#ffebee', color: secondaryAccent }}>
+            {referralError}
+          </Alert>
+        </Grid>
+      )}
+      {!referralVerified && (
+        <Grid item xs={12}>
+          <Typography variant="body2" sx={{ color: textColor }}>
+            To get ₹30 discount, please verify your referral code before payment.
+          </Typography>
+        </Grid>
+      )}
+    </Grid>
+
     <Box
       sx={{
         border: `1px solid ${primaryAccent}`,
@@ -513,6 +629,10 @@ const PaymentPage: React.FC = () => {
       <Box display="flex" justifyContent="space-between" color={secondaryAccent} mb={1}>
         <span>Discount</span>
         <span>- ₹{discount}</span>
+      </Box>
+      <Box display="flex" justifyContent="space-between" color={secondaryAccent} mb={1}>
+        <span>Refferel Discount</span>
+        <span>- ₹{reffereldiscount}</span>
       </Box>
       <Divider sx={{ borderColor: isDarkMode ? 'gray' : 'black', my: 2 }} />
       <Box display="flex" justifyContent="space-between" color={primaryAccent} fontWeight="bold">
