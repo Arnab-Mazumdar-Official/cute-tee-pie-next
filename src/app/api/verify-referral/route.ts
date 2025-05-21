@@ -7,13 +7,13 @@ export const POST = async (request: NextRequest) => {
       const req = await request.json();
       console.log("Payload received:", req);
   
-      const { code } = req;
+      const { code, user_id } = req;
   
-      if (!code ) {
+      if (!code || !user_id) {
         return NextResponse.json({
           success: false,
           status: 400,
-          message: 'Code Required',
+          message: 'Code And User Id Required',
         });
       }
       await dbConnect();
@@ -21,11 +21,21 @@ export const POST = async (request: NextRequest) => {
       const response = await users.find({referralCode:code});
   
       if (response.length > 0) {
-        return NextResponse.json({
+        if(response[0]._id.toString === user_id){
+
+          return NextResponse.json({
+          success: false,
+          status: 401,
+          is_reffer:false
+        });
+
+        }else{
+          return NextResponse.json({
           success: true,
           status: 200,
           is_reffer:true
         });
+        }
       } else {
         // Return error message if login failed
         return NextResponse.json({

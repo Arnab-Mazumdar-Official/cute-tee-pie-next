@@ -137,7 +137,9 @@ const PaymentPage: React.FC = () => {
 
   const verifyReferral = async () => {
         try {
-          const res = await axios.post('/api/verify-referral', { code: referralCode });
+          const userCookie = Cookies.get('user_login_data');
+          const userId = userCookie ? JSON.parse(userCookie)._id : null;
+          const res = await axios.post('/api/verify-referral', { code: referralCode , user_id:userId  });
           console.log("Refferal Verification--------->>",res);
           
           if (res?.data?.is_reffer === true) {

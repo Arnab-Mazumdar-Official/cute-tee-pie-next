@@ -136,7 +136,8 @@ export async function POST(req: NextRequest) {
       const created = await Orders.create(orderDoc);
       console.log('✅ Order saved for product:', item.product_id);
       if(referralCode){
-        const referrelDoc = {
+        if(reffered_user_id.toString() !== user_id){
+          const referrelDoc = {
           razorpay_order_id,
           razorpay_payment_id,
           status: 'success',
@@ -154,6 +155,8 @@ export async function POST(req: NextRequest) {
         }
         const saveReferral = await refferel_earning.create(referrelDoc);
         console.log('saveReferral---------------->:', saveReferral);
+        }
+        
       }
       return created;
     }));
