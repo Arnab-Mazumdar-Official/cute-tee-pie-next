@@ -19,9 +19,10 @@ export const POST = async (request: NextRequest) => {
       await dbConnect();
   
       const response = await users.find({referralCode:code});
-  
+      console.log("response------->>",response);
+      
       if (response.length > 0) {
-        if(response[0]._id.toString === user_id){
+        if(response[0]._id.toString() === user_id){
 
           return NextResponse.json({
           success: false,
