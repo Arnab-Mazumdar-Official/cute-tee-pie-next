@@ -177,13 +177,15 @@ const PaymentPage: React.FC = () => {
   const verifyReferral = async () => {
     try {
       const res = await axios.post('/api/verify-referral', { code: referralCode });
-
-      if (res.data.success) {
+      console.log("Refferal Verification--------->>",res);
+      
+      if (res?.data?.is_reffer === true) {
         setReferralVerified(true);
         setReferralError('');
-        setDiscount(30);
-        // onDiscountApply(30); // Pass discount up to parent
-        const Payable = subtotal - 30
+        
+        const Payable = subtotal - 30 * (Array.isArray(orderData) ? orderData.length : 0);
+        const dis = 30 * (Array.isArray(orderData) ? orderData.length : 0)
+        setDiscount(dis);
         setTotalPayable(Payable)
       } else {
         setReferralVerified(false);
@@ -235,11 +237,12 @@ const PaymentPage: React.FC = () => {
 
     
         const payload = {
-          response,
-          user_id: userId,
-          products: productDetails,
-          amount:amount_paied,
-        };
+            response,
+            user_id: userId,
+            products: productDetails,
+            amount: amount_paied,
+            ...(reffereldiscount > 0 && { referralCode }),
+          };
           console.log("Payload Payment-------->>",payload);
           
         try {
@@ -278,7 +281,6 @@ const PaymentPage: React.FC = () => {
               console.error('Failed to parse order data', err);
             }
           }
-
           router.push("/");
         } catch (error) {
           console.error("Payment verification error:", error);
@@ -372,7 +374,8 @@ const PaymentPage: React.FC = () => {
         return;
       }
 
-      makePayment(subtotal);
+      // makePayment(totalPayable);
+      makePayment(1);
     } catch (err) {
       console.error(err);
       alert('Something went wrong while processing your request.');
@@ -419,7 +422,7 @@ const PaymentPage: React.FC = () => {
               alt={item.title}
               width={300}
               height={300}
-              style={{ width: '100%', height: 'auto', borderRadius: 8 }}
+              style={{ width: '100%',height: '348px', borderRadius: 8 }}
             />
             <Typography variant="h6" color={textColor} mt={1}>{item.title}</Typography>
             <Typography variant="body2" color={isDarkMode ? '#ccc' : 'gray'} mb={1}>
@@ -514,10 +517,10 @@ const PaymentPage: React.FC = () => {
             <Checkbox
               checked={sameAsShipping}
               onChange={(e) => setSameAsShipping(e.target.checked)}
-              sx={{ color: textColor }}
+              sx={{ color: textColor, mb:2}}
             />
           }
-          label={<Typography sx={{ color: textColor }}>Same as Shipping Address</Typography>}
+          label={<Typography sx={{ color: textColor, mb:2 }}>Billing Address Same as Shipping Address</Typography>}
         />
 
         {!sameAsShipping && (
@@ -554,7 +557,7 @@ const PaymentPage: React.FC = () => {
           label="Enter Referral Code (Optional)"
           variant="outlined"
           value={referralCode}
-          onChange={(e) => setReferralCode(e.target.value)}
+          onChange={(e) => setReferralCode(e.target.value.trim())}
           onKeyPress={handleKeyPress}
           disabled={referralVerified}
           sx={{

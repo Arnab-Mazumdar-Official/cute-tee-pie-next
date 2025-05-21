@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from '@mui/material/styles';
 import ResponsiveHeader from '../../../components/header/header';
 import AnnouncementBar from '../../../components/anouncement/announcement';
+import axios from 'axios';
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -106,6 +107,12 @@ const PaymentPage: React.FC = () => {
   const [previousAddresses, setPreviousAddresses] = useState<any[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const [loadingAddresses, setLoadingAddresses] = useState(true);
+  const [referralCode, setReferralCode] = useState('');
+  const [referralVerified, setReferralVerified] = useState(false);
+  const [referralError, setReferralError] = useState('');
+  const [reffereldiscount, setDiscount] = useState(0);
+  const [subtotal, setsubtotal] = useState(0);
+  const [totalPayable, setTotalPayable] = useState(0);
   const isMobile = useMediaQuery('(max-width:594px)');
   const router = useRouter();
   const theme = useTheme();
@@ -133,11 +140,45 @@ const PaymentPage: React.FC = () => {
     const cookieData = Cookies.get('user_customise_order_data');
     if (cookieData) {
       try {
+        const parsedData = JSON.parse(cookieData)
         setOrderData(JSON.parse(cookieData));
+        const subtotal = parsedData?.order_images?.[0]?.price * (parsedData?.order_images?.[0]?.quantity || 1) || 0
+        setsubtotal(subtotal)
+        setTotalPayable(subtotal)
       } catch (err) {
         console.error('Failed to parse order data', err);
       }
     }
+
+    const verifyReferral = async () => {
+        try {
+          const res = await axios.post('/api/verify-referral', { code: referralCode });
+          console.log("Refferal Verification--------->>",res);
+          
+          if (res?.data?.is_reffer === true) {
+            setReferralVerified(true);
+            setReferralError('');
+            
+            const Payable = subtotal - 30 * (Array.isArray(orderData) ? orderData.length : 0);
+            const dis = 30 * (Array.isArray(orderData) ? orderData.length : 0)
+            setDiscount(dis);
+            setTotalPayable(Payable)
+          } else {
+            setReferralVerified(false);
+            setReferralError("Referral code didn't match.");
+            setDiscount(0);
+            setTotalPayable(subtotal)
+          }
+        } catch (error) {
+          setReferralError('Something went wrong while verifying referral.');
+        }
+      };
+    
+      const handleKeyPress = (e:any) => {
+        if (e.key === 'Enter') {
+          verifyReferral();
+        }
+      };
 
     const userCookie = Cookies.get('user_login_data');
     const userId = userCookie ? JSON.parse(userCookie)._id : null;
@@ -195,6 +236,7 @@ const PaymentPage: React.FC = () => {
           quantity: frontDesign?.quantity || 1,
           product: orderData?.order_images || [],
           amount: amount_paied,
+          ...(reffereldiscount > 0 && { referralCode }),
         };
 
         console.log("Payload Payment-------->>", payload);
@@ -304,7 +346,7 @@ const PaymentPage: React.FC = () => {
         return;
       }
 
-    //   makePayment(subtotal);
+      // makePayment(totalPayable);
       makePayment(1);
     } catch (err) {
       console.error(err);
@@ -312,10 +354,10 @@ const PaymentPage: React.FC = () => {
     }
   };
 
-  const subtotal = orderData?.order_images?.[0]?.price * (orderData?.order_images?.[0]?.quantity || 1) || 0;
+  // const subtotal = orderData?.order_images?.[0]?.price * (orderData?.order_images?.[0]?.quantity || 1) || 0;
   const shippingCharge = 49;
   const discount = shippingCharge;
-  const totalPayable = subtotal;
+  // const totalPayable = subtotal;
 
   return (
     
@@ -499,6 +541,78 @@ const PaymentPage: React.FC = () => {
         <span>Total to Pay</span><span>₹{totalPayable}</span>
       </Box>
     </Box>
+     <Grid
+          container
+          spacing={2}
+          alignItems="center"
+          sx={{
+            mb:2,
+            backgroundColor: bgColor,
+            color: textColor,
+            // border: `1px solid ${borderColor}`,
+            borderRadius: '8px',
+            p: 2,
+          }}
+        >
+          <Grid item xs={8}>
+            <TextField
+              fullWidth
+              label="Enter Referral Code (Optional)"
+              variant="outlined"
+              value={referralCode}
+              onChange={(e) => setReferralCode(e.target.value.trim())}
+              onKeyPress={handleKeyPress}
+              disabled={referralVerified}
+              sx={{
+                input: { color: textColor },
+                label: { color: textColor },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: borderColor,
+                  },
+                  '&:hover fieldset': {
+                    borderColor: primaryAccent,
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: primaryAccent,
+                  },
+                },
+              }}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={verifyReferral}
+              disabled={referralVerified}
+              sx={{
+                backgroundColor: referralVerified ? secondaryAccent : primaryAccent,
+                color: isDarkMode ? 'black' : 'white',
+                '&:hover': {
+                  backgroundColor: referralVerified ? secondaryAccent : primaryAccent,
+                  opacity: 0.85,
+                },
+              }}
+            >
+              {referralVerified ? 'Verified' : 'Verify'}
+            </Button>
+          </Grid>
+          {referralError && (
+            <Grid item xs={12}>
+              <Alert severity="error" sx={{ backgroundColor: isDarkMode ? '#330000' : '#ffebee', color: secondaryAccent }}>
+                {referralError}
+              </Alert>
+            </Grid>
+          )}
+          {!referralVerified && (
+            <Grid item xs={12}>
+              <Typography variant="body2" sx={{ color: textColor }}>
+                To get ₹30 discount, please verify your referral code before payment.
+              </Typography>
+            </Grid>
+          )}
+        </Grid>
 
     <Box textAlign="center" mt={6}>
       <MotionButton

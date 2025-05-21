@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import dbConnect from '../../../../db/dbConnect';
 import Orders from '../.././../../models/orders';
+import users from '../.././../../models/users';
+import refferel_earning from '../.././../../models/refferel_earning';
 import {sendOrderNotification} from '../../../../helpers/user'
 
 export async function POST(req: NextRequest) {
@@ -21,6 +23,7 @@ export async function POST(req: NextRequest) {
       amount,
       quantity,
       products = [],
+      referralCode,
     } = body || {};
 
     const {
@@ -36,8 +39,15 @@ export async function POST(req: NextRequest) {
       user_id,
       amount,
       products,
-      quantity
+      quantity,
+      referralCode
     });
+
+    let  reffered_user_id = "";
+    if(referralCode){
+      const findReferraluser = await users.find({referralCode:referralCode})
+      reffered_user_id = findReferraluser[0]._id
+    }
 
     // Validate all required fields
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !user_id || !Array.isArray(products)) {
@@ -125,6 +135,26 @@ export async function POST(req: NextRequest) {
       };
       const created = await Orders.create(orderDoc);
       console.log('✅ Order saved for product:', item.product_id);
+      if(referralCode){
+        const referrelDoc = {
+          razorpay_order_id,
+          razorpay_payment_id,
+          status: 'success',
+          verified: true,
+          user_id,
+          product_id: item.product_id,
+          size: item.size,
+          color: item.color,
+          quantity: item.quantity,
+          source,
+          amount,
+          refferel_payment_status:'Not Paid',
+          referel_earning: (40*item.quantity),
+          reffered_user_id:reffered_user_id.toString()
+        }
+        const saveReferral = await refferel_earning.create(referrelDoc);
+        console.log('saveReferral---------------->:', saveReferral);
+      }
       return created;
     }));
     await sendOrderNotification();

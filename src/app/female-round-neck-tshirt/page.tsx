@@ -105,6 +105,14 @@ const handleDeleteDesign = () => {
   setCurrentDesignPos({ top: 100, left: 100 });
   setCurrentDesignSize(100);
 };
+const disableBodyScroll = () => {
+  document.body.style.overflow = 'hidden';
+};
+
+const enableBodyScroll = () => {
+  document.body.style.overflow = '';
+};
+
 
 // Drag & Drop handlers
 const onMouseDown = (e: React.MouseEvent<HTMLImageElement>) => {
@@ -142,7 +150,10 @@ const onMouseUp = () => setDragging(false);
 
 // Touch handlers
 const onTouchStart = (e: React.TouchEvent<HTMLImageElement>) => {
+  e.preventDefault(); // Prevent touchstart from triggering scroll
   setDragging(true);
+  disableBodyScroll();
+
   const activeRef = getCurrentRef();
   if (!activeRef.current) return;
 
@@ -157,9 +168,13 @@ const onTouchStart = (e: React.TouchEvent<HTMLImageElement>) => {
 };
 
 const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+  disableBodyScroll();
+  if (!dragging) return;
+
   const activeRef = getCurrentRef();
-  if (!dragging || !activeRef.current) return;
-  e.preventDefault();
+  if (!activeRef.current) return;
+
+  e.preventDefault(); // Critical to disable scroll while dragging
 
   const rect = activeRef.current.getBoundingClientRect();
   const touch = e.touches[0];
@@ -176,7 +191,11 @@ const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
   });
 };
 
-const onTouchEnd = () => setDragging(false);
+const onTouchEnd = () => {
+  setDragging(false);
+  enableBodyScroll();
+};
+
 
   // Capture tshirt preview as image blob
   const captureImage = async (ref: React.RefObject<HTMLDivElement>): Promise<Blob> => {
@@ -325,13 +344,24 @@ const onTouchEnd = () => setDragging(false);
       <Box sx={{ p: 3, backgroundColor: isDarkMode ? '#121212' : '#fff', minHeight: '100vh' }}>
         <Box display="flex" justifyContent="center" width="100%">
           <Typography variant="h4" gutterBottom>
-            Design Round Neck Women T-shirt
+            Design Round Neck Men T-shirt
           </Typography>
         </Box>
 
 
       <Box display="flex" justifyContent="center" width="100%">
-        <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: 4,
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            width: '100%',
+            maxWidth: 1000, // This ensures it doesn't stretch too far
+            mx: 'auto',     // Horizontally center it
+          }}
+        >
           {/* Left panel: T-shirt preview */}
           {frontBack === 'front' ? (
             <Box
@@ -436,7 +466,16 @@ const onTouchEnd = () => setDragging(false);
           )}
 
           {/* Right panel: Controls */}
-          <Box sx={{ flex: 1, maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Box
+            sx={{
+              flex: 1,
+              maxWidth: { xs: '100%', sm: 400 },
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 3,
+              width: '100%',
+            }}
+          >
             {/* Front/Back select */}
             <FormControl fullWidth>
               <InputLabel id="front-back-label">Side</InputLabel>

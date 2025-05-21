@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import dbConnect from '../../../../db/dbConnect';
 import customise_orders from '../.././../../models/customise_orders';
 import {sendOrderNotification} from '../../../../helpers/user'
+import users from '../.././../../models/users';
+import refferel_earning from '../.././../../models/refferel_earning';
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,7 +24,8 @@ export async function POST(req: NextRequest) {
           color,
           quantity,
           product,
-          amount
+          amount,
+          referralCode
     } = body || {};
 
     const {
@@ -40,8 +43,15 @@ export async function POST(req: NextRequest) {
       color,
       quantity,
       product,
-      amount
+      amount,
+      referralCode
     });
+
+    let  reffered_user_id = "";
+        if(referralCode){
+          const findReferraluser = await users.find({referralCode:referralCode})
+          reffered_user_id = findReferraluser[0]._id
+        }
 
     // Validate all required fields
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !user_id || !Array.isArray(product)) {
@@ -120,6 +130,26 @@ export async function POST(req: NextRequest) {
       };
       const created = await customise_orders.create(orderDoc);
       console.log('✅ Order saved for product:', created);
+      if(referralCode){
+        const referrelDoc = {
+          razorpay_order_id,
+          razorpay_payment_id,
+          status: 'success',
+          verified: true,
+          user_id,
+          product_id: "Customised Procduct",
+          size,
+          color,
+          quantity,
+          source:"Customise",
+          amount,
+          refferel_payment_status:'Not Paid',
+          referel_earning: (40*quantity),
+          reffered_user_id:reffered_user_id.toString()
+        }
+        const saveReferral = await refferel_earning.create(referrelDoc);
+        console.log('saveReferral---------------->:', saveReferral);
+      }
       await sendOrderNotification();
     return NextResponse.json(
       {

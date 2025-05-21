@@ -23,6 +23,9 @@ const usersSchema = new mongoose.Schema(
     email: {
       type: String
     },
+    referralCode: {
+      type: String
+    },
     phone: {
       type: String
     },
