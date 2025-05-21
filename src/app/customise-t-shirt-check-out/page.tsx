@@ -135,22 +135,7 @@ const PaymentPage: React.FC = () => {
     });
   };
 
-  
-  useEffect(() => {
-    const cookieData = Cookies.get('user_customise_order_data');
-    if (cookieData) {
-      try {
-        const parsedData = JSON.parse(cookieData)
-        setOrderData(JSON.parse(cookieData));
-        const subtotal = parsedData?.order_images?.[0]?.price * (parsedData?.order_images?.[0]?.quantity || 1) || 0
-        setsubtotal(subtotal)
-        setTotalPayable(subtotal)
-      } catch (err) {
-        console.error('Failed to parse order data', err);
-      }
-    }
-
-    const verifyReferral = async () => {
+  const verifyReferral = async () => {
         try {
           const res = await axios.post('/api/verify-referral', { code: referralCode });
           console.log("Refferal Verification--------->>",res);
@@ -179,6 +164,21 @@ const PaymentPage: React.FC = () => {
           verifyReferral();
         }
       };
+
+  
+  useEffect(() => {
+    const cookieData = Cookies.get('user_customise_order_data');
+    if (cookieData) {
+      try {
+        const parsedData = JSON.parse(cookieData)
+        setOrderData(JSON.parse(cookieData));
+        const subtotal = parsedData?.order_images?.[0]?.price * (parsedData?.order_images?.[0]?.quantity || 1) || 0
+        setsubtotal(subtotal)
+        setTotalPayable(subtotal)
+      } catch (err) {
+        console.error('Failed to parse order data', err);
+      }
+    }
 
     const userCookie = Cookies.get('user_login_data');
     const userId = userCookie ? JSON.parse(userCookie)._id : null;
