@@ -70,7 +70,7 @@ const refferel_earningSchema = new mongoose.Schema(
        index: -1,
      },
      referel_earning: {
-       type: String,
+       type: Number,
        index: -1,
      },
      reffered_user_id: {

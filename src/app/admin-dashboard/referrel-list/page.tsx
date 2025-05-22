@@ -559,8 +559,8 @@ const handleUpdateReferredPayment = async () => {
         <Typography><strong>Type:</strong> {order.source === "one_item" ? "One Item" : "Multiple"}</Typography>
         <Typography><strong>Payment ID:</strong> {order.razorpay_payment_id}</Typography>
         <Typography><strong>Order ID:</strong> {order.razorpay_order_id}</Typography>
-        <Typography><strong>Refered User Id:</strong> {order.reffered_user_name}</Typography>
-        <Typography><strong>Refered Payment Amount:</strong> {order.referel_earning}</Typography>
+        <Typography><strong>Refered User Name:</strong> {order.reffered_user_name}</Typography>
+        <Typography><strong>Refered Payment Amount:</strong> ₹{order.referel_earning}</Typography>
         <Typography><strong>Refered Payment Status:</strong> {order.refferel_payment_status}</Typography>
         <Typography><strong>Ordered Date:</strong> {formatCustomDate(order.created_on)}</Typography>
         <Typography><strong>Order Desposition:</strong> {order.desposition}</Typography>
@@ -626,7 +626,7 @@ const handleUpdateReferredPayment = async () => {
                 <TableCell>Type</TableCell>
                 <TableCell>Payment ID</TableCell>
                 <TableCell>Order ID</TableCell>
-                <TableCell>Refered User Id</TableCell>
+                <TableCell>Refered User Name</TableCell>
                 <TableCell>Refered Payment Amount</TableCell>
                 <TableCell>Refered Payment Status</TableCell>
                 <TableCell>Ordered Date</TableCell>
@@ -648,7 +648,7 @@ const handleUpdateReferredPayment = async () => {
                 <TableCell>{order.razorpay_payment_id}</TableCell>
                 <TableCell>{order.razorpay_order_id}</TableCell>
                 <TableCell>{order.reffered_user_name}</TableCell>
-                <TableCell>{order.referel_earning}</TableCell>
+                <TableCell>₹{order.referel_earning}</TableCell>
                 <TableCell>{order.refferel_payment_status}</TableCell>
                 <TableCell>{formatCustomDate(order.created_on)}</TableCell>
                 <TableCell>{order.desposition}</TableCell>
