@@ -2,6 +2,7 @@ import mongoose, { Types } from "mongoose";
 import dbConnect from "../db/dbConnect";
 import products from "../models/products";
 import Orders from "../models/orders";
+import refferel_earning from "../models/refferel_earning";
 import customise_orders from "../models/customise_orders";
 import moment from "moment";
 import slugifyLib from 'slugify';
@@ -201,6 +202,137 @@ export async function orderList() {
   return { message: 'orders found', orders };
 }
 
+
+export async function referelEarningList() {
+
+  console.log("product List Debug 1");
+  
+  await dbConnect();
+  console.log("product List Debug 1");
+  const orders = await refferel_earning.aggregate([
+    {
+      '$sort':{'_id':-1}
+    },
+ {
+    '$addFields': {
+      'isCustomProduct': {
+        '$eq': [
+          '$product_id', 'Customised Procduct'
+        ]
+      }
+    }
+  }, {
+    '$addFields': {
+      'product_id_obj': {
+        '$cond': {
+          'if': {
+            '$eq': [
+              '$isCustomProduct', false
+            ]
+          }, 
+          'then': {
+            '$toObjectId': '$product_id'
+          }, 
+          'else': null
+        }
+      }, 
+      'user_id_obj': {
+        '$toObjectId': '$user_id'
+      }, 
+      'reffered_user_id_obj': {
+        '$toObjectId': '$reffered_user_id'
+      }
+    }
+  }, {
+    '$lookup': {
+      'from': 'products', 
+      'localField': 'product_id_obj', 
+      'foreignField': '_id', 
+      'as': 'product_details'
+    }
+  }, {
+    '$lookup': {
+      'from': 'users', 
+      'localField': 'reffered_user_id_obj', 
+      'foreignField': '_id', 
+      'as': 'referred_users_details'
+    }
+  }, {
+    '$lookup': {
+      'from': 'users', 
+      'localField': 'user_id_obj', 
+      'foreignField': '_id', 
+      'as': 'users_details'
+    }
+  }, {
+    '$lookup': {
+      'from': 'address_collcetions', 
+      'let': {
+        'userId': '$user_id'
+      }, 
+      'pipeline': [
+        {
+          '$match': {
+            '$expr': {
+              '$and': [
+                {
+                  '$eq': [
+                    '$user_id', '$$userId'
+                  ]
+                }, {
+                  '$eq': [
+                    '$selected', true
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ], 
+      'as': 'address_details'
+    }
+  }, {
+    '$addFields': {
+      'product_name': {
+        '$cond': {
+          'if': '$isCustomProduct', 
+          'then': 'Customised Procduct', 
+          'else': {
+            '$ifNull': [
+              {
+                '$arrayElemAt': [
+                  '$product_details.title', 0
+                ]
+              }, 'Not Found'
+            ]
+          }
+        }
+      }, 
+      'user_name': {
+        '$ifNull': [
+          {
+            '$arrayElemAt': [
+              '$users_details.name', 0
+            ]
+          }, 'Not Found'
+        ]
+      }, 
+      'reffered_user_name': {
+        '$ifNull': [
+          {
+            '$arrayElemAt': [
+              '$referred_users_details.name', 0
+            ]
+          }, 'Not Found'
+        ]
+      }
+    }
+  }
+]);
+  console.log("product List Debug 1");
+
+  return { message: 'orders found', orders };
+}
 
 export async function customiseOrderList() {
 

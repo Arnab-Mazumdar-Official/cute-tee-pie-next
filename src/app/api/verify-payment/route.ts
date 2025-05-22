@@ -81,7 +81,8 @@ export async function POST(req: NextRequest) {
     console.log(`✅ Signature verification result: ${isValid ? 'VALID ✅' : 'INVALID ❌'}`);
 
     if (!isValid) {
-
+      console.log("Not Valid");
+      
       const source = products.length === 1 ? 'one_item' : 'multiple_item';
     console.log(`📚 Saving ${products.length} order(s) with source: ${source}`);
 
@@ -114,6 +115,8 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    console.log("Valid");
 
     const source = products.length === 1 ? 'one_item' : 'multiple_item';
     console.log(`📚 Saving ${products.length} order(s) with source: ${source}`);

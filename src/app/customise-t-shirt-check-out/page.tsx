@@ -146,8 +146,9 @@ const PaymentPage: React.FC = () => {
             setReferralVerified(true);
             setReferralError('');
             
-            const Payable = subtotal - 30 * (Array.isArray(orderData) ? orderData.length : 0);
-            const dis = 30 * (Array.isArray(orderData) ? orderData.length : 0)
+            
+            const dis = 30 * (orderData?.order_images?.[0]?.quantity || 1);
+            const Payable = dis;
             setDiscount(dis);
             setTotalPayable(Payable)
           } else {
@@ -495,10 +496,10 @@ const PaymentPage: React.FC = () => {
             <Checkbox
               checked={sameAsShipping}
               onChange={(e) => setSameAsShipping(e.target.checked)}
-              sx={{ color: textColor }}
+              sx={{ color: textColor,mb:2 }}
             />
           }
-          label={<Typography sx={{ color: textColor }}>Same as Shipping Address</Typography>}
+          label={<Typography sx={{ color: textColor, mb:2 }}>Same as Shipping Address</Typography>}
         />
 
         {!sameAsShipping && (
@@ -516,33 +517,7 @@ const PaymentPage: React.FC = () => {
       </>
     )}
 
-    <Box
-      sx={{
-        border: `1px solid ${primaryAccent}`,
-        borderRadius: 2,
-        p: 3,
-        backgroundColor: bgColor,
-        boxShadow: `0 0 10px ${primaryAccent}55`,
-        mb: 4,
-        color: textColor,
-      }}
-    >
-      <Typography variant="h6" color={textColor} gutterBottom>Invoice Summary</Typography>
-      <Divider sx={{ borderColor: isDarkMode ? 'gray' : 'black', mb: 2 }} />
-      <Box display="flex" justifyContent="space-between" mb={1}><span>Subtotal</span><span>₹{subtotal}</span></Box>
-      <Box display="flex" justifyContent="space-between" mb={1}>
-        <span>Shipping</span>
-        <span style={{ textDecoration: 'line-through' }}>₹{shippingCharge}</span>
-      </Box>
-      <Box display="flex" justifyContent="space-between" color={secondaryAccent} mb={1}>
-        <span>Discount</span>
-        <span>- ₹{discount}</span>
-      </Box>
-      <Divider sx={{ borderColor: isDarkMode ? 'gray' : 'black', my: 2 }} />
-      <Box display="flex" justifyContent="space-between" color={primaryAccent} fontWeight="bold">
-        <span>Total to Pay</span><span>₹{totalPayable}</span>
-      </Box>
-    </Box>
+    
      <Grid
           container
           spacing={2}
@@ -615,6 +590,38 @@ const PaymentPage: React.FC = () => {
             </Grid>
           )}
         </Grid>
+
+    <Box
+      sx={{
+        border: `1px solid ${primaryAccent}`,
+        borderRadius: 2,
+        p: 3,
+        backgroundColor: bgColor,
+        boxShadow: `0 0 10px ${primaryAccent}55`,
+        mb: 4,
+        color: textColor,
+      }}
+    >
+      <Typography variant="h6" color={textColor} gutterBottom>Invoice Summary</Typography>
+      <Divider sx={{ borderColor: isDarkMode ? 'gray' : 'black', mb: 2 }} />
+      <Box display="flex" justifyContent="space-between" mb={1}><span>Subtotal</span><span>₹{subtotal}</span></Box>
+      <Box display="flex" justifyContent="space-between" mb={1}>
+        <span>Shipping</span>
+        <span style={{ textDecoration: 'line-through' }}>₹{shippingCharge}</span>
+      </Box>
+      <Box display="flex" justifyContent="space-between" color={secondaryAccent} mb={1}>
+        <span>Discount</span>
+        <span>- ₹{discount}</span>
+      </Box>
+      <Box display="flex" justifyContent="space-between" color={secondaryAccent} mb={1}>
+        <span>Refferel Discount</span>
+        <span>- ₹{reffereldiscount}</span>
+      </Box>
+      <Divider sx={{ borderColor: isDarkMode ? 'gray' : 'black', my: 2 }} />
+      <Box display="flex" justifyContent="space-between" color={primaryAccent} fontWeight="bold">
+        <span>Total to Pay</span><span>₹{totalPayable}</span>
+      </Box>
+    </Box>
 
     <Box textAlign="center" mt={6}>
       <MotionButton

@@ -185,8 +185,11 @@ const PaymentPage: React.FC = () => {
         setReferralVerified(true);
         setReferralError('');
         
-        const Payable = subtotal - 30 * (Array.isArray(orderData) ? orderData.length : 0);
-        const dis = 30 * (Array.isArray(orderData) ? orderData.length : 0)
+        
+        const dis = Array.isArray(orderData)
+                ? orderData.reduce((sum, item) => sum + (30 * item.quantity), 0)
+                : 0;
+        const Payable = subtotal - dis;
         setDiscount(dis);
         setTotalPayable(Payable)
       } else {

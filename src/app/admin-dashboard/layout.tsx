@@ -94,7 +94,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                onClick={() => router.push('/admin-dashboard/customise-order-list')}
+                onClick={() => router.push('/admin-dashboard/referrel-list')}
                 className="w-full p-3 mb-4 bg-gray-700 rounded hover:bg-gray-600 text-white transition-all"
               >
                 Referrel Money Backs
@@ -109,6 +109,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
               <motion.button
                 whileTap={{ scale: 0.95 }}
+                onClick={() => router.push('/admin-dashboard/user-list')}
                 className="w-full p-3 mb-4 bg-gray-700 rounded hover:bg-gray-600 text-white transition-all"
               >
                 User's List
