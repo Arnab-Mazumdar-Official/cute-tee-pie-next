@@ -155,7 +155,7 @@ const BannerSection = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
-      <Box sx={{ mt: 3 }}>
+      <Box>
         <ScrollingOffers />
         <Box sx={{ backgroundColor, py: 6, px: 3, color: textColor }}>
           <Grid container spacing={4} alignItems="center" justifyContent="center">
