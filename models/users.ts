@@ -26,6 +26,16 @@ const usersSchema = new mongoose.Schema(
     referralCode: {
       type: String
     },
+    referral_payment_method: {
+        method: { type: String },
+        details: {
+          bank_account_number: { type: String },
+          ifsccode: { type: String },
+          phone_number: { type: String },
+          upi_id: { type: String },
+        }
+      },
+
     phone: {
       type: String
     },
