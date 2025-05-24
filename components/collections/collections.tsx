@@ -1,173 +1,195 @@
 'use client';
 import React, { useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
 import SwiperCore from "swiper";
-import ComingSoonModal from '../commingsoon/commingsoon';
 import {
   Box,
   Card,
   CardMedia,
   CardContent,
   Typography,
-  Button
+  Button,
+  Grow,
+  useTheme
 } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import ComingSoonModal from "../commingsoon/commingsoon";
+import Skeleton from '@mui/material/Skeleton';
 
 type TShirtItem = {
   title: string;
   image: string;
 };
 
-const items: TShirtItem[] = [
-  {
-    title: "Casuals with chaos.",
-    image:
-      "https://cuteteepie.myshopify.com/cdn/shop/collections/xG6sLdpQfCH3Z6Nc4V74g.jpg?v=1745137793"
-  },
-  {
-    title: "Bong Roots",
-    image:
-      "https://cuteteepie.myshopify.com/cdn/shop/collections/3_Front_bce8e706-fa0c-446a-9599-747034d96a64.png?v=1745137690"
-  },
-  {
-    title: "Breezy Formals",
-    image:
-      "https://cuteteepie.myshopify.com/cdn/shop/collections/MlbMBFTOQw6bLSoPyO9o7A.jpg?v=1745137533"
-  },
-  {
-    title: "Cosmic Vibes",
-    image:
-      "https://cuteteepie.myshopify.com/cdn/shop/collections/WhatsApp_Image_2025-04-20_at_2.55.25_PM.jpg?v=1745141253"
-  },
-  {
-    title: "Oops I Did Nothing",
-    image:
-      "https://cuteteepie.myshopify.com/cdn/shop/collections/aawIiUoTQJeQxJ17Mez6qA.jpg?v=1745138386"
-  },
-  {
-    title: "Thoda Pagal, Thoda Pro",
-    image:
-      "https://cuteteepie.myshopify.com/cdn/shop/collections/eyST3-ZUSgSog3J-OmixXA.jpg?v=1745138517"
-  }
-];
+const fetchCollections = async (): Promise<TShirtItem[]> => {
+  const res = await axios.get("/api/collections-list");
+  console.log("API response:", res.data);
+  return res.data.data.category || [];
+};
 
 const TShirtGrid = () => {
-    const swiperRef = useRef<SwiperCore | null>(null);
-    const [openModal, setOpenModal] = useState(false); 
-    // const [selectedItem, setSelectedItem] = useState<any>(null);
-
-    const handleCardClick = () => {
-      // setSelectedItem(item);
-      setOpenModal(true);
-    };
+  const swiperRef = useRef<SwiperCore | null>(null);
+  const [openModal, setOpenModal] = useState(false);
+  const theme = useTheme();
   
-    const handleCloseModal = () => {
-      setOpenModal(false);
-      // setSelectedItem(null);
-    };
+  const isDark = theme.palette.mode === 'dark';
+  const bgColor = isDark ? '#000' : '#fff';
+  const textColor = isDark ? '#fff' : '#000';
+  const borderColor = textColor;
+  const isDarkMode = theme.palette.mode === "dark";
 
-    const handleViewAll = () => {
-      setOpenModal(true);
-    }
+  const { data, isLoading } = useQuery({
+    queryKey: ["tshirt-collections"],
+    queryFn: fetchCollections,
+    staleTime: 1000 * 60 * 10, // cache for 10 minutes
+  });
+
+  
+  const items = Array.isArray(data) ? data : [];
+
+  const handleCardClick = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
+
+  if (isLoading) {
+  return (
+      <Box sx={{ py: 6, px: 2 }}>
+        <Typography variant="h5" fontWeight="bold" sx={{ mb: 4 }}>
+          Explore Our Collections
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 3, overflowX: 'auto' }}>
+          {[...Array(5)].map((_, idx) => (
+            <Box key={idx} sx={{ width: 200 }}>
+              <Skeleton variant="rectangular" width="100%" height={200} sx={{ borderRadius: 2 }} />
+              <Skeleton variant="text" sx={{ mt: 1 }} />
+            </Box>
+          ))}
+        </Box>
+      </Box>
+    );
+  }
 
 
   return (
-    <Box sx={{ backgroundColor: "#000", py: 5, px: 2 }}>
+     <Box sx={{ backgroundColor: bgColor, py: 6, px: 2 }}>
+      {/* Heading and CTA */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          px: 1,
+          mb: 4,
+        }}
+      >
+        <Typography variant="h5" fontWeight="bold" sx={{ color: textColor }}>
+          Explore Our Collections
+        </Typography>
+        <Button
+          size="small"
+          onClick={handleCardClick}
+          sx={{
+            fontWeight: "bold",
+            textTransform: "none",
+            fontSize: "0.85rem",
+            color: textColor,
+            border: `1px solid ${borderColor}`,
+            borderRadius: 4,
+            px: 2,
+            py: 0.5,
+            "&:hover": {
+              backgroundColor: isDarkMode ? "#222" : "#eee",
+              color: "#d32f2f",
+              borderColor: "#d32f2f",
+            },
+          }}
+        >
+          Show More
+        </Button>
+      </Box>
+
+      {/* Swiper Section */}
       <Swiper
-        modules={[Navigation, Pagination, Autoplay]}
-        spaceBetween={20}
-        slidesPerView={3}
-        navigation
-        pagination={{ clickable: true }}
-        autoplay={{ delay: 1000, disableOnInteraction: false }}
+        modules={[Autoplay]}
+        autoplay={{ delay: 2500, disableOnInteraction: false }}
+        loop
+        spaceBetween={24}
         onSwiper={(swiper) => (swiperRef.current = swiper)}
         breakpoints={{
-          0: {
-            slidesPerView: 1
-          },
-          600: {
-            slidesPerView: 2
-          },
-          960: {
-            slidesPerView: 3
-          }
+          0: { slidesPerView: 2 },
+          600: { slidesPerView: 3 },
+          900: { slidesPerView: 4 },
+          1200: { slidesPerView: 5 },
         }}
       >
         {items.map((item, index) => (
           <SwiperSlide key={index}>
-            <Card
-              onClick={() => handleCardClick()}
-              onMouseEnter={() => swiperRef.current?.autoplay?.stop()}
-              onMouseLeave={() => swiperRef.current?.autoplay?.start()}
+            <Box
+              onClick={handleCardClick}
               sx={{
-                bgcolor: "#fff",
-                boxShadow: 3,
-                transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                "&:hover": {
-                  transform: "scale(1.05)",
-                  boxShadow: 6,
-                  zIndex: 2,
-                },
+                cursor: 'pointer',
+                width: '100%',
+                maxWidth: 300,
+                mx: 'auto',
               }}
             >
-              <CardMedia
-                component="img"
-                image={item.image}
-                alt={item.title}
+              <Box
                 sx={{
-                  height: 480,
-                  width: "100%",
-                  objectFit: "cover",
+                  height: {
+                    xs: 200,
+                    sm: 200,
+                    md: 250,
+                    lg: 300,
+                  },
+                  width: '100%',
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                  border: `2px solid ${borderColor}`,
+                  backgroundColor: [ '#FFD700', '#FF6347', '#1E90FF', '#FFA500', '#32CD32' ][index % 5],
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'transform 0.3s ease',
+                  "&:hover": {
+                    transform: 'scale(1.05)',
+                  },
                 }}
-              />
-              <CardContent>
-                <Typography variant="subtitle1" fontWeight="bold" noWrap>
-                  {item.title} →
-                </Typography>
-              </CardContent>
-            </Card>
+              >
+                <Box
+                  component="img"
+                  src={item.image}
+                  alt={item.title}
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </Box>
+
+              <Typography
+                variant="subtitle1"
+                fontWeight="bold"
+                sx={{
+                  mt: 1,
+                  color: textColor,
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {item.title}
+              </Typography>
+            </Box>
           </SwiperSlide>
         ))}
       </Swiper>
 
-      {/* View All Button */}
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-      <Button
-          variant="outlined"
-          onClick={handleViewAll}
-          sx={{
-            textTransform: "none",
-            fontWeight: "bold",
-            fontSize: "1rem",
-            color: "#fff", // White text
-            borderColor: "#fff", // White border
-            px: 4,
-            py: 1.5,
-            borderRadius: 8,
-            transition: "all 0.3s ease",
-            "&:hover": {
-              backgroundColor: "rgba(255, 255, 255, 0.1)", // slight white transparent on hover
-              borderColor: "#fff",
-              transform: "scale(1.05)",
-            },
-            "&:active": {
-              transform: "scale(0.95)",
-            },
-          }}
-        >
-          View All
-        </Button>
-      </Box>
-
-      <ComingSoonModal
-        open={openModal}
-        onClose={handleCloseModal}
-      />
+      <ComingSoonModal open={openModal} onClose={handleCloseModal} />
     </Box>
-
   );
 };
 

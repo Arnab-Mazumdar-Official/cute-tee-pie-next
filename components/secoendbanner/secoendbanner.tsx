@@ -13,7 +13,7 @@ const MovableSectionWithBackgrounds = () => {
       {/* Top Still Background */}
       <Box
         sx={{
-          height: '100vh',
+          height: '20vh',
           backgroundImage: 'url(//cuteteepie.myshopify.com/cdn/shop/files/n_zWTHLRShW7z6jwCzt6Ag.jpg?v=1745137077&width=3840)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
