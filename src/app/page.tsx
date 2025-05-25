@@ -20,7 +20,7 @@ export default function Page() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div>
         <AnnouncementBar />
         <Header />
         <BannerSection />

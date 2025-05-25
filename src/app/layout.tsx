@@ -88,12 +88,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `}
         </Script>
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable}`}
+        style={{ margin: 0, padding: 0 }}
+      >
         <QueryProvider>
-        <ThemeProviderWrapper>
-          <RootLayoutInner>{children}</RootLayoutInner>
-        </ThemeProviderWrapper>
-        <WhatsAppButton />
+          <ThemeProviderWrapper>
+            <RootLayoutInner>{children}</RootLayoutInner>
+          </ThemeProviderWrapper>
+          <WhatsAppButton />
         </QueryProvider>
       </body>
     </html>
