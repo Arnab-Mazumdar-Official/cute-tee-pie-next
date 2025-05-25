@@ -39,18 +39,33 @@ export async function generateMetadata({
   };
 }
 
+// export default async function Page({
+//     params,
+//   }: {
+//     params: Promise<{ id: string }>
+    
+//   }) {
+//     const { id } = await params
+//     const product = await getProductByName(id);
+//     console.log("Fetch Product Data---------->>",product);
+    
+//     if (!product) return notFound();
+//     return <ProductDetails product={product.data} />
+//   }
+
 export default async function Page({
-    params,
-  }: {
-    params: Promise<{ id: string }>
-    
-  }) {
-    const { id } = await params
-    const product = await getProductByName(id);
-    console.log("Fetch Product Data---------->>",product);
-    
-    if (!product) return notFound();
-    return <ProductDetails product={product.data} />
-  }
+  params,
+}: {
+  params: { id: string };
+}) {
+  const { id } = params;
+  const product = await getProductByName(id);
+
+  console.log("Fetch Product Data---------->>", product);
+
+  if (!product) return notFound();
+
+  return <ProductDetails product={product.data} />;
+}
 
   

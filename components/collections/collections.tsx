@@ -12,7 +12,9 @@ import {
   Typography,
   Button,
   Grow,
-  useTheme
+  useTheme,
+  Grid,
+  useMediaQuery
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -53,23 +55,36 @@ const TShirtGrid = () => {
   const handleCardClick = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
+
+   const isXl = useMediaQuery(theme.breakpoints.up('xl'));
+  const isLg = useMediaQuery(theme.breakpoints.up('lg'));
+  const isMd = useMediaQuery(theme.breakpoints.up('md'));
+  const isSm = useMediaQuery(theme.breakpoints.up('sm'));
+
+  // Determine number of boxes to render
+  let boxCount = 2;
+  if (isXl) boxCount = 9;
+  else if (isLg) boxCount = 8;
+  else if (isMd) boxCount = 7;
+  else if (isSm) boxCount = 5;
+
   if (isLoading) {
   return (
-      <Box sx={{ py: 6, px: 2 }}>
-        <Typography variant="h5" fontWeight="bold" sx={{ mb: 4 }}>
-          Explore Our Collections
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 3, overflowX: 'auto' }}>
-          {[...Array(5)].map((_, idx) => (
-            <Box key={idx} sx={{ width: 200 }}>
-              <Skeleton variant="rectangular" width="100%" height={200} sx={{ borderRadius: 2 }} />
-              <Skeleton variant="text" sx={{ mt: 1 }} />
-            </Box>
-          ))}
-        </Box>
+    <Box sx={{ py: 6, px: 2 }}>
+      <Typography variant="h5" fontWeight="bold" sx={{ mb: 4 }}>
+        Explore Our Collections
+      </Typography>
+      <Box sx={{ display: 'flex', gap: 3, overflowX: 'auto' }}>
+        {[...Array(boxCount)].map((_, idx) => (
+          <Box key={idx} sx={{ width: 200, flexShrink: 0 }}>
+            <Skeleton variant="rectangular" width="100%" height={200} sx={{ borderRadius: 2 }} />
+            <Skeleton variant="text" sx={{ mt: 1 }} />
+          </Box>
+        ))}
       </Box>
-    );
-  }
+    </Box>
+  );
+};
 
 
   return (

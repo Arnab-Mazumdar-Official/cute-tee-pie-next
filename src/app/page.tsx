@@ -10,27 +10,28 @@ import TShirtGrid from '../../components/collections/collections';
 import TshirtCustomizeSection from '../../components/customisesection/customisesection';
 import MovableSectionWithBackgrounds from '../../components/secoendbanner/secoendbanner';
 import TrendingProducts from '../../components/trendingproducts/trendingproducts';
-import TraditionalTShirtSection from '../../components/productadvertisement/productadvertisement';
-import WelcomePage from '../../components/welcomenote/welcomenote';
-import Footer from '../../components/footer/footer';
+// Uncomment if needed
+// import TraditionalTShirtSection from '../../components/productadvertisement/productadvertisement';
+// import WelcomePage from '../../components/welcomenote/welcomenote';
+// import Footer from '../../components/footer/footer';
 
-function Page() {
+export default function Page() {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AnnouncementBar />
-      <Header />
-      <BannerSection />
-      <TShirtGrid />
-      <TshirtCustomizeSection />
-      <MovableSectionWithBackgrounds />
-      <TrendingProducts />
-      <TraditionalTShirtSection />
-      <WelcomePage />
-      <Footer />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <AnnouncementBar />
+        <Header />
+        <BannerSection />
+        <TShirtGrid />
+        <TshirtCustomizeSection />
+        <MovableSectionWithBackgrounds />
+        <TrendingProducts />
+        {/* <TraditionalTShirtSection />
+        <WelcomePage />
+        <Footer /> */}
+      </div>
     </QueryClientProvider>
   );
 }
-
-export default Page;

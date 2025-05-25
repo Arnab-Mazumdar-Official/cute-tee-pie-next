@@ -52,6 +52,7 @@ const ReferralModal = ({
 
   const bgColor = isDark ? '#fff' : '#000';
   const textColor = isDark ? '#000' : '#fff';
+  const headerColor = isDark ? '#fff': '#000';
   const borderColor = textColor;
 
   const handleGenerate = () => {
@@ -122,7 +123,7 @@ const ReferralModal = ({
               fontWeight="bold"
               textAlign="center"
               sx={{
-                color: '#2196f3',
+                color: headerColor,
                 background: isDark ? '#000' : '#fff',
                 borderRadius: 2,
                 height: '37px',
@@ -139,8 +140,8 @@ const ReferralModal = ({
               }}
             >
               <Box sx={{ pl: 1 }}>
-                <Typography sx={{ color: '#f44336' }}>
-                  • Once you make your first purchase, you become a part of our family — and that’s when your referral code will be unlocked!.
+                <Typography sx={{ color: textColor }}>
+                  • Once you signed up, you become a part of our family — and that’s when your referral code will be unlocked!.
                 </Typography>
                 <Typography sx={{ color: textColor }}>
                   • Friends get <span style={{ color: isDark ? 'Black' : '#ffeb3b' }}>₹30</span> off using your code for every single product.
@@ -163,7 +164,7 @@ const ReferralModal = ({
             >
               {referralCode ? (
                 <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="h6" sx={{ color: '#2196f3' }}>
+                  <Typography variant="h6" sx={{ color: textColor }}>
                     Your Referral Code:
                   </Typography>
                   <Typography variant="h4" fontWeight="bold" sx={{ color: isDark ? 'Black' : '#ffeb3b' }}>
@@ -172,7 +173,7 @@ const ReferralModal = ({
                 </Box>
               ) : (
                 <>
-                  <Typography fontWeight="bold" sx={{ color: '#2196f3' }}>
+                  <Typography fontWeight="bold" sx={{ color: textColor }}>
                     Choose how you want to receive your rewards:
                   </Typography>
 

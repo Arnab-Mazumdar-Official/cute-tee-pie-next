@@ -6,6 +6,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import ThemeProviderWrapper from '../../components/theamprovider/theamprovider';
 import RootLayoutInner from '../../components/rootlayout/rootlayout';
+import QueryProvider from '../../components/QueryProvider/QueryProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -21,6 +22,9 @@ export const metadata: Metadata = {
   title: 'Prin Tee Pal – Custom T-Shirts & Apparel',
   description:
     'Discover unique and high-quality custom t-shirts at Prin Tee Pal. Perfect for individuals and businesses. Style meets comfort with every print!',
+  icons: {
+    icon: '/customise image/27250cb0-6277-43fb-9fce-ba82a97cc364-modified.png',
+  },
   metadataBase: new URL('https://prin-tee-pal.d28tf79avao1gk.amplifyapp.com/'),
   robots: {
     index: true,
@@ -85,10 +89,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Script>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <QueryProvider>
         <ThemeProviderWrapper>
           <RootLayoutInner>{children}</RootLayoutInner>
         </ThemeProviderWrapper>
         <WhatsAppButton />
+        </QueryProvider>
       </body>
     </html>
   );

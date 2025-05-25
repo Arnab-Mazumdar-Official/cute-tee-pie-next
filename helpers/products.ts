@@ -495,6 +495,96 @@ export async function getProductByid(product_id: string) {
   }
 }
 
+export async function usercollectionList({ skip = 0, limit = 6 }) {
+  console.log("product List Debug 1");
+
+  await dbConnect();
+  console.log("product List Debug 2");
+
+  // const skip = page * limit;
+
+  const [category, total] = await Promise.all([
+    products.aggregate([
+      {
+        '$lookup': {
+          'from': 'collections',
+          'let': {
+            'collectionIdObject': {
+              '$cond': {
+                'if': {
+                  '$and': [
+                    {
+                      '$gt': [
+                        {
+                          '$strLenBytes': '$collectionId'
+                        }, 0
+                      ]
+                    }, {
+                      '$regexMatch': {
+                        'input': '$collectionId',
+                        'regex': new RegExp('^[a-fA-F0-9]{24}$')
+                      }
+                    }
+                  ]
+                },
+                'then': {
+                  '$toObjectId': '$collectionId'
+                },
+                'else': null
+              }
+            }
+          },
+          'pipeline': [
+            {
+              '$match': {
+                '$expr': {
+                  '$eq': [
+                    '$_id', '$$collectionIdObject'
+                  ]
+                }
+              }
+            }
+          ],
+          'as': 'collection_data'
+        }
+      },
+      {
+        '$project': {
+          'title': 1,
+          'active': 1,
+          'image': '$thumbnail_url',
+          'slug': '$slug',
+          'createdOn': {
+            '$dateToString': {
+              'format': '%Y-%m-%d',
+              'date': {
+                '$toDate': '$created_on'
+              }
+            }
+          },
+          'category': {
+            '$ifNull': [
+              {
+                '$arrayElemAt': [
+                  '$collection_data.title', 0
+                ]
+              }, 'Not Found'
+            ]
+          }
+        }
+      },
+      { $skip: skip },
+      { $limit: limit }
+    ]),
+    products.countDocuments()
+  ]);
+
+  console.log("product List Debug 3");
+
+  return { category, total };
+}
+
+
 
 
   
