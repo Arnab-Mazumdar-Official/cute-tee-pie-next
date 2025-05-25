@@ -114,6 +114,7 @@ const TShirtGrid = () => {
             borderRadius: 4,
             px: 2,
             py: 0.5,
+            width:"180px",
             "&:hover": {
               backgroundColor: isDarkMode ? "#222" : "#eee",
               color: "#d32f2f",

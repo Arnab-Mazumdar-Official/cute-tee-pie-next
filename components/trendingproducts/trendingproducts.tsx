@@ -150,6 +150,15 @@ export default function ProductList() {
             grid-template-columns: repeat(2, minmax(45%, 1fr));
           }
         }
+        @media (max-height: 589px) {
+          .product-card {
+            min-height: 300px;
+          }
+
+          .product-card .image-border {
+            min-height: 200px;
+          }
+        }
       `}</style>
     </div>
   );
@@ -172,11 +181,16 @@ const styles = {
   },
   card: {
     cursor: 'pointer',
+    minHeight: '250px', // Prevent shrinking on small viewports
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   imageWrapper: {
     width: '100%',
-    paddingTop: '100%',
+    paddingTop: '100%', // keeps it square
     position: 'relative',
+    minHeight: '200px', // ensures it doesn't shrink vertically
   },
   image: {
     position: 'absolute',
