@@ -20,7 +20,6 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import Header from '../header/header';
-import TrendingProducts from '../trendingproducts/trendingproducts';
 import WelcomePage from '../welcomenote/welcomenote';
 import Footer from '../footer/footer';
 import Cookies from 'js-cookie';
@@ -29,6 +28,7 @@ import CartDrawer from '../cart/cart';
 import { useTheme } from '@mui/material/styles';
 import AnnouncementBar from '../anouncement/announcement';
 import LoginNeeded from '../loginneed/loginneed';
+import TShirtGrid from '../collections/collections';
 
 const Transition = React.forwardRef(function Transition(
     props: any,
@@ -501,7 +501,7 @@ export default function ProductDetails({ product }: { product: any }) {
           {snackbarMessage}
         </Alert >
       </Snackbar>
-      <TrendingProducts />
+      <TShirtGrid />
       <WelcomePage />
       <Footer />
       <CartDrawer open={openCart} onClose={() => setOpenCart(false)} />

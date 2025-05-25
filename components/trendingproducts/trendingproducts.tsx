@@ -1,18 +1,21 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
-import Link from 'next/link';
-import Skeleton from '@mui/material/Skeleton';
 import { useRouter } from 'next/navigation';
+import Skeleton from '@mui/material/Skeleton';
 
 const fetchProducts = async ({ pageParam = 0 }) => {
   const res = await fetch(`/api/user-product-list?page=${pageParam}&limit=6`);
   const data = await res.json();
+
+  const products = data.data.category.slice(0, 6);
+  const hasMore = products.length === 6;  // If less than 6 returned, no more products
+
   return {
-    products: data.data.category.slice(0, 6),
-    hasMore: data.data.category.length === 6,
+    products,
+    hasMore,
   };
 };
 
@@ -21,134 +24,134 @@ export default function ProductList() {
     data,
     fetchNextPage,
     hasNextPage,
-    isFetchingNextPage,
     status,
   } = useInfiniteQuery({
     queryKey: ['products'],
     queryFn: fetchProducts,
     initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.hasMore ? allPages.length : undefined;
-    },
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.hasMore ? allPages.length : undefined,
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 30 * 60 * 1000,
   });
 
   const { ref, inView } = useInView();
   const router = useRouter();
+  const throttleRef = useRef(false);
 
   const handleClick = (productname: string) => {
-      const route = `/blog/${productname}`;
-      router.push(route);
-    };
+    const route = `/blog/${productname}`;
+    router.push(route);
+  };
 
   useEffect(() => {
-    if (inView && hasNextPage) {
+    if (inView && hasNextPage && !throttleRef.current) {
       fetchNextPage();
+      throttleRef.current = true;
+      setTimeout(() => {
+        throttleRef.current = false;
+      }, 1000); // throttle: max 1 fetch per second
     }
   }, [inView, hasNextPage, fetchNextPage]);
 
-  const allProducts = data?.pages.flatMap(page => page.products) ?? [];
+  const allProducts = data?.pages.flatMap((page) => page.products) ?? [];
 
   return (
     <div style={styles.container}>
-        <h2 style={styles.heading}>Our Best Selling T-Shirt</h2>
-        <div style={styles.gridContainer} className="product-grid">
-          {status === 'loading'
-            ? Array.from({ length: 6 }).map((_, idx) => (
-                <div key={idx} style={styles.card}>
+      <h2 style={styles.heading}>Explore More To Set Your Wardrobe</h2>
+      <div style={styles.gridContainer} className="product-grid">
+        {status === 'loading'
+          ? Array.from({ length: 6 }).map((_, idx) => (
+              <div key={idx} style={styles.card}>
+                <div className="image-border">
+                  <Skeleton
+                    variant="rectangular"
+                    width="100%"
+                    height={0}
+                    sx={{ paddingTop: '100%' }}
+                  />
+                </div>
+                <Skeleton variant="text" width="80%" height={30} />
+              </div>
+            ))
+          : allProducts.map((product, idx) => (
+              <div
+                onClick={() => handleClick(product.slug)}
+                key={idx}
+                style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+              >
+                <div style={styles.card}>
                   <div className="image-border">
-                    <Skeleton
-                      variant="rectangular"
-                      width="100%"
-                      height={0}
-                      sx={{ paddingTop: '100%' }}
-                    />
-                  </div>
-                  <Skeleton variant="text" width="80%" height={30} />
-                </div>
-              ))
-            : allProducts.map((product, idx) => (
-                <div
-                  onClick={() => handleClick(product.slug)}
-                  key={idx}
-                  style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
-                >
-                  <div style={styles.card}>
-                    <div className="image-border">
-                      <div style={styles.imageWrapper}>
-                        <img
-                          src={product.image}
-                          alt={product.title}
-                          style={styles.image}
-                        />
-                      </div>
+                    <div style={styles.imageWrapper}>
+                      <img
+                        src={product.image}
+                        alt={product.title}
+                        style={styles.image}
+                      />
                     </div>
-                    <div style={styles.title}>{product.title}</div>
                   </div>
+                  <div style={styles.title}>{product.title}</div>
                 </div>
-              ))}
-          {hasNextPage && (
-            <div ref={ref} style={{ width: '100%' }}>
-              <Skeleton
-                variant="rectangular"
-                width="100%"
-                height={0}
-                sx={{ paddingTop: '100%' }}
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Theme & Responsive Grid Styles */}
-        <style jsx>{`
-          .image-border {
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid black;
-          }
-
-          body.dark .image-border {
-            border: 2px solid white;
-          }
-
-          body.dark {
-            background-color: black;
-            color: white;
-          }
-
-          body:not(.dark) {
-            background-color: white;
-            color: black;
-          }
-
-          .product-grid {
-            display: grid;
-            gap: 32px;
-            padding: 0 20px;
-          }
-
-          /* 6 columns for large screens */
-          @media (min-width: 1232px) {
-            .product-grid {
-              grid-template-columns: repeat(6, 1fr);
-            }
-          }
-
-          /* Auto-fit for mid-range screens */
-          @media (max-width: 1231px) and (min-width: 577px) {
-            .product-grid {
-              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            }
-          }
-
-          /* 2 columns minimum on small screens */
-          @media (max-width: 576px) {
-            .product-grid {
-              grid-template-columns: repeat(2, minmax(45%, 1fr));
-            }
-          }
-        `}</style>
+              </div>
+            ))}
+        {hasNextPage && (
+          <div ref={ref} style={{ width: '100%' }}>
+            <Skeleton
+              variant="rectangular"
+              width="100%"
+              height={0}
+              sx={{ paddingTop: '100%' }}
+            />
+          </div>
+        )}
       </div>
 
+      <style jsx>{`
+        .image-border {
+          border-radius: 12px;
+          overflow: hidden;
+          border: 2px solid black;
+        }
+
+        body.dark .image-border {
+          border: 2px solid white;
+        }
+
+        body.dark {
+          background-color: black;
+          color: white;
+        }
+
+        body:not(.dark) {
+          background-color: white;
+          color: black;
+        }
+
+        .product-grid {
+          display: grid;
+          gap: 32px;
+          padding: 0 20px;
+        }
+
+        @media (min-width: 1232px) {
+          .product-grid {
+            grid-template-columns: repeat(6, 1fr);
+          }
+        }
+
+        @media (max-width: 1231px) and (min-width: 577px) {
+          .product-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          }
+        }
+
+        @media (max-width: 576px) {
+          .product-grid {
+            grid-template-columns: repeat(2, minmax(45%, 1fr));
+          }
+        }
+      `}</style>
+    </div>
   );
 }
 
@@ -165,7 +168,6 @@ const styles = {
   gridContainer: {
     display: 'grid',
     gap: '32px',
-    // maxWidth: '1200px',
     margin: '0 auto',
   },
   card: {
@@ -191,4 +193,3 @@ const styles = {
     textAlign: 'center',
   },
 };
-
