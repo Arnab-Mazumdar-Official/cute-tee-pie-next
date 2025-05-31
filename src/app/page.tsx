@@ -10,10 +10,9 @@ import TShirtGrid from '../../components/collections/collections';
 import TshirtCustomizeSection from '../../components/customisesection/customisesection';
 import MovableSectionWithBackgrounds from '../../components/secoendbanner/secoendbanner';
 import TrendingProducts from '../../components/trendingproducts/trendingproducts';
-// Uncomment if needed
 // import TraditionalTShirtSection from '../../components/productadvertisement/productadvertisement';
 // import WelcomePage from '../../components/welcomenote/welcomenote';
-// import Footer from '../../components/footer/footer';
+import Footer from '../../components/footer/footer';
 
 export default function Page() {
   const [queryClient] = useState(() => new QueryClient());
@@ -28,9 +27,9 @@ export default function Page() {
         <TshirtCustomizeSection />
         <MovableSectionWithBackgrounds />
         <TrendingProducts />
-        {/* <TraditionalTShirtSection />
-        <WelcomePage />
-        <Footer /> */}
+        {/* <TraditionalTShirtSection /> */}
+        {/* <WelcomePage /> */}
+        <Footer />
       </div>
     </QueryClientProvider>
   );

@@ -12,8 +12,14 @@ import {
   Divider,
   useTheme,
   Slide,
+  IconButton,
 } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ShareIcon from '@mui/icons-material/Share'
+import CloseIcon from '@mui/icons-material/Close';
+import Tooltip from '@mui/material/Tooltip';
+
 
 // Define Slide transition component with forwardRef
 const Transition = forwardRef(function Transition(
@@ -105,6 +111,26 @@ const ReferralModal = ({
           alignItems: 'center',
         }}
       >
+        <Tooltip title="Close">
+            <IconButton
+              onClick={onClose}
+              sx={{
+                position: 'absolute',
+                top: 8,
+                right: 8,
+                backgroundColor: isDark ? '#000' : '#fff',
+                color: isDark ? '#fff' : '#000',
+                borderRadius: '9px',
+                '&:hover': {
+                  backgroundColor: isDark ? '#111' : '#f0f0f0',
+                },
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
+
+
         <Box
           sx={{
             backgroundColor: bgColor,
@@ -163,14 +189,43 @@ const ReferralModal = ({
               }}
             >
               {referralCode ? (
-                <Box sx={{ textAlign: 'center' }}>
+                <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center' }}>
                   <Typography variant="h6" sx={{ color: textColor }}>
                     Your Referral Code:
                   </Typography>
                   <Typography variant="h4" fontWeight="bold" sx={{ color: isDark ? 'Black' : '#ffeb3b' }}>
                     {referralCode}
                   </Typography>
+
+                  <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+                    <IconButton
+                        onClick={async () => {
+                          await navigator.clipboard.writeText(referralCode);
+                          alert('Referral code copied!');
+                        }}
+                        sx={{ color: textColor }} // ← Only color, no background
+                      >
+                        <ContentCopyIcon />
+                      </IconButton>
+
+                      {'share' in navigator && (
+                        <IconButton
+                          onClick={() => {
+                            navigator.share({
+                              title: 'Join and get ₹30 off!',
+                              text: `Use my referral code "${referralCode}" to get ₹30 off on your order!`,
+                              url: window.location.href,
+                            });
+                          }}
+                          sx={{ color: textColor }} // ← Only color, no background
+                        >
+                          <ShareIcon />
+                        </IconButton>
+                      )}
+
+                  </Box>
                 </Box>
+
               ) : (
                 <>
                   <Typography fontWeight="bold" sx={{ color: textColor }}>

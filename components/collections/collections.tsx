@@ -20,6 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import ComingSoonModal from "../commingsoon/commingsoon";
 import Skeleton from '@mui/material/Skeleton';
+import { useRouter } from "next/navigation";
 
 type TShirtItem = {
   title: string;
@@ -27,7 +28,7 @@ type TShirtItem = {
 };
 
 const fetchCollections = async (): Promise<TShirtItem[]> => {
-  const res = await axios.get("/api/collections-list");
+  const res = await axios.get("/api/user-collections-list");
   console.log("API response:", res.data);
   return res.data.data.category || [];
 };
@@ -36,6 +37,7 @@ const TShirtGrid = () => {
   const swiperRef = useRef<SwiperCore | null>(null);
   const [openModal, setOpenModal] = useState(false);
   const theme = useTheme();
+  const router = useRouter();
   
   const isDark = theme.palette.mode === 'dark';
   const bgColor = isDark ? '#000' : '#fff';
@@ -52,7 +54,13 @@ const TShirtGrid = () => {
   
   const items = Array.isArray(data) ? data : [];
 
-  const handleCardClick = () => setOpenModal(true);
+  // const handleCardClick = () => setOpenModal(true);
+  const handleCardClick = () => {
+    router.push(`/collection`)
+  };
+  const handleClick = (slug: string) => {
+    router.push(`/products-under/${slug}`);
+  };
   const handleCloseModal = () => setOpenModal(false);
 
 
@@ -143,7 +151,7 @@ const TShirtGrid = () => {
         {items.map((item, index) => (
           <SwiperSlide key={index}>
             <Box
-              onClick={handleCardClick}
+              onClick={() => handleClick(item._id)}
               sx={{
                 cursor: 'pointer',
                 width: '100%',

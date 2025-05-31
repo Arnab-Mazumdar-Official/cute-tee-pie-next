@@ -66,9 +66,9 @@ export default function ProductGrid() {
       setProducts(productsData.map(product => ({ ...product, active: true })));
     }, [productsData]);
 
-  const handleToggle = (prodIndex: number) => {
+  const handleToggle = (index: number) => {
     const updated = [...products];
-    updated[prodIndex].active = !updated[prodIndex].active;
+    updated[index].active = !updated[index].active;
     setProducts(updated);
   };
 
@@ -326,8 +326,16 @@ export default function ProductGrid() {
                         </Box>
                         <Box>
                           <FormControlLabel
-                            control={<Checkbox checked={product.active} onChange={() => handleToggle(index)} />}
-                            label="Active"
+                            control={
+                              <Checkbox
+                                checked={product.active}
+                                onChange={() => handleToggle(index)}
+                                color="primary"
+                                size="small" // smaller checkbox
+                              />
+                            }
+                            label={product.active ? 'Active' : 'Inactive'}
+                            sx={{ '.MuiFormControlLabel-label': { fontSize: '0.75rem' } }} // smaller label text
                           />
                           <Button variant="outlined" size="small" fullWidth sx={{ mt: '0 !important' , mb: 3 }} onClick={() => handleClick(product.slug)}>View</Button>
                         </Box>

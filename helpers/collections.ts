@@ -38,6 +38,32 @@ export async function collectionList() {
  
     return { message: 'Category created', category };
   }
+export async function usercollectionList() {
+    await dbConnect();
+ 
+    const category = await collections.aggregate([
+      {
+        '$match':{
+          active:true
+        }
+      },
+        {
+          $project: {
+            title: 1,
+            active: 1,
+            image: "$imageUrl",
+            createdOn: {
+              $dateToString: {
+                format: "%Y-%m-%d",
+                date: { $toDate: "$created_on" }
+              }
+            }
+          }
+        }
+      ]);
+ 
+    return { message: 'Category created', category };
+  }
 
 
 
@@ -68,6 +94,46 @@ export async function updateCategory(_id: string, body: any) {
 
 
   return { message: 'Category updated', category: updatedCategory };
+}
+
+
+export async function userallcollectionList({ skip = 0, limit = 6 }) {
+  console.log("product List Debug 1");
+
+  await dbConnect();
+  console.log("product List Debug 2");
+
+  // const skip = page * limit;
+
+  const [category, total] = await Promise.all([
+    collections.aggregate([
+      {
+        '$match':{
+          active:true
+        }
+      },
+      {
+          $project: {
+            title: 1,
+            active: 1,
+            image: "$imageUrl",
+            createdOn: {
+              $dateToString: {
+                format: "%Y-%m-%d",
+                date: { $toDate: "$created_on" }
+              }
+            }
+          }
+        },
+      { $skip: skip },
+      { $limit: limit }
+    ]),
+    collections.countDocuments({active:true})
+  ]);
+
+  console.log("product List Debug 3");
+
+  return { category, total };
 }
 
 

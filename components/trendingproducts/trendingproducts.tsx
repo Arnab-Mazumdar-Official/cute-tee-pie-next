@@ -113,8 +113,8 @@ export default function ProductList() {
           border: 2px solid black;
         }
 
-        body.dark .image-border {
-          border: 2px solid white;
+        :global(html.dark) .image-border {
+          border-color: white; /* override in dark mode */
         }
 
         body.dark {

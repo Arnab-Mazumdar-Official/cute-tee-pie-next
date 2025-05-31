@@ -584,6 +584,189 @@ export async function usercollectionList({ skip = 0, limit = 6 }) {
   return { category, total };
 }
 
+export async function productListByCategory({
+  categoryId,
+  skip = 0,
+  limit = 6,
+}: {
+  categoryId: string;
+  skip?: number;
+  limit?: number;
+}) {
+  console.log("Product List Debug 1");
+
+  await dbConnect();
+  console.log("Product List Debug 2");
+
+  // Check if categoryId is a valid ObjectId string
+  const isValidObjectId = categoryId && categoryId.match(/^[0-9a-fA-F]{24}$/);
+  if (!isValidObjectId) {
+    throw new Error('Invalid categoryId');
+  }
+
+  const objectId = new mongoose.Types.ObjectId(categoryId);
+
+  const [productsList, total] = await Promise.all([
+    products.aggregate([
+      {
+        $match: {
+          collectionId: categoryId,
+          active:true
+        }
+      },
+      {
+        $lookup: {
+          from: 'collections',
+          let: {
+            collectionIdObject: {
+              $cond: {
+                if: {
+                  $and: [
+                    { $gt: [{ $strLenBytes: '$collectionId' }, 0] },
+                    {
+                      $regexMatch: {
+                        input: '$collectionId',
+                        regex: /^[a-fA-F0-9]{24}$/
+                      }
+                    }
+                  ]
+                },
+                then: { $toObjectId: '$collectionId' },
+                else: null
+              }
+            }
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$collectionIdObject']
+                }
+              }
+            }
+          ],
+          as: 'collection_data'
+        }
+      },
+      {
+        $project: {
+          title: 1,
+          active: 1,
+          image: '$thumbnail_url',
+          slug: '$slug',
+          createdOn: {
+            $dateToString: {
+              format: '%Y-%m-%d',
+              date: { $toDate: '$created_on' }
+            }
+          },
+          category: {
+            $ifNull: [
+              { $arrayElemAt: ['$collection_data.title', 0] },
+              'Not Found'
+            ]
+          }
+        }
+      },
+      { $skip: skip },
+      { $limit: limit }
+    ]),
+    products.countDocuments({ collectionId: categoryId,active:true })
+  ]);
+
+  console.log("Product List Debug 3");
+
+  return { products: productsList, total };
+}
+
+export async function productListByType({
+  type,
+  skip = 0,
+  limit = 6,
+}: {
+  type: string;
+  skip?: number;
+  limit?: number;
+}) {
+  console.log("Product List Debug 1");
+
+  await dbConnect();
+  console.log("Product List Debug 2");
+
+
+  const [productsList, total] = await Promise.all([
+    products.aggregate([
+      {
+        $match: {
+          type: type,
+          active:true
+        }
+      },
+      {
+        $lookup: {
+          from: 'collections',
+          let: {
+            collectionIdObject: {
+              $cond: {
+                if: {
+                  $and: [
+                    { $gt: [{ $strLenBytes: '$collectionId' }, 0] },
+                    {
+                      $regexMatch: {
+                        input: '$collectionId',
+                        regex: /^[a-fA-F0-9]{24}$/
+                      }
+                    }
+                  ]
+                },
+                then: { $toObjectId: '$collectionId' },
+                else: null
+              }
+            }
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$collectionIdObject']
+                }
+              }
+            }
+          ],
+          as: 'collection_data'
+        }
+      },
+      {
+        $project: {
+          title: 1,
+          active: 1,
+          image: '$thumbnail_url',
+          slug: '$slug',
+          createdOn: {
+            $dateToString: {
+              format: '%Y-%m-%d',
+              date: { $toDate: '$created_on' }
+            }
+          },
+          category: {
+            $ifNull: [
+              { $arrayElemAt: ['$collection_data.title', 0] },
+              'Not Found'
+            ]
+          }
+        }
+      },
+      { $skip: skip },
+      { $limit: limit }
+    ]),
+    products.countDocuments({ type: type,active:true })
+  ]);
+
+  console.log("Product List Debug 3");
+
+  return { products: productsList, total };
+}
+
 
 
 
