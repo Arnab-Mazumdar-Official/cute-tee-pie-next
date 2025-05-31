@@ -9,12 +9,13 @@ import {
   useTheme,
 } from "@mui/material";
 import ComingSoonModal from '../commingsoon/commingsoon';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import FeatureCards from "../featureCard/featurecard";
 import ScrollingOffers from "../scrollingoffers/scrollingoffers";
 import ReferralModal from "../referralsection/referralsection";
 import Cookies from 'js-cookie';
 import LoginNeeded from '../loginneed/loginneed';
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 
 const AnimatedButton = motion(Button);
 
@@ -39,9 +40,16 @@ const BannerSection = () => {
   const [openLogineed, setOpenLogineed] = useState(false);
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
+  const imageArray = [
+  'referrel_images/f5005dbc-38e0-42b3-a754-f450f49ff8aa.jpeg',
+  'referrel_images/f3cd8874-2a18-4327-af78-3460fd4e7610.jpeg',
+  'customise image/-q74ZP7iRHiWD2s9nio2cg.jpeg'
+];
+const [leftImageIndex, setLeftImageIndex] = useState(0);
+const [rightImageIndex, setRightImageIndex] = useState(1); // start with a different one
 
   useEffect(() => {
-      const cookie = Cookies.get('user_login_data');
+     const cookie = Cookies.get('user_login_data');
       if (cookie) {
         try {
           const user = JSON.parse(cookie);
@@ -51,7 +59,29 @@ const BannerSection = () => {
           console.error('Failed to parse user_login_data cookie:', error);
         }
       }
-    }, []);
+    const interval = setInterval(() => {
+      setLeftImageIndex((prevLeft) => {
+        let nextLeft = (prevLeft + 1) % imageArray.length;
+
+        if (nextLeft === rightImageIndex) {
+          nextLeft = (nextLeft + 1) % imageArray.length;
+        }
+        return nextLeft;
+      });
+
+      setRightImageIndex((prevRight) => {
+        let nextRight = (prevRight + 1) % imageArray.length;
+
+        if (nextRight === leftImageIndex) {
+          nextRight = (nextRight + 1) % imageArray.length;
+        }
+        return nextRight;
+      });
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [leftImageIndex, rightImageIndex]);
+
 
   const handleGenerateReferral = async (referral_payment_method: object) => {
   try {
@@ -135,6 +165,16 @@ const BannerSection = () => {
     else if (is430 && !is380) (imageHeight = 381), (knowMoreButtom = 15), (paddingButtomKnow = 0.5);
     else if (is380) (imageHeight = 331), (knowMoreButtom = 6), (paddingButtomKnow = 0.4);
   }
+  
+
+const slideVariants = {
+  initial: { x: '100%', opacity: 0 },
+  animate: { x: 0, opacity: 1 },
+  exit: { x: '-100%', opacity: 0 },
+  transition: { duration: 0.8, ease: 'easeInOut' },
+};
+
+
 
   const handleClick = () => {
     const cookie = Cookies.get('user_login_data');
@@ -170,43 +210,36 @@ const BannerSection = () => {
                 transition={fadeInUp.transition}
                 style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
               >
-                <Box
-                  component="img"
-                  src="referrel_images/f5005dbc-38e0-42b3-a754-f450f49ff8aa.jpeg"
-                  alt="T-shirt left"
-                  sx={{
-                    width: 801,
-                    height: imageHeight,
-                    objectFit: "cover",
-                    borderRadius: 2,
-                  }}
-                />
-              </motion.div>
+                <Box  sx={{
+                  position: 'relative',
+                  width: '100%',
+                  height: imageHeight,
+                  overflow: 'hidden', // <-- ensures sliding stays inside
+                }}>
+  
+                <motion.img
+                      key={imageArray[leftImageIndex]} // or rightImageIndex
+                      src={imageArray[leftImageIndex]}
+                      alt="T-shirt image"
+                      variants={slideVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={slideVariants.transition}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        borderRadius: 8,
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                      }}
+                    />
 
-              {/* Button on small screens */}
-              {!isLargeScreen && (
-                <AnimatedButton
-                  whileTap={{ scale: 0.95 }}
-                  variant="contained"
-                  onClick={handleClick}
-                  sx={{
-                    position: 'absolute',
-                    bottom: knowMoreButtom,
-                    backgroundColor: textColor,
-                    color: backgroundColor,
-                    fontWeight: 'bold',
-                    px: 4,
-                    py: 1.5,
-                    pb: paddingButtomKnow,
-                    width: 300,
-                    "&:hover": {
-                      backgroundColor: isDark ? "#333" : "#ddd",
-                    },
-                  }}
-                >
-                  Know More
-                </AnimatedButton>
-              )}
+                  </Box>
+
+              </motion.div>
             </Grid>
 
             {/* Text and Right Image (only for large screen) */}
@@ -250,7 +283,7 @@ const BannerSection = () => {
                           },
                         }}
                       >
-                        Know More
+                        Show Me How
                       </AnimatedButton>
                     </motion.div>
                   </Grid>
@@ -266,22 +299,90 @@ const BannerSection = () => {
                     transition={fadeInUp.transition}
                     style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
                   >
-                    <Box
-                      component="img"
-                      src="referrel_images/f3cd8874-2a18-4327-af78-3460fd4e7610.jpeg"
-                      alt="T-shirt right"
-                      sx={{
-                        width: 843,
-                        height: imageHeight,
-                        objectFit: "cover",
-                        borderRadius: 2,
+                    <Box  sx={{
+                  position: 'relative',
+                  width: '100%',
+                  height: imageHeight,
+                  overflow: 'hidden', // <-- ensures sliding stays inside
+                }}>
+  
+                <motion.img
+                      key={imageArray[rightImageIndex]} // or rightImageIndex
+                      src={imageArray[rightImageIndex]}
+                      alt="T-shirt image"
+                      variants={slideVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={slideVariants.transition}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        borderRadius: 8,
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
                       }}
                     />
+
+                  </Box>
+
+
                   </motion.div>
                 </Grid>
               </>
             )}
           </Grid>
+
+          {/* Referral section only for xs & sm */}
+          <Box
+            sx={{
+              display: { xs: 'flex', md: 'none' },
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              border: `2px dashed ${isDark ? '#4caf50' : '#2e7d32'}`,
+              borderRadius: 3,
+              p: 3,
+              mx: 2,
+              mt:3,
+              backgroundColor: isDark ? '#111' : '#f5f5f5',
+              color: isDark ? '#fff' : '#000',
+              cursor: 'pointer',
+              transition: 'transform 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.03)',
+                backgroundColor: isDark ? '#1a1a1a' : '#e8f5e9',
+              },
+            }}
+            component={motion.div}
+            variants={fadeInUp}
+            initial="initial"
+            whileInView="whileInView"
+            exit="exit"
+            viewport={{ once: false, amount: 0.3 }}
+            transition={fadeInUp.transition}
+          >
+            <GroupAddIcon sx={{ fontSize: 40, color: isDark ? '#4caf50' : '#2e7d32', mb: 1 }} />
+            <Typography fontWeight="bold" fontSize={{ xs: 14, sm: 16 }}>
+              Invite & Earn with Referrals!
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 1, mb: 2 }}>
+              Get exclusive discounts when your friends shop through your referral.
+            </Typography>
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              onClick={() => {
+                handleClick();
+              }}
+            >
+              Show Me How
+            </Button>
+          </Box>
 
           {/* Features */}
           <motion.div

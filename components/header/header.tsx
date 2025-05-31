@@ -161,7 +161,7 @@ export default function ResponsiveHeader() {
           {/* Right Side: Theme Toggle */}
           {/* Right Side: Theme Toggle + Home Icon */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <ThemeToggle />
+            
             <Tooltip title="Cart" arrow>
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <MotionButton onClick={openCartSection}>
@@ -169,6 +169,7 @@ export default function ResponsiveHeader() {
                 </MotionButton>
               </motion.div>
             </Tooltip>
+            <ThemeToggle />
             
           </Box>
 

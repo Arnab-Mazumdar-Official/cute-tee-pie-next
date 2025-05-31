@@ -19,9 +19,9 @@ export default function ThemeToggle() {
         color: mode === 'light' ? 'white' : 'white',
       }}
     >
-      <Typography variant="body2">
+      {/* <Typography variant="body2">
         {mode === 'light' ? 'Light Mode' : 'Dark Mode'}
-      </Typography>
+      </Typography> */}
       <IconButton onClick={toggleTheme} color="inherit">
         {mode === 'light' ?<LightModeIcon />:<DarkModeIcon />}
       </IconButton>
