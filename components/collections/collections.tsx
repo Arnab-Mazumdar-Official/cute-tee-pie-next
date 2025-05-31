@@ -86,7 +86,7 @@ const TShirtGrid = () => {
         {[...Array(boxCount)].map((_, idx) => (
           <Box key={idx} sx={{ width: 200, flexShrink: 0 }}>
             <Skeleton variant="rectangular" width="100%" height={200} sx={{ borderRadius: 2 }} />
-            <Skeleton variant="text" sx={{ mt: 1 }} />
+            {/* <Skeleton variant="text" sx={{ mt: 1 }} /> */}
           </Box>
         ))}
       </Box>

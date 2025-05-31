@@ -9,19 +9,22 @@ import {
   CardMedia,
   CardContent,
   Skeleton,
+  useTheme,
 } from '@mui/material';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { useRouter, useParams } from 'next/navigation';
 import AnnouncementBar from '../../../../components/anouncement/announcement';
 import Header from '../../../../components/header/header';
+import TShirtGrid from '../../../../components/collections/collections';
+import Footer from '../../../../components/footer/footer';
 
 const fetchProductsByCategory = async ({ pageParam = 0, queryKey }) => {
   const categoryId = queryKey[1];
   const res = await fetch(`/api/product-list-by-category?id=${categoryId}&page=${pageParam}&limit=6`);
   const data = await res.json();
 
-  const products = data.data.products.slice(0, 6); // Adjust depending on your API shape
+  const products = data.data.products.slice(0, 6);
   const hasMore = products.length === 6;
 
   return {
@@ -31,6 +34,7 @@ const fetchProductsByCategory = async ({ pageParam = 0, queryKey }) => {
 };
 
 export default function ProductListByCategory() {
+  const theme = useTheme();
   const params = useParams();
   const categoryId = params.id;
 
@@ -71,7 +75,13 @@ export default function ProductListByCategory() {
   const allProducts = data?.pages.flatMap((page) => page.products) ?? [];
 
   return (
-    <Box>
+    <Box
+      sx={{
+        backgroundColor: theme.palette.mode === 'dark' ? '#000000' : '#ffffff',
+        color: theme.palette.mode === 'dark' ? '#ffffff' : '#000000',
+        minHeight: '100vh',
+      }}
+    >
       <AnnouncementBar />
       <Header />
       <Box sx={{ px: 2, py: 5, textAlign: 'center' }}>
@@ -79,7 +89,6 @@ export default function ProductListByCategory() {
           Explore Products in This Category
         </Typography>
 
-        {/* Show loading skeletons */}
         {status === 'loading' && (
           <Grid container spacing={4}>
             {Array.from({ length: 6 }).map((_, idx) => (
@@ -110,7 +119,6 @@ export default function ProductListByCategory() {
           </Grid>
         )}
 
-        {/* Show no products message if loaded and empty */}
         {status === 'success' && allProducts.length === 0 && (
           <Box sx={{ mt: 10 }}>
             <Typography variant="h6" color="text.secondary">
@@ -119,7 +127,6 @@ export default function ProductListByCategory() {
           </Box>
         )}
 
-        {/* Show products grid */}
         {status === 'success' && allProducts.length > 0 && (
           <Grid container spacing={4}>
             {allProducts.map((product, idx) => (
@@ -131,8 +138,7 @@ export default function ProductListByCategory() {
                   <Box
                     sx={{
                       border: '2px solid',
-                      borderColor: (theme) =>
-                        theme.palette.mode === 'dark' ? 'white' : 'black',
+                      borderColor: theme.palette.mode === 'dark' ? 'white' : 'black',
                       borderRadius: 2,
                       overflow: 'hidden',
                     }}
@@ -172,7 +178,6 @@ export default function ProductListByCategory() {
           </Grid>
         )}
 
-        {/* Infinite scroll loader */}
         {hasNextPage && (
           <Box ref={ref} sx={{ mt: 4 }}>
             <Skeleton
@@ -194,6 +199,8 @@ export default function ProductListByCategory() {
           </Box>
         )}
       </Box>
+      <TShirtGrid />
+      <Footer />
     </Box>
   );
 }

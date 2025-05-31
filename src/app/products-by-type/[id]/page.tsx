@@ -15,6 +15,10 @@ import { useInView } from 'react-intersection-observer';
 import { useRouter, useParams } from 'next/navigation';
 import AnnouncementBar from '../../../../components/anouncement/announcement';
 import Header from '../../../../components/header/header';
+import TShirtGrid from '../../../../components/collections/collections';
+import Footer from '../../../../components/footer/footer';
+import { useTheme } from '@mui/material';
+
 
 const fetchProductsByCategory = async ({ pageParam = 0, queryKey }) => {
   const type = queryKey[1];
@@ -53,6 +57,8 @@ export default function ProductListByCategory() {
   const { ref, inView } = useInView();
   const router = useRouter();
   const throttleRef = useRef(false);
+  const theme = useTheme();
+
 
   const handleClick = (slug: string) => {
     router.push(`/blog/${slug}`);
@@ -71,7 +77,13 @@ export default function ProductListByCategory() {
   const allProducts = data?.pages.flatMap((page) => page.products) ?? [];
 
   return (
-    <Box>
+    <Box
+      sx={{
+        backgroundColor: theme.palette.mode === 'dark' ? '#000000' : '#ffffff',
+        color: theme.palette.mode === 'dark' ? '#ffffff' : '#000000',
+        minHeight: '100vh',
+      }}
+    >
       <AnnouncementBar />
       <Header />
       <Box sx={{ px: 2, py: 5, textAlign: 'center' }}>
@@ -194,6 +206,8 @@ export default function ProductListByCategory() {
           </Box>
         )}
       </Box>
+      <TShirtGrid />
+      <Footer />
     </Box>
   );
 }
