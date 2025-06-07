@@ -127,14 +127,6 @@ export default function ResponsiveHeader() {
               <MenuIcon fontSize="large" />
             </MotionButton>
 
-            {/* Cart Button */}
-            {/* <Tooltip title="Cart" arrow>
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <MotionButton onClick={openCartSection}>
-                  <ShoppingBagOutlinedIcon fontSize="large" />
-                </MotionButton>
-              </motion.div>
-            </Tooltip> */}
             <Tooltip title="Home" arrow>
               <MotionButton onClick={() => router.push('/')}>
                 <HomeIcon fontSize="large" />
@@ -158,8 +150,6 @@ export default function ResponsiveHeader() {
             </Box>
           </Box>
 
-          {/* Right Side: Theme Toggle */}
-          {/* Right Side: Theme Toggle + Home Icon */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             
             <Tooltip title="Cart" arrow>
@@ -198,22 +188,6 @@ export default function ResponsiveHeader() {
       >
         <Box sx={{ p: 2 }}>
               <List>
-                {/* <Typography
-                  variant="h6"
-                  sx={{
-                    px: 2,
-                    p: 2,
-                    bgcolor: 'black',
-                    borderRadius: 5,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    textAlign: 'center',
-                    color: 'white',
-                  }}
-                >
-                  Your Menu
-                </Typography> */}
-                {/* <Divider sx={{ my: 1 }} /> */}
 
                 <ListItem button onClick={() => navigate('/sign-up')}>
                   <ListItemText primary="Sign Up" />
@@ -322,6 +296,20 @@ export default function ResponsiveHeader() {
                   }}
                 >
                   <ListItemText primary="Your Customised T-shirt Orders" />
+                </ListItem>
+                <Divider sx={{ my: 1 }} />
+
+                <ListItem
+                  button
+                  onClick={() => {
+                    if (isLogin) {
+                      navigate('/virtual-try');
+                    } else {
+                      setOpenLogineed(true);
+                    }
+                  }}
+                >
+                  <ListItemText primary="Virtual Trial Room" />
                 </ListItem>
                 <Divider sx={{ my: 1 }} />
 

@@ -12,6 +12,7 @@
     "@aws-sdk/client-s3": "^3.802.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@gradio/client": "^1.15.1",
     "@mui/icons-material": "^6.4.11",
     "@mui/material": "^6.4.11",
     "@mui/x-date-pickers": "^8.2.0",
