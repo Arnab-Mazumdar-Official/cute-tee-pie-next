@@ -33,6 +33,8 @@ export async function POST(req: NextRequest) {
     });
 
     console.log("Result from Gradio:", result);
+    console.log("Result from Gradio:", );
+    console.log(" from Gradio:", );
     const output = result.data as {
         path: string;
         url: string;
