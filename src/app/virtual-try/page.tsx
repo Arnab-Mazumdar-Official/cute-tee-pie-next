@@ -147,85 +147,7 @@ export default function TryOnUploader() {
         Discover your next look instantly and confidently!
       </Typography>
 
-      <Box sx={{ mb: 4 }}>
-        <Typography
-          variant="subtitle1"
-          fontWeight="bold"
-          color={borderColor}
-          mb={2}
-        >
-           👀 Sample Idol Poses & Reference Images <br />
-          <Typography variant="caption" component="span">
-            (Use front-facing, full-body, clear photos and try this type of  poses for the best results)
-          </Typography>
-        </Typography>
-
-        <Stack
-  direction="row"
-  useFlexGap
-  justifyContent="center"
-  alignItems="center"
-  flexWrap="wrap"
-  spacing={0}
-  sx={{
-    rowGap: 3,
-    columnGap: 3,
-  }}
->
-  {[
-    { src: '/vton/-w_QHuw3SFS14Jo3i-jXMQ.jpeg', label: 'Male Example' },
-    { src: '/vton/1E3fdYN9RYWHimhBuYzo_w.jpeg', label: 'Male Example' },
-    { src: '/vton/2mLXWWW4S4mHA44grtFQgA.jpeg', label: 'Male Example' },
-    { src: '/vton/aawIiUoTQJeQxJ17Mez6qA.jpeg', label: 'Male Example' },
-    { src: '/vton/eyST3-ZUSgSog3J-OmixXA.jpeg', label: 'Male Example' },
-    { src: '/vton/gXNiIUXwRD-dev4jiFhg2A.jpeg', label: 'Male Example' },
-    { src: '/vton/wcMYcwTJTjiAKlbo-djYOQ.jpeg', label: 'Male Example' },
-    { src: '/customise_image/human02.jpg', label: 'Female Example' },
-    { src: '/customise_image/human01.jpg', label: 'Female Example' },
-  ].map((item, idx) => (
-    <Box
-      key={idx}
-      sx={{
-        flexBasis: {
-          xs: 'calc(50% - 12px)', // 2 per row on xs
-          sm: 'auto',
-        },
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-      }}
-    >
-      <Box
-        component="img"
-        src={item.src}
-        alt={item.label}
-        sx={{
-          width: { xs: 172, sm: 138, md: 199 },
-          height: { xs: 183, sm: 223, md: 324 },
-          borderRadius: 2,
-          objectFit: 'cover',
-          border: `2px solid ${borderColor}`,
-        }}
-      />
-      <Typography
-        variant="caption"
-        display="block"
-        textAlign="center"
-        mt={1}
-      >
-        {item.label}
-      </Typography>
-    </Box>
-  ))}
-</Stack>
-
-
-
-
       </Box>
-    </Box>
       <Box sx={{ maxWidth: 700, mx: 'auto', px: 3, py: 5, textAlign: 'center', color: isDark ? '#fff' : '#000' }}>
         
         <Box
@@ -534,6 +456,92 @@ export default function TryOnUploader() {
           )}
         </Box>
       </Box>
+      <Box sx={{ mb: 4 }}>
+        <Box
+          sx={{
+            textAlign: 'center',
+            color: isDark ? '#fff' : '#000',
+            bgcolor: isDark ? '#000' : '#fff',
+            borderRadius: '30px',
+            p: 2,
+            mb: 3,
+          }}
+        >
+          <Typography variant="h5" fontWeight="bold" gutterBottom>
+            👀 Sample Idol Poses & Reference Images
+          </Typography>
+          <Typography variant="caption">
+            (Use front-facing, full-body, clear photos and try these types of poses for the best results)
+          </Typography>
+        </Box>
+<Box>
+
+        <Stack
+  direction="row"
+  useFlexGap
+  justifyContent="center"
+  alignItems="center"
+  flexWrap="wrap"
+  spacing={0}
+  sx={{
+    rowGap: 3,
+    columnGap: 3,
+  }}
+>
+  {[
+    { src: '/vton/-w_QHuw3SFS14Jo3i-jXMQ.jpeg', label: 'Male Example' },
+    { src: '/vton/1E3fdYN9RYWHimhBuYzo_w.jpeg', label: 'Male Example' },
+    { src: '/vton/2mLXWWW4S4mHA44grtFQgA.jpeg', label: 'Male Example' },
+    { src: '/vton/aawIiUoTQJeQxJ17Mez6qA.jpeg', label: 'Male Example' },
+    { src: '/vton/eyST3-ZUSgSog3J-OmixXA.jpeg', label: 'Male Example' },
+    { src: '/vton/gXNiIUXwRD-dev4jiFhg2A.jpeg', label: 'Male Example' },
+    { src: '/vton/wcMYcwTJTjiAKlbo-djYOQ.jpeg', label: 'Male Example' },
+    { src: '/customise_image/human02.jpg', label: 'Female Example' },
+    { src: '/customise_image/human01.jpg', label: 'Female Example' },
+  ].map((item, idx) => (
+    <Box
+      key={idx}
+      sx={{
+        flexBasis: {
+          xs: 'calc(50% - 12px)', // 2 per row on xs
+          sm: 'auto',
+        },
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+      }}
+    >
+      <Box
+        component="img"
+        src={item.src}
+        alt={item.label}
+        sx={{
+          width: { xs: 172, sm: 138, md: 199 },
+          height: { xs: 183, sm: 223, md: 324 },
+          borderRadius: 2,
+          objectFit: 'cover',
+          border: `2px solid ${borderColor}`,
+        }}
+      />
+      <Typography
+        variant="caption"
+        display="block"
+        textAlign="center"
+        mt={1}
+      >
+        {item.label}
+      </Typography>
+    </Box>
+  ))}
+</Stack>
+
+
+
+
+      </Box>
+    </Box>
 
       <TShirtGrid />
       <Footer />
