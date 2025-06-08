@@ -26,15 +26,14 @@ export async function POST(req: NextRequest) {
       is_stream: false,
       meta: {},
     };
-
+    console.log("humanInput:", humanInput);
+    console.log("clothInput:", humanInput);
     const result = await client.predict("/process_image", {
       human_img_path: humanInput,
       garm_img_path: clothInput,
     });
 
     console.log("Result from Gradio:", result);
-    console.log("Result from Gradio:", );
-    console.log(" from Gradio:", );
     const output = result.data as {
         path: string;
         url: string;
