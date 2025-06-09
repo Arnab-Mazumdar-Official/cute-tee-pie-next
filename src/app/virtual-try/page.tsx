@@ -17,6 +17,7 @@ import Footer from '../../../components/footer/footer';
 import AnnouncementBar from '../../../components/anouncement/announcement';
 import Header from '../../../components/header/header';
 import TShirtGrid from '../../../components/collections/collections';
+import DownloadIcon from '@mui/icons-material/Download';
 
 export default function TryOnUploader() {
   const theme = useTheme();
@@ -162,62 +163,88 @@ export default function TryOnUploader() {
           {/* Upload Area */}
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={4} justifyContent="center" alignItems="center" mb={4}>
             {/* Human Image Upload */}
-            <Box textAlign="center" width={imageBoxWidth}>
-              <Typography mb={1} fontWeight="600" color={accentYellow}>
-                👤 Your Photo
-              </Typography>
-              {humanImage ? (
-                <Paper
-                  variant="outlined"
-                  sx={{
-                    position: 'relative',
-                    width: imageBoxWidth,
-                    height: imageBoxHeight,
-                    borderColor,
-                    overflow: 'hidden',
-                    borderRadius: 3,
-                  }}
-                >
-                  <img
-                    src={URL.createObjectURL(humanImage)}
-                    alt="Human"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                  <Tooltip title="Remove your photo">
-                    <IconButton
-                      size="small"
-                      onClick={handleDeleteHuman}
-                      sx={{
-                        position: 'absolute',
-                        top: 6,
-                        right: 6,
-                        bgcolor: accentRed,
-                        color: '#fff',
-                        '&:hover': { bgcolor: '#b71c1c' },
-                      }}
-                    >
-                      <CloseIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </Paper>
-              ) : (
-                <Button
-                  variant="outlined"
-                  component="label"
-                  sx={{
-                    color: isDark ? '#fff' : '#000',
-                    borderColor,
-                    width: imageBoxWidth,
-                    height: imageBoxHeight,
-                    borderRadius: 3,
-                    fontWeight: 600,
-                  }}
-                >
-                  Upload
-                  <input hidden accept="image/*" type="file" onChange={handleHumanImageChange} />
-                </Button>
-              )}
-            </Box>
+            {/* Human Image Upload */}
+<Box textAlign="center" width={imageBoxWidth}>
+  <Typography mb={1} fontWeight="600" color={accentYellow}>
+    👤 Your Photo
+  </Typography>
+
+  {humanImage ? (
+    <Paper
+      variant="outlined"
+      sx={{
+        position: 'relative',
+        width: imageBoxWidth,
+        height: imageBoxHeight,
+        borderColor,
+        overflow: 'hidden',
+        borderRadius: 3,
+      }}
+    >
+      <img
+        src={URL.createObjectURL(humanImage)}
+        alt="Human"
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      />
+      <Tooltip title="Remove your photo">
+        <IconButton
+          size="small"
+          onClick={handleDeleteHuman}
+          sx={{
+            position: 'absolute',
+            top: 6,
+            right: 6,
+            bgcolor: accentRed,
+            color: '#fff',
+            '&:hover': { bgcolor: '#b71c1c' },
+          }}
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+    </Paper>
+  ) : (
+    <Stack spacing={1}>
+      <Button
+        variant="outlined"
+        component="label"
+        sx={{
+          color: isDark ? '#fff' : '#000',
+          borderColor,
+          width: imageBoxWidth,
+          height: 48,
+          borderRadius: 3,
+          fontWeight: 600,
+        }}
+      >
+        Upload
+        <input hidden accept="image/*" type="file" onChange={handleHumanImageChange} />
+      </Button>
+      <Button
+        variant="outlined"
+        component="label"
+        sx={{
+          color: isDark ? '#fff' : '#000',
+          borderColor,
+          width: imageBoxWidth,
+          height: 48,
+          borderRadius: 3,
+          fontWeight: 600,
+        }}
+      >
+        Use Camera
+        <input
+          hidden
+          accept="image/*"
+          capture="environment"
+          type="file"
+          onChange={handleHumanImageChange}
+        />
+      </Button>
+    </Stack>
+  )}
+</Box>
+
 
             {/* Cloth Image Upload */}
             <Box textAlign="center" width={imageBoxWidth}>
@@ -424,29 +451,52 @@ export default function TryOnUploader() {
 
 
             {resultUrl && (
-              <>
-                <img
-                  src={resultUrl}
-                  alt="Try-On Result"
-                  style={{ width: '100%', height: '100%', borderRadius: 16, objectFit: 'cover' }}
-                />
-                {loading && (
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      inset: 0,
-                      bgcolor: 'rgba(0,0,0,0.5)',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderRadius: 4,
-                    }}
-                  >
-                    <CircularProgress size={70} thickness={5} sx={{ color: accentYellow }} />
-                  </Box>
-                )}
-              </>
-            )}
+  <>
+    <img
+      src={resultUrl}
+      alt="Try-On Result"
+      style={{ width: '100%', height: '100%', borderRadius: 16, objectFit: 'cover' }}
+    />
+    {/* Download Icon - shown only if result exists */}
+    <Tooltip title="Download your look">
+      <IconButton
+        href={resultUrl}
+        download="tryon_result.jpg"
+        sx={{
+          position: 'absolute',
+          top: 8,
+          right: 8,
+          bgcolor: 'rgba(0,0,0,0.6)',
+          color: '#fff',
+          zIndex: 2,
+          '&:hover': {
+            bgcolor: 'rgba(255,255,255,0.2)',
+          },
+        }}
+      >
+        <DownloadIcon />
+        {/* Or use an MUI Icon like DownloadIcon */}
+      </IconButton>
+    </Tooltip>
+
+    {loading && (
+      <Box
+        sx={{
+          position: 'absolute',
+          inset: 0,
+          bgcolor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderRadius: 4,
+        }}
+      >
+        <CircularProgress size={70} thickness={5} sx={{ color: accentYellow }} />
+      </Box>
+    )}
+  </>
+)}
+
           </Box>
 
           {(loading || !resultUrl) && (
