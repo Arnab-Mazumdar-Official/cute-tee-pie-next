@@ -8,31 +8,31 @@ const tshirtOptions = [
     title: 'Female Round Neck',
     path: '/female-round-neck-tshirt',
     color: '#FF6347',
-    image: '/customise image/94fuL-bvR7CzGUcqoDI7Fg.webp', // Optional placeholder or leave blank
+    image: '/customise_image/94fuL-bvR7CzGUcqoDI7Fg.webp', // Optional placeholder or leave blank
   },
   {
     title: 'Polo Customised',
     path: '/polo-customised-tshirt',
     color: '#1E90FF',
-    image: '/customise image/P1ynu4uRRaWY1Nc2w8lNfg.webp',
+    image: '/customise_image/P1ynu4uRRaWY1Nc2w8lNfg.webp',
   },
   {
     title: 'Unisex Oversize',
     path: '/unisex-oversize-tshirt',
     color: '#FFA500',
-    image: '/customise image/Kp09pJXgSLezZgAoSSnHWQ.jpeg',
+    image: '/customise_image/Kp09pJXgSLezZgAoSSnHWQ.jpeg',
   },
   {
     title: 'Men Full Sleeve',
     path: '/mens_full_sleeve_t_shirt',
     color: '#32CD32',
-    image: '/customise image/3UX-2Fu9RVymhot05SCJtQ.webp',
+    image: '/customise_image/3UX-2Fu9RVymhot05SCJtQ.webp',
   },
   {
     title: 'Round Neck T-shirt',
     path: '/round-neck-t-shirt',
     color: '#FFD700',
-    image: '/customise image/-q74ZP7iRHiWD2s9nio2cg.jpeg', // Replace with actual path
+    image: '/customise_image/-q74ZP7iRHiWD2s9nio2cg.jpeg', // Replace with actual path
   },
 ];
 
