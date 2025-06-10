@@ -109,40 +109,43 @@ const borderColor = isDarkMode ? '#555' : '#ccc';
   };
 
   return (
-    <Box position="relative" sx={{ overflow: 'hidden', px: 4 }}>
+    <Box>
         <Box
-  display="flex"
-  justifyContent="space-between"
-  alignItems="center"
-  sx={{ px: 4, mt: 2 }}
->
-  <Typography variant="h5" fontWeight="bold">
-    Fitness Freak
-  </Typography>
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ px: 4, mt: 2 }}
+            >
+            <Typography variant="h5" fontWeight="bold">
+                Fitness Freak
+            </Typography>
 
-  <Button
-    size="small"
-    onClick={() => router.push('/products')}
-    sx={{
-      fontWeight: 'bold',
-      textTransform: 'none',
-      fontSize: '0.85rem',
-      color: textColor,
-      border: `2px solid ${borderColor}`,
-      borderRadius: 4,
-      px: 2,
-      py: 0.5,
-      width: '180px',
-      '&:hover': {
-        backgroundColor: isDarkMode ? '#222' : '#eee',
-        color: '#d32f2f',
-        borderColor: '#d32f2f',
-      },
-    }}
-  >
-    Show More
-  </Button>
-</Box>
+            <Button
+                size="small"
+                onClick={() => router.push('/products')}
+                sx={{
+                fontWeight: 'bold',
+                textTransform: 'none',
+                fontSize: '0.85rem',
+                color: textColor,
+                border: `2px solid ${borderColor}`,
+                borderRadius: 4,
+                px: 2,
+                py: 0.5,
+                width: '180px',
+                '&:hover': {
+                    backgroundColor: isDarkMode ? '#222' : '#eee',
+                    color: '#d32f2f',
+                    borderColor: '#d32f2f',
+                },
+                }}
+            >
+                Show More
+            </Button>
+            </Box>
+    
+    <Box position="relative" sx={{ overflow: 'hidden', px: 4 }}>
+        
       <IconButton
         onClick={() => scroll('left')}
         sx={{ position: 'absolute', top: '50%', left: 0, zIndex: 2, transform: 'translateY(-50%)' }}
@@ -228,6 +231,7 @@ const borderColor = isDarkMode ? '#555' : '#ccc';
       >
         <ArrowForwardIos />
       </IconButton>
+    </Box>
     </Box>
   );
 };
