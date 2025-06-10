@@ -129,7 +129,7 @@ export default function TryOnUploader() {
         variant="h3"
         fontWeight="bold"
         gutterBottom
-        sx={{ color: accentRed }}
+        sx={{ color: borderColor }}
       >
         🧥 Experience PrinteepaL's Virtual Trial Room!
       </Typography>
@@ -138,7 +138,7 @@ export default function TryOnUploader() {
         variant="h6"
         sx={{
           mb: 5,
-          color: accentYellow,
+          color: borderColor,
           fontWeight: 700,
           maxWidth: 520,
           mx: 'auto',
@@ -458,7 +458,7 @@ export default function TryOnUploader() {
       style={{ width: '100%', height: '100%', borderRadius: 16, objectFit: 'cover' }}
     />
     {/* Download Icon - shown only if result exists */}
-    <Tooltip title="Download your look">
+    <Tooltip title="Show your look">
       <IconButton
         href={resultUrl}
         download="tryon_result.jpg"
@@ -540,14 +540,14 @@ export default function TryOnUploader() {
 >
   {[
     { src: '/vton/-w_QHuw3SFS14Jo3i-jXMQ.jpeg', label: 'Male Example' },
-    { src: '/vton/1E3fdYN9RYWHimhBuYzo_w.jpeg', label: 'Male Example' },
-    { src: '/vton/2mLXWWW4S4mHA44grtFQgA.jpeg', label: 'Male Example' },
+    // { src: '/vton/1E3fdYN9RYWHimhBuYzo_w.jpeg', label: 'Male Example' },
+    // { src: '/vton/2mLXWWW4S4mHA44grtFQgA.jpeg', label: 'Male Example' },
     { src: '/vton/aawIiUoTQJeQxJ17Mez6qA.jpeg', label: 'Male Example' },
-    { src: '/vton/eyST3-ZUSgSog3J-OmixXA.jpeg', label: 'Male Example' },
-    { src: '/vton/gXNiIUXwRD-dev4jiFhg2A.jpeg', label: 'Male Example' },
-    { src: '/vton/wcMYcwTJTjiAKlbo-djYOQ.jpeg', label: 'Male Example' },
+    // { src: '/vton/eyST3-ZUSgSog3J-OmixXA.jpeg', label: 'Male Example' },
+    // { src: '/vton/gXNiIUXwRD-dev4jiFhg2A.jpeg', label: 'Male Example' },
+    // { src: '/vton/wcMYcwTJTjiAKlbo-djYOQ.jpeg', label: 'Male Example' },
     { src: '/customise_image/human02.jpg', label: 'Female Example' },
-    { src: '/customise_image/human01.jpg', label: 'Female Example' },
+    // { src: '/customise_image/human01.jpg', label: 'Female Example' },
   ].map((item, idx) => (
     <Box
       key={idx}

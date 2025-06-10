@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description:
     'Discover unique and high-quality custom t-shirts at Prin Tee Pal. Perfect for individuals and businesses. Style meets comfort with every print!',
   icons: {
-    icon: '/customise image/27250cb0-6277-43fb-9fce-ba82a97cc364-modified.png',
+    icon: '/customise_image/541H3vUmTh-_Qj3JI1UfJQ.webp',
   },
   metadataBase: new URL('https://prin-tee-pal.d28tf79avao1gk.amplifyapp.com/'),
   robots: {
