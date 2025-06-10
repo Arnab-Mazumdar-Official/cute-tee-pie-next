@@ -7,9 +7,9 @@ import { useRouter } from 'next/navigation';
 
 const tshirtOptions = [
   {
-    title: 'Naruto Design',
-    image: "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/32c78a35-164f-4482-a51e-b5194035eb08.jpg",
-    path: '/blog/naruto',
+    title: 'Inside My Head 2.0',
+    image: "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/66226700-ca70-4cba-a9ff-aa212fadd61d.jpg",
+    path: '/blog/inside-my-head-20',
     color: '#FF6347',
   },
   {
@@ -25,9 +25,9 @@ const tshirtOptions = [
     color: '#FF6347',
   },
   {
-    title: 'Venom Unleashed',
-    image: "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/b3f7ffdc-1ad1-474b-b842-239ab712711f.jpg",
-    path: '/blog/venom-unleashed',
+    title: 'Armour',
+    image: "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/f9d355e1-5cd5-41eb-ac88-71f5794b6f0a.jpg",
+    path: '/blog/armour',
     color: '#FF6347',
   },
   {
@@ -74,7 +74,7 @@ const MovableSectionWithBackgrounds = () => {
       }}
     >
       <Typography variant="h4" fontWeight="bold" gutterBottom>
-        Our Best Selling T-Shirt
+        Top Picks
       </Typography>
 
       <Box
@@ -158,7 +158,8 @@ const MovableSectionWithBackgrounds = () => {
       <Box
         sx={{
           height: '25vh',
-          backgroundImage: 'url(//cuteteepie.myshopify.com/cdn/shop/files/h_u0trkkRhyuYa06ouhurg.jpg?v=1745140671&width=3840)',
+          // backgroundImage: 'url(//cuteteepie.myshopify.com/cdn/shop/files/h_u0trkkRhyuYa06ouhurg.jpg?v=1745140671&width=3840)',
+          backgroundImage: 'url(/banner/abe142c8-c022-46f7-b95f-9cc7bf8139bd.jpeg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed',
@@ -168,6 +169,7 @@ const MovableSectionWithBackgrounds = () => {
         }}
       />
     </Box>
+    
   );
 };
 

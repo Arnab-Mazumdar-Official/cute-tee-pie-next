@@ -17,7 +17,7 @@ import Footer from '../../../components/footer/footer';
 import AnnouncementBar from '../../../components/anouncement/announcement';
 import Header from '../../../components/header/header';
 import TShirtGrid from '../../../components/collections/collections';
-import DownloadIcon from '@mui/icons-material/Download';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
 
 export default function TryOnUploader() {
   const theme = useTheme();
@@ -99,10 +99,10 @@ export default function TryOnUploader() {
       if (data.url) {
         setResultUrl(data.url);
       } else {
-        throw new Error("Failed to generate try-on image, please try sometimes leter");
+        throw new Error("Lots of people are creating images right now, so this might take a bit. please try sometimes leter");
       }
     } catch (err: any) {
-      setError("Failed to generate try-on image, please try sometimes leter");
+      setError("Lots of people are creating images right now, so this might take a bit. please try sometimes leter");
     } finally {
       setLoading(false);
     }
@@ -474,7 +474,7 @@ export default function TryOnUploader() {
           },
         }}
       >
-        <DownloadIcon />
+        <FullscreenIcon />
         {/* Or use an MUI Icon like DownloadIcon */}
       </IconButton>
     </Tooltip>

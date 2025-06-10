@@ -92,7 +92,7 @@ export default function ProductListByCategory() {
         </Typography>
 
         {/* Show loading skeletons */}
-        {status === 'loading' && (
+        {(status === 'loading' || allProducts.length === 0) && (
           <Grid container spacing={4}>
             {Array.from({ length: 6 }).map((_, idx) => (
               <Grid item xs={6} sm={4} md={2} key={idx}>

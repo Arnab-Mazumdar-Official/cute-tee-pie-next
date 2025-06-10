@@ -10,9 +10,10 @@ import TShirtGrid from '../../components/collections/collections';
 import TshirtCustomizeSection from '../../components/customisesection/customisesection';
 import MovableSectionWithBackgrounds from '../../components/secoendbanner/secoendbanner';
 import TrendingProducts from '../../components/trendingproducts/trendingproducts';
-// import TraditionalTShirtSection from '../../components/productadvertisement/productadvertisement';
-// import WelcomePage from '../../components/welcomenote/welcomenote';
 import Footer from '../../components/footer/footer';
+import ProductSwiper from '../../components/thirdbanner/thirdbanner';
+import FourboxSec from '../../components/fourboxsec/fourboxsec';
+import ScrollableProductCarousel from '../../components/numberimage/numberimage';
 
 export default function Page() {
   const [queryClient] = useState(() => new QueryClient());
@@ -26,9 +27,12 @@ export default function Page() {
         <TShirtGrid />
         <TshirtCustomizeSection />
         <MovableSectionWithBackgrounds />
-        <TrendingProducts />
+        {/* <TrendingProducts /> */}
         {/* <TraditionalTShirtSection /> */}
         {/* <WelcomePage /> */}
+        <ProductSwiper />
+        <FourboxSec />
+        <ScrollableProductCarousel />
         <Footer />
       </div>
     </QueryClientProvider>

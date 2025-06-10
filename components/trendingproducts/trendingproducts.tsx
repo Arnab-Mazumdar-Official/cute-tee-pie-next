@@ -60,7 +60,7 @@ export default function ProductList() {
     <div style={styles.container}>
       <h2 style={styles.heading}>Explore More To Set Your Wardrobe</h2>
       <div style={styles.gridContainer} className="product-grid">
-        {status === 'loading'
+        {status === 'loading' || allProducts.length === 0
           ? Array.from({ length: 6 }).map((_, idx) => (
               <div key={idx} style={styles.card}>
                 <div className="image-border">
@@ -74,6 +74,7 @@ export default function ProductList() {
                 <Skeleton variant="text" width="80%" height={30} />
               </div>
             ))
+
           : allProducts.map((product, idx) => (
               <div
                 onClick={() => handleClick(product.slug)}
