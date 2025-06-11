@@ -16,6 +16,7 @@ import ProductSwiper from '../../components/thirdbanner/thirdbanner';
 import FourboxSec from '../../components/fourboxsec/fourboxsec';
 import ScrollableProductCarousel from '../../components/numberimage/numberimage';
 import Weeklypick from '../../components/weaklypick/weaklypick';
+import CoupleGoalsSection from '../../components/couplesection/couplesection';
 
 export default function Page() {
   const [queryClient] = useState(() => new QueryClient());
@@ -71,6 +72,7 @@ export default function Page() {
         <FourboxSec />
         <ScrollableProductCarousel />
         <Weeklypick />
+        <CoupleGoalsSection />
         <Footer />
 
         {/* Scroll to Top Button */}

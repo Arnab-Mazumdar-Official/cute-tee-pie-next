@@ -26,7 +26,7 @@ const tshirtOptions = [
     title: 'Error : 404',
     path: '/blog/error-404',
     color: '#32CD32',
-    image: 'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/65dc3929-4886-4c19-bcfc-7d4c3fd32579.jpg',
+    image: 'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/63ee33be-e282-49a4-9b6d-3ef3c283038c.jpg',
   },
   {
     title: 'Tried and Tired',

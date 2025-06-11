@@ -125,12 +125,12 @@ const ScrollableProductCarousel = () => {
   };
 
   return (
-    <Box>
+    <Box sx={{bgcolor:isDarkMode?'black':'white',p:'32px'}}>
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ px: 4, mt: 2 }}
+        // sx={{ px: 4, mt: 2, }}
       >
         <Typography variant="h5" fontWeight="bold">
           Fitness Freak

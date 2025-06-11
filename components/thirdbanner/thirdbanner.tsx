@@ -32,7 +32,7 @@ const ProductSwiper = () => {
   };
 
   return (
-    <Box sx={{ my: 4, px: { xs: 2, sm: 4 } }}>
+    <Box sx={{bgcolor: isDark?'black':'white',p:'32px' }}>
       {/* Header */}
       <Box
         sx={{
