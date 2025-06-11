@@ -144,7 +144,7 @@ export default function ProductGrid() {
         {loading && <LinearProgress />}
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
                   <Typography variant="h4" fontWeight="bold">
-                    Our Products
+                    Our Product
                   </Typography>
                 </Box>
       <Stack

@@ -159,7 +159,7 @@ const MovableSectionWithBackgrounds = () => {
         sx={{
           height: '25vh',
           // backgroundImage: 'url(//cuteteepie.myshopify.com/cdn/shop/files/h_u0trkkRhyuYa06ouhurg.jpg?v=1745140671&width=3840)',
-          backgroundImage: 'url(/banner/abe142c8-c022-46f7-b95f-9cc7bf8139bd.jpeg)',
+          backgroundImage: 'url(/banner/d48af0d6-c427-41c3-b110-5c8443d32877.jpeg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed',

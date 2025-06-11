@@ -16,7 +16,7 @@ const WhatsAppButton = () => {
         sx={{
           position: 'fixed',
           bottom: 16,
-          right: 16,
+          left: 16,
           zIndex: 1300,
         }}
         onClick={() => window.open(url, '_blank')}
