@@ -18,6 +18,7 @@ import AnnouncementBar from '../../../components/anouncement/announcement';
 import Header from '../../../components/header/header';
 import TShirtGrid from '../../../components/collections/collections';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import axios from 'axios';
 
 export default function TryOnUploader() {
   const theme = useTheme();
@@ -25,7 +26,8 @@ export default function TryOnUploader() {
 
   const [humanImage, setHumanImage] = useState<File | null>(null);
   // Fixed cloth image URL from AWS S3
-  const clothImageUrl = "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/0cdfd891-4de2-4480-a13a-f6570a00709f.jpg";
+  const clothImageUrl =
+    'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/0cdfd891-4de2-4480-a13a-f6570a00709f.jpg';
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,18 +49,20 @@ export default function TryOnUploader() {
       const response = await fetch(url, {
         mode: 'cors',
         credentials: 'omit',
-        referrerPolicy: 'no-referrer'
+        referrerPolicy: 'no-referrer',
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const blob = await response.blob();
       return await toBase64(blob);
     } catch (error) {
       console.error('Error fetching image from URL:', error);
-      throw new Error('Failed to convert URL to base64. Please check CORS settings.');
+      throw new Error(
+        'Failed to convert URL to base64. Please check CORS settings.'
+      );
     }
   };
 
@@ -87,35 +91,24 @@ export default function TryOnUploader() {
 
     try {
       const humanBase64 = await toBase64(humanImage);
-      
-      console.log('Preparing garment image data...');
-      
-      // Format the garment image according to the API specification
-      const garmImgData = {
-        path: null,
-        url: clothImageUrl, // Use the S3 URL directly
-        size: null,
-        orig_name: "featured-garment.jpg",
-        mime_type: "image/jpeg",
-        is_stream: false,
-        meta: {}
-      };
 
-      console.log('Sending request to VTON API...');
-      console.log('Human image size:', humanBase64.length);
-      console.log('Garment image data:', garmImgData);
+      if (!clothImageUrl) throw new Error('Garment image URL is missing.');
+
+      console.log('Base64 Human Image:', humanBase64.substring(0, 100));
 
       const res = await fetch('/api/vton', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           humanImageBase64: humanBase64,
-          garm_img_path: garmImgData, // Send as the expected dictionary format
+          garm_img_url: clothImageUrl, // just pass URL, don't fetch it client-side
         }),
       });
 
       const data = await res.json();
-      console.log('VTON API Response:', data);
+      console.log('Response from /api/vton:', data);
+      console.log('Sending request to VTON API...');
+      console.log('Human image size:', humanBase64.length);
 
       if (data.url) {
         setResultUrl(data.url);
@@ -129,7 +122,8 @@ export default function TryOnUploader() {
     } catch (err: any) {
       console.error('Try-on error:', err);
       setError(
-        err.message || 'Lots of people are creating images right now, so this might take a bit. please try sometimes leter'
+        err.message ||
+          'Lots of people are creating images right now, so this might take a bit. please try sometimes leter'
       );
     } finally {
       setLoading(false);
@@ -171,8 +165,8 @@ export default function TryOnUploader() {
             mx: 'auto',
           }}
         >
-          Upload your photo and see how you look in our featured garment — watch as we
-          magically fit your style with our cutting-edge AI try-on. <br />
+          Upload your photo and see how you look in our featured garment — watch
+          as we magically fit your style with our cutting-edge AI try-on. <br />
           Discover your next look instantly and confidently!
         </Typography>
       </Box>
