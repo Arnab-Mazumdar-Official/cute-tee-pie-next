@@ -24,16 +24,14 @@ export default function TryOnUploader() {
   const isDark = theme.palette.mode === 'dark';
 
   const [humanImage, setHumanImage] = useState<File | null>(null);
-  const [clothImage, setClothImage] = useState<File | null>(null);
+  // Fixed cloth image URL from AWS S3
+  const clothImageUrl = "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/0cdfd891-4de2-4480-a13a-f6570a00709f.jpg";
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const imageBoxWidth = 240;
   const imageBoxHeight = 300;
-  // const accentRed = isDark ? '#FF6B6B' : '#D32F2F';
-  // const accentYellow = isDark ? '#FFD600' : '#FBC02D';
-  // const borderColor = isDark ? '#BDBDBD' : '#424242';
 
   const toBase64 = (file: Blob): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -43,30 +41,30 @@ export default function TryOnUploader() {
       reader.onerror = () => reject('Failed to convert image to base64.');
     });
 
-  const handleHumanImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setHumanImage(e.target.files[0]);
-      setResultUrl(null);
-      setError(null);
+  // Function to convert URL to base64 with CORS handling
+  const urlToBase64 = async (url: string): Promise<string> => {
+    try {
+      const response = await fetch(url, {
+        mode: 'cors',
+        credentials: 'omit',
+        referrerPolicy: 'no-referrer'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const blob = await response.blob();
+      return await toBase64(blob);
+    } catch (error) {
+      console.error('Error fetching image from URL:', error);
+      throw new Error('Failed to convert URL to base64. Please check CORS settings.');
     }
   };
 
-  useEffect(() => {
-    const fetchImageAsFile = async () => {
-      const response = await fetch(
-        'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/0cdfd891-4de2-4480-a13a-f6570a00709f.jpg'
-      );
-      const blob = await response.blob();
-      const file = new File([blob], 'cloth.jpg', { type: blob.type });
-      setClothImage(file);
-    };
-
-    fetchImageAsFile();
-  }, []);
-
-  const handleClothImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleHumanImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setClothImage(e.target.files[0]);
+      setHumanImage(e.target.files[0]);
       setResultUrl(null);
       setError(null);
     }
@@ -78,16 +76,10 @@ export default function TryOnUploader() {
     setError(null);
   };
 
-  const handleDeleteCloth = () => {
-    setClothImage(null);
-    setResultUrl(null);
-    setError(null);
-  };
-
   const handleTryOn = async () => {
     setError(null);
-    if (!humanImage || !clothImage) {
-      setError('Please upload both images to continue.');
+    if (!humanImage) {
+      setError('Please upload your photo to continue.');
       return;
     }
 
@@ -95,30 +87,49 @@ export default function TryOnUploader() {
 
     try {
       const humanBase64 = await toBase64(humanImage);
-      const clothBase64 = await toBase64(clothImage);
+      
+      console.log('Preparing garment image data...');
+      
+      // Format the garment image according to the API specification
+      const garmImgData = {
+        path: null,
+        url: clothImageUrl, // Use the S3 URL directly
+        size: null,
+        orig_name: "featured-garment.jpg",
+        mime_type: "image/jpeg",
+        is_stream: false,
+        meta: {}
+      };
+
+      console.log('Sending request to VTON API...');
+      console.log('Human image size:', humanBase64.length);
+      console.log('Garment image data:', garmImgData);
 
       const res = await fetch('/api/vton', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           humanImageBase64: humanBase64,
-          clothImageBase64: clothBase64,
+          garm_img_path: garmImgData, // Send as the expected dictionary format
         }),
       });
 
       const data = await res.json();
-      console.log('Data------------>>', data);
+      console.log('VTON API Response:', data);
 
       if (data.url) {
         setResultUrl(data.url);
+      } else if (data.error) {
+        throw new Error(data.error);
       } else {
         throw new Error(
           'Lots of people are creating images right now, so this might take a bit. please try sometimes leter'
         );
       }
     } catch (err: any) {
+      console.error('Try-on error:', err);
       setError(
-        'Lots of people are creating images right now, so this might take a bit. please try sometimes leter'
+        err.message || 'Lots of people are creating images right now, so this might take a bit. please try sometimes leter'
       );
     } finally {
       setLoading(false);
@@ -127,7 +138,6 @@ export default function TryOnUploader() {
 
   const handleReset = () => {
     setHumanImage(null);
-    setClothImage(null);
     setResultUrl(null);
     setError(null);
     setLoading(false);
@@ -161,7 +171,7 @@ export default function TryOnUploader() {
             mx: 'auto',
           }}
         >
-          Upload your photo and your favorite garment image — watch as we
+          Upload your photo and see how you look in our featured garment — watch as we
           magically fit your style with our cutting-edge AI try-on. <br />
           Discover your next look instantly and confidently!
         </Typography>
@@ -195,7 +205,6 @@ export default function TryOnUploader() {
             alignItems="center"
             mb={4}
           >
-            {/* Human Image Upload */}
             {/* Human Image Upload */}
             <Box textAlign="center" width={imageBoxWidth}>
               <Typography mb={1} fontWeight="600" color={accentYellow}>
@@ -287,71 +296,49 @@ export default function TryOnUploader() {
               )}
             </Box>
 
-            {/* Cloth Image Upload */}
+            {/* Fixed Cloth Image Display */}
             <Box textAlign="center" width={imageBoxWidth}>
               <Typography mb={1} fontWeight="600" color={accentYellow}>
-                👗 Garment
+                👗 Featured Garment
               </Typography>
-              {clothImage ? (
-                <Paper
-                  variant="outlined"
+              <Paper
+                variant="outlined"
+                sx={{
+                  position: 'relative',
+                  width: imageBoxWidth,
+                  height: imageBoxHeight,
+                  borderColor,
+                  overflow: 'hidden',
+                  borderRadius: 3,
+                }}
+              >
+                <img
+                  src={clothImageUrl}
+                  alt="Featured Garment"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+                {/* Optional: Add a badge to indicate it's a featured item */}
+                <Box
                   sx={{
-                    position: 'relative',
-                    width: imageBoxWidth,
-                    height: imageBoxHeight,
-                    borderColor,
-                    overflow: 'hidden',
-                    borderRadius: 3,
+                    position: 'absolute',
+                    top: 6,
+                    left: 6,
+                    bgcolor: accentYellow,
+                    color: '#000',
+                    px: 1,
+                    py: 0.5,
+                    borderRadius: 1,
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
                   }}
                 >
-                  <img
-                    src={URL.createObjectURL(clothImage)}
-                    alt="Cloth"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
-                  />
-                  <Tooltip title="Remove garment image">
-                    <IconButton
-                      size="small"
-                      onClick={handleDeleteCloth}
-                      sx={{
-                        position: 'absolute',
-                        top: 6,
-                        right: 6,
-                        bgcolor: accentRed,
-                        color: '#fff',
-                        '&:hover': { bgcolor: '#b71c1c' },
-                      }}
-                    >
-                      <CloseIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </Paper>
-              ) : (
-                <Button
-                  variant="outlined"
-                  component="label"
-                  sx={{
-                    color: isDark ? '#fff' : '#000',
-                    borderColor,
-                    width: imageBoxWidth,
-                    height: imageBoxHeight,
-                    borderRadius: 3,
-                    fontWeight: 600,
-                  }}
-                >
-                  Upload
-                  <input
-                    hidden
-                    accept="image/*"
-                    type="file"
-                    onChange={handleClothImageChange}
-                  />
-                </Button>
-              )}
+                  Featured
+                </Box>
+              </Paper>
             </Box>
           </Stack>
 
@@ -367,7 +354,7 @@ export default function TryOnUploader() {
               variant="contained"
               color="error"
               onClick={handleTryOn}
-              disabled={loading || !humanImage || !clothImage}
+              disabled={loading || !humanImage}
               sx={{
                 px: 5,
                 py: 1.5,
@@ -465,8 +452,8 @@ export default function TryOnUploader() {
                 textAlign="center"
                 mt={2}
               >
-                Upload your images above and click "Try It On Now" to see
-                yourself in style!
+                Upload your photo above and click "Try It On Now" to see
+                yourself in our featured garment!
               </Typography>
             )}
 
@@ -623,17 +610,11 @@ export default function TryOnUploader() {
                 src: '/vton/-w_QHuw3SFS14Jo3i-jXMQ.jpeg',
                 label: 'Male Example',
               },
-              // { src: '/vton/1E3fdYN9RYWHimhBuYzo_w.jpeg', label: 'Male Example' },
-              // { src: '/vton/2mLXWWW4S4mHA44grtFQgA.jpeg', label: 'Male Example' },
               {
                 src: '/vton/aawIiUoTQJeQxJ17Mez6qA.jpeg',
                 label: 'Male Example',
               },
-              // { src: '/vton/eyST3-ZUSgSog3J-OmixXA.jpeg', label: 'Male Example' },
-              // { src: '/vton/gXNiIUXwRD-dev4jiFhg2A.jpeg', label: 'Male Example' },
-              // { src: '/vton/wcMYcwTJTjiAKlbo-djYOQ.jpeg', label: 'Male Example' },
               { src: '/customise_image/human02.jpg', label: 'Female Example' },
-              // { src: '/customise_image/human01.jpg', label: 'Female Example' },
             ].map((item, idx) => (
               <Box
                 key={idx}

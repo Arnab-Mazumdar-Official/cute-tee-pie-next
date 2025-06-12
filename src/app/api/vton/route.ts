@@ -3,7 +3,10 @@ import { Client } from "@gradio/client";
 
 export async function POST(req: NextRequest) {
   try {
-    const { humanImageBase64, clothImageBase64 } = await req.json();
+    const { humanImageBase64, garm_img_path } = await req.json();
+
+    console.log("humanImageBase64:", humanImageBase64);
+    console.log("garm_img_path:", garm_img_path);
 
     const client = await Client.connect("phitran/fashion-virtual-tryon");
 
@@ -17,20 +20,20 @@ export async function POST(req: NextRequest) {
       meta: {},
     };
 
-    const clothInput = {
-      path: null,
-      url: clothImageBase64,
-      size: null,
-      orig_name: "cloth.png",
-      mime_type: "image/png",
-      is_stream: false,
-      meta: {},
-    };
+    // const clothInput = {
+    //   path: null,
+    //   url: clothImageBase64,
+    //   size: null,
+    //   orig_name: "cloth.png",
+    //   mime_type: "image/png",
+    //   is_stream: false,
+    //   meta: {},
+    // };
     console.log("humanInput:", humanInput);
     console.log("clothInput:", humanInput);
     const result = await client.predict("/process_image", {
       human_img_path: humanInput,
-      garm_img_path: clothInput,
+      garm_img_path: garm_img_path,
     });
 
     console.log("Result from Gradio:", result);
