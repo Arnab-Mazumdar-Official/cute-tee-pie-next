@@ -289,7 +289,7 @@ const ScrollableProductCarousel = () => {
                       objectFit: 'cover',
                       height: '360px',
                       [theme.breakpoints.down('sm')]: {
-                        height: '200px',
+                        height: '300px',
                       },
                     })}
                   />

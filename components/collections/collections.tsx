@@ -199,7 +199,7 @@ const TShirtGrid = () => {
             900: { slidesPerView: 4 },
             1200: { slidesPerView: 5 },
           }}
-          style={{ paddingRight: '3px' }} // this ensures the last card isn’t clipped
+          style={{ paddingRight: '5px' }} // this ensures the last card isn’t clipped
         >
           {items.map((item, index) => (
             <SwiperSlide key={index}>
