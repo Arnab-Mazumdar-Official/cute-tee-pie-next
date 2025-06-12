@@ -42,7 +42,8 @@ export default function TryOnUploader() {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = () => reject('Failed to convert image to base64.');
     });
-
+  const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+  const MIN_SIZE = 100 * 1024; // 100 KB
   // Function to convert URL to base64 with CORS handling
   const urlToBase64 = async (url: string): Promise<string> => {
     try {
@@ -66,12 +67,56 @@ export default function TryOnUploader() {
     }
   };
 
-  const handleHumanImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setHumanImage(e.target.files[0]);
-      setResultUrl(null);
-      setError(null);
+  const handleHumanImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setError('No image selected.');
+      return;
     }
+
+    // Type validation
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload a valid image.');
+      return;
+    }
+
+    // Size validation
+    if (file.size > MAX_SIZE) {
+      setError('Image is too large. Please upload an image under 5MB.');
+      return;
+    }
+
+    if (file.size < MIN_SIZE) {
+      setError(
+        'Image is too small. Please upload a clearer image (min 100KB).'
+      );
+      return;
+    }
+
+    // Optional: Dimension validation
+    const isValidDimensions = await validateImageDimensions(file);
+    if (!isValidDimensions) {
+      setError(
+        'Image resolution is too low. Please upload a photo with minimum 300x400 pixels.'
+      );
+      return;
+    }
+
+    setHumanImage(file);
+    setResultUrl(null);
+    setError(null);
+  };
+
+  // Optional helper to validate image resolution
+  const validateImageDimensions = (file: File): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const isValid = img.width >= 300 && img.height >= 400;
+        resolve(isValid);
+      };
+      img.src = URL.createObjectURL(file);
+    });
   };
 
   const handleDeleteHuman = () => {
@@ -90,6 +135,11 @@ export default function TryOnUploader() {
     setLoading(true);
 
     try {
+      if (humanImage.size > MAX_SIZE || humanImage.size < MIN_SIZE) {
+        setError('Please upload a clearer photo (between 100KB to 5MB).');
+        return;
+      }
+
       const humanBase64 = await toBase64(humanImage);
 
       if (!clothImageUrl) throw new Error('Garment image URL is missing.');
@@ -112,18 +162,16 @@ export default function TryOnUploader() {
 
       if (data.url) {
         setResultUrl(data.url);
-      } else if (data.error) {
-        throw new Error(data.error);
-      } else {
+      }else {
         throw new Error(
-          'Lots of people are creating images right now, so this might take a bit. please try sometimes leter'
+          'We’re a bit overwhelmed. Please try again later,Pardon us'
         );
       }
     } catch (err: any) {
       console.error('Try-on error:', err);
       setError(
         err.message ||
-          'Lots of people are creating images right now, so this might take a bit. please try sometimes leter'
+          'We’re a bit overwhelmed. Please try again later,Pardon us'
       );
     } finally {
       setLoading(false);
@@ -602,13 +650,13 @@ export default function TryOnUploader() {
             {[
               {
                 src: '/vton/-w_QHuw3SFS14Jo3i-jXMQ.jpeg',
-                label: 'Male Example',
+                label: 'Pose 1',
               },
               {
                 src: '/vton/aawIiUoTQJeQxJ17Mez6qA.jpeg',
-                label: 'Male Example',
+                label: 'Pose 2',
               },
-              { src: '/customise_image/human02.jpg', label: 'Female Example' },
+              { src: '/customise_image/human02.jpg', label: 'Pose 3' },
             ].map((item, idx) => (
               <Box
                 key={idx}
