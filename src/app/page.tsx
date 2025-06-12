@@ -1,46 +1,51 @@
 'use client';
 
+import { useEffect, useRef, useState, lazy, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
-import { Box, Fab, Slide } from '@mui/material';
+import {
+  Box,
+  Fab,
+  Slide,
+  CircularProgress,
+  Skeleton,
+} from '@mui/material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
+// Eager components (needed immediately)
 import AnnouncementBar from '../../components/anouncement/announcement';
 import Header from '../../components/header/header';
-import BannerSection from '../../components/firstbanner/firstbanner';
-import TShirtGrid from '../../components/collections/collections';
-import TshirtCustomizeSection from '../../components/customisesection/customisesection';
-import MovableSectionWithBackgrounds from '../../components/secoendbanner/secoendbanner';
 import Footer from '../../components/footer/footer';
-import ProductSwiper from '../../components/thirdbanner/thirdbanner';
-import FourboxSec from '../../components/fourboxsec/fourboxsec';
-import ScrollableProductCarousel from '../../components/numberimage/numberimage';
-import Weeklypick from '../../components/weaklypick/weaklypick';
-import CoupleGoalsSection from '../../components/couplesection/couplesection';
+
+// Lazy loaded components (heavy sections)
+const BannerSection = lazy(() => import('../../components/firstbanner/firstbanner'));
+const TShirtGrid = lazy(() => import('../../components/collections/collections'));
+const TshirtCustomizeSection = lazy(() => import('../../components/customisesection/customisesection'));
+const MovableSectionWithBackgrounds = lazy(() => import('../../components/secoendbanner/secoendbanner'));
+const ProductSwiper = lazy(() => import('../../components/thirdbanner/thirdbanner'));
+const FourboxSec = lazy(() => import('../../components/fourboxsec/fourboxsec'));
+const ScrollableProductCarousel = lazy(() => import('../../components/numberimage/numberimage'));
+const Weeklypick = lazy(() => import('../../components/weaklypick/weaklypick'));
+const CoupleGoalsSection = lazy(() => import('../../components/couplesection/couplesection'));
 
 export default function Page() {
   const [queryClient] = useState(() => new QueryClient());
 
   const [showHeader, setShowHeader] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isPageReady, setIsPageReady] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Determine scroll direction
       if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-        // Scrolling down
         setShowHeader(false);
       } else {
-        // Scrolling up
         setShowHeader(true);
       }
 
-      // Show scroll-to-top button
       setShowScrollTop(currentScrollY > 300);
-
       lastScrollY.current = currentScrollY;
     };
 
@@ -48,50 +53,79 @@ export default function Page() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsPageReady(true);
+    }, 100); // quick transition
+    return () => clearTimeout(timer);
+  }, []);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const sectionFallback = <Skeleton variant="rectangular" height={300} animation="wave" sx={{ my: 2 }} />;
+
   return (
     <QueryClientProvider client={queryClient}>
-      <Box>
-        {/* Animated Header & AnnouncementBar */}
-        <Slide in={showHeader} direction="down" appear={false}>
-          <Box sx={{ position: 'sticky', top: 0, zIndex: 1200 }}>
-            <AnnouncementBar />
-            <Header />
-          </Box>
-        </Slide>
+      {!isPageReady ? (
+        <Box
+          sx={{
+            width: '100vw',
+            height: '100vh',
+            bgcolor: 'background.default',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1500,
+          }}
+        >
+          <CircularProgress color="primary" />
+        </Box>
+      ) : (
+        <Box>
+          {/* Sticky Header */}
+          <Slide in={showHeader} direction="down" appear={false}>
+            <Box sx={{ position: 'sticky', top: 0, zIndex: 1200 }}>
+              <AnnouncementBar />
+              <Header />
+            </Box>
+          </Slide>
 
-        {/* Content Sections */}
-        <BannerSection />
-        <TShirtGrid />
-        <TshirtCustomizeSection />
-        <MovableSectionWithBackgrounds />
-        <ProductSwiper />
-        <FourboxSec />
-        <ScrollableProductCarousel />
-        <Weeklypick />
-        <CoupleGoalsSection />
-        <Footer />
+          {/* Page Sections - Lazy with fallback */}
+          <Suspense fallback={sectionFallback}>
+            <BannerSection />
+            <TShirtGrid />
+            <TshirtCustomizeSection />
+            <MovableSectionWithBackgrounds />
+            <ProductSwiper />
+            <FourboxSec />
+            <ScrollableProductCarousel />
+            <Weeklypick />
+            <CoupleGoalsSection />
+          </Suspense>
 
-        {/* Scroll to Top Button */}
-        {showScrollTop && (
-          <Fab
-            color="primary"
-            size="medium"
-            onClick={scrollToTop}
-            sx={{
-              position: 'fixed',
-              bottom: 24,
-              right: 24,
-              zIndex: 1300,
-            }}
-          >
-            <KeyboardArrowUpIcon />
-          </Fab>
-        )}
-      </Box>
+          {/* Footer (eager) */}
+          <Footer />
+
+          {/* Scroll to Top */}
+          {showScrollTop && (
+            <Fab
+              color="primary"
+              size="medium"
+              onClick={scrollToTop}
+              sx={{
+                position: 'fixed',
+                bottom: 24,
+                right: 24,
+                zIndex: 1300,
+              }}
+            >
+              <KeyboardArrowUpIcon />
+            </Fab>
+          )}
+        </Box>
+      )}
     </QueryClientProvider>
   );
 }
