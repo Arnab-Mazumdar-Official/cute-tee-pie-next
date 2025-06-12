@@ -76,10 +76,35 @@ const TShirtGrid = () => {
 
   if (isLoading) {
     return (
-      <Box sx={{ py: 6, px: 2 }}>
-        <Typography variant="h5" fontWeight="bold" sx={{ mb: 4 }}>
-          Explore Our Collections
-        </Typography>
+      <Box sx={{ py: 6, px: 2, backgroundColor: isDark ? 'black' : 'white' }}>
+        {/* Header row with title and button skeleton */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            px: 1,
+            mb: 4,
+          }}
+        >
+          <Skeleton
+            variant="text"
+            width={141}
+            height={32}
+            sx={{ bgcolor: isDark ? '#333' : undefined }}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={109}
+            height={36}
+            sx={{
+              borderRadius: 2,
+              bgcolor: isDark ? '#333' : undefined,
+            }}
+          />
+        </Box>
+
+        {/* Horizontal scroll skeleton cards */}
         <Box
           sx={{
             display: 'flex',
@@ -93,12 +118,24 @@ const TShirtGrid = () => {
           }}
         >
           {[...Array(boxCount)].map((_, idx) => (
-            <Box key={idx} sx={{ width: 200, flexShrink: 0 }}>
+            <Box
+              key={idx}
+              sx={{
+                width: 200,
+                flexShrink: 0,
+              }}
+            >
               <Skeleton
                 variant="rectangular"
                 width="100%"
                 height={200}
                 sx={{ borderRadius: 2 }}
+              />
+              <Skeleton
+                variant="text"
+                width="80%"
+                height={24}
+                sx={{ mt: 1, mx: 'auto' }}
               />
             </Box>
           ))}
@@ -147,88 +184,93 @@ const TShirtGrid = () => {
       </Box>
 
       {/* Swiper Section */}
-      <Swiper
-        modules={[Autoplay]}
-        autoplay={{ delay: 2500, disableOnInteraction: false }}
-        loop
-        spaceBetween={24}
-        onSwiper={(swiper) => (swiperRef.current = swiper)}
-        breakpoints={{
-          0: { slidesPerView: 2 },
-          600: { slidesPerView: 3 },
-          900: { slidesPerView: 4 },
-          1200: { slidesPerView: 5 },
-        }}
-      >
-        {items.map((item, index) => (
-          <SwiperSlide key={index}>
-            <Box
-              onClick={() => handleClick(item._id)}
-              sx={{
-                cursor: 'pointer',
-                width: '100%',
-                maxWidth: 300,
-                mx: 'auto',
-              }}
-            >
+      <Box sx={{ px: { xs: 1, sm: 2 } }}>
+        {' '}
+        {/* Add horizontal padding to the swiper container */}
+        <Swiper
+          modules={[Autoplay]}
+          autoplay={{ delay: 2500, disableOnInteraction: false }}
+          loop
+          spaceBetween={24}
+          onSwiper={(swiper) => (swiperRef.current = swiper)}
+          breakpoints={{
+            0: { slidesPerView: 2 },
+            600: { slidesPerView: 3 },
+            900: { slidesPerView: 4 },
+            1200: { slidesPerView: 5 },
+          }}
+          style={{ paddingRight: '3px' }} // this ensures the last card isn’t clipped
+        >
+          {items.map((item, index) => (
+            <SwiperSlide key={index}>
               <Box
+                onClick={() => handleClick(item._id)}
                 sx={{
-                  height: {
-                    xs: 200,
-                    sm: 200,
-                    md: 250,
-                    lg: 300,
-                  },
+                  cursor: 'pointer',
                   width: '100%',
-                  borderRadius: 4,
-                  overflow: 'hidden',
-                  border: `2px solid ${borderColor}`,
-                  backgroundColor: [
-                    '#FFD700',
-                    '#FF6347',
-                    '#1E90FF',
-                    '#FFA500',
-                    '#32CD32',
-                  ][index % 5],
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'transform 0.3s ease',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                  },
+                  maxWidth: 300,
+                  mx: 'auto',
                 }}
               >
                 <Box
-                  component="img"
-                  src={item.image}
-                  alt={item.title}
                   sx={{
+                    height: {
+                      xs: 200,
+                      sm: 200,
+                      md: 250,
+                      lg: 300,
+                    },
                     width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
+                    borderRadius: 4,
+                    overflow: 'hidden',
+                    border: `2px solid ${borderColor}`,
+                    backgroundColor: [
+                      '#FFD700',
+                      '#FF6347',
+                      '#1E90FF',
+                      '#FFA500',
+                      '#32CD32',
+                    ][index % 5],
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'transform 0.3s ease',
+                    '&:hover': {
+                      transform: 'scale(1.05)',
+                    },
                   }}
-                />
-              </Box>
+                >
+                  <Box
+                    component="img"
+                    src={item.image}
+                    alt={item.title}
+                    sx={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                </Box>
 
-              <Typography
-                variant="subtitle1"
-                fontWeight="bold"
-                sx={{
-                  mt: 1,
-                  color: textColor,
-                  textAlign: 'center',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {item.title}
-              </Typography>
-            </Box>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+                <Typography
+                  variant="subtitle1"
+                  fontWeight="bold"
+                  sx={{
+                    mt: 1,
+                    color: textColor,
+                    textAlign: 'center',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {item.title}
+                </Typography>
+              </Box>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </Box>
 
       <ComingSoonModal open={openModal} onClose={handleCloseModal} />
     </Box>

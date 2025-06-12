@@ -82,6 +82,7 @@ const ProductSwiper = () => {
           900: { slidesPerView: 4 },
           1200: { slidesPerView: 5 },
         }}
+        style={{ paddingRight: '3px' }}
       >
         {items.map((item, index) => (
           <SwiperSlide key={index}>

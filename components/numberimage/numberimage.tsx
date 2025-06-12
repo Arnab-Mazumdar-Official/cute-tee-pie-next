@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Typography,
@@ -9,8 +11,9 @@ import {
   Button,
   CardContent,
 } from '@mui/material';
-import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
 
 const products = [
   {
@@ -106,32 +109,54 @@ const products = [
 ];
 
 const ScrollableProductCarousel = () => {
-  const containerRef = React.useRef();
+  const containerRef = React.useRef(null);
   const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const router = useRouter();
-
   const isDarkMode = theme.palette.mode === 'dark';
   const textColor = isDarkMode ? '#fff' : '#000';
   const borderColor = isDarkMode ? '#555' : '#ccc';
 
-  const scroll = (direction) => {
-    const { current } = containerRef;
-    if (current) {
-      current.scrollBy({
-        left: direction === 'left' ? -300 : 300,
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const cardWidth = 350 + 16; // Card width + spacing approx
+
+  const handleScroll = () => {
+    if (containerRef.current) {
+      const scrollLeft = containerRef.current.scrollLeft;
+      const index = Math.round(scrollLeft / cardWidth);
+      setActiveIndex(index);
+    }
+  };
+
+  const scroll = (direction: string) => {
+    const container = containerRef.current;
+    if (container) {
+      const scrollAmount = 350; // Adjust as needed
+      container.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth',
       });
     }
   };
 
+  useEffect(() => {
+    const ref = containerRef.current;
+    if (ref) {
+      ref.addEventListener('scroll', handleScroll);
+      return () => ref.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
   return (
-    <Box sx={{bgcolor:isDarkMode?'black':'white',pt:'32px',pb:'32px'}}>
+    <Box
+      sx={{ bgcolor: isDarkMode ? 'black' : 'white', pt: '15px', pb: '15px' }}
+    >
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        // sx={{ px: 4, mt: 2, }}
-        sx={{pr:'32px',pl:'32px'}}
+        sx={{ pr: '32px', pl: '32px' }}
       >
         <Typography variant="h5" fontWeight="bold">
           Fitness Freak
@@ -141,19 +166,51 @@ const ScrollableProductCarousel = () => {
           size="small"
           onClick={() => router.push('/products')}
           sx={{
+            position: 'relative',
             fontWeight: 'bold',
             textTransform: 'none',
-            fontSize: '0.85rem',
-            color: textColor,
-            border: `2px solid ${borderColor}`,
+            fontSize: '0.95rem',
+            px: 3,
+            py: 1.2,
+            width: '190px',
             borderRadius: 4,
-            px: 2,
-            py: 0.5,
-            width: '180px',
-            '&:hover': {
-              backgroundColor: isDarkMode ? '#222' : '#eee',
-              color: '#d32f2f',
-              borderColor: '#d32f2f',
+            overflow: 'hidden',
+            color: isDarkMode ? '#fff' : '#000',
+            border: `2px solid ${isDarkMode ? '#fff' : '#000'}`,
+            backgroundColor: isDarkMode ? '#111' : '#fff',
+            animation: 'pulseBorder 2s infinite ease-in-out',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: '-75%',
+              width: '250%',
+              height: '100%',
+              background: `linear-gradient(120deg, transparent, ${
+                isDarkMode ? '#d32f2f88' : '#ff525288'
+              }, transparent)`,
+              animation: 'shimmer 2s infinite',
+              zIndex: 0,
+            },
+            '& > *': {
+              position: 'relative',
+              zIndex: 1,
+            },
+            '@keyframes shimmer': {
+              '0%': { left: '-75%' },
+              '50%': { left: '100%' },
+              '100%': { left: '100%' },
+            },
+            '@keyframes pulseBorder': {
+              '0%': {
+                boxShadow: `0 0 0px ${isDarkMode ? '#d32f2f55' : '#ff525255'}`,
+              },
+              '50%': {
+                boxShadow: `0 0 12px 4px ${isDarkMode ? '#d32f2f88' : '#ff525288'}`,
+              },
+              '100%': {
+                boxShadow: `0 0 0px ${isDarkMode ? '#d32f2f55' : '#ff525255'}`,
+              },
             },
           }}
         >
@@ -161,32 +218,16 @@ const ScrollableProductCarousel = () => {
         </Button>
       </Box>
 
-      <Box position="relative" sx={{ overflow: 'hidden', px: 4 }}>
-        <IconButton
-          onClick={() => scroll('left')}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: 0,
-            zIndex: 2,
-            transform: 'translateY(-50%)',
-          }}
-        >
-          <ArrowBackIos />
-        </IconButton>
-
+      <Box sx={{ position: 'relative' }}>
         <Box
           ref={containerRef}
           display="flex"
-          // gap={4}
           overflow="auto"
           sx={{
             scrollBehavior: 'smooth',
             py: 4,
             scrollbarWidth: 'none',
-            '&::-webkit-scrollbar': {
-              display: 'none',
-            },
+            '&::-webkit-scrollbar': { display: 'none' },
           }}
         >
           {products.map((product) => (
@@ -194,86 +235,128 @@ const ScrollableProductCarousel = () => {
               key={product.id}
               sx={(theme) => ({
                 position: 'relative',
-                minWidth: '350px',
+                minWidth: '400px',
                 [theme.breakpoints.down(471)]: {
-                  minWidth: '56.666vw',
+                  minWidth: '66.666vw',
                 },
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
+                flexDirection: 'column',
+                mx: 1,
               })}
               onClick={() => router.push(product.path)}
             >
-              {/* OUTSIDE NUMBER, 75% visible */}
-              <Typography
-                variant="h1"
-                sx={(theme) => ({
-                  fontSize: '160px',
-                  fontWeight: 900,
-                  color: theme.palette.mode === 'dark' ? '#444' : '#250202',
-                  opacity: 0.4,
-                  mr: '-26px', // Push it partly behind the card
-                  zIndex: 0,
-                  pointerEvents: 'none',
-                  userSelect: 'none',
-                  width: '75px',
-                  flexShrink: 0,
-                  textAlign: 'right',
-                })}
+              <Box
+                sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
               >
-                {product.id}
-              </Typography>
-
-              {/* CARD */}
-              <Card
-                sx={(theme) => ({
-                  borderRadius: 4,
-                  boxShadow: 4,
-                  backgroundColor:
-                    theme.palette.mode === 'dark' ? '#000' : '#fff',
-                  color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                  position: 'relative',
-                  zIndex: 1,
-                  flex: 1,
-                })}
-              >
-                <CardMedia
-                  component="img"
-                  image={product.image}
-                  alt={product.title}
+                <Typography
+                  variant="h1"
                   sx={(theme) => ({
-                    objectFit: 'cover',
-                    height: '311px',
-                    [theme.breakpoints.down('sm')]: {
-                      height: '185px',
-                    },
+                    fontSize: '160px',
+                    fontWeight: 900,
+                    color: theme.palette.mode === 'dark' ? '#444' : '#250202',
+                    opacity: 0.4,
+                    mr: '-25px',
+                    zIndex: 0,
+                    pointerEvents: 'none',
+                    userSelect: 'none',
+                    width: '75px',
+                    flexShrink: 0,
+                    textAlign: 'right',
                   })}
-                />
-                <CardContent>
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    {product.title}
-                  </Typography>
-                  {/* <Typography variant="body2" color="text.secondary">
-                    {product.category}
-                  </Typography> */}
-                </CardContent>
-              </Card>
+                >
+                  {product.id}
+                </Typography>
+
+                <Card
+                  sx={(theme) => ({
+                    borderRadius: 4,
+                    boxShadow: 6,
+                    backgroundColor:
+                      theme.palette.mode === 'dark' ? '#000' : '#fff',
+                    color: theme.palette.mode === 'dark' ? '#fff' : '#000',
+                    position: 'relative',
+                    zIndex: 1,
+                    flex: 1,
+                  })}
+                >
+                  <CardMedia
+                    component="img"
+                    image={product.image}
+                    alt={product.title}
+                    sx={(theme) => ({
+                      objectFit: 'cover',
+                      height: '360px',
+                      [theme.breakpoints.down('sm')]: {
+                        height: '200px',
+                      },
+                    })}
+                  />
+                </Card>
+              </Box>
+
+              <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 1 }}>
+                {product.title}
+              </Typography>
             </Box>
           ))}
         </Box>
+        {isDesktop && (
+          <>
+            <IconButton
+              onClick={() => scroll('left')}
+              size="small"
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: 10,
+                transform: 'translateY(-50%)',
+                zIndex: 3,
+                bgcolor: 'rgba(255,255,255,0.7)',
+                '&:hover': {
+                  bgcolor: 'rgba(255,255,255,0.9)',
+                },
+              }}
+            >
+              <ArrowBackIos fontSize="inherit" />
+            </IconButton>
 
-        <IconButton
-          onClick={() => scroll('right')}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            right: 0,
-            zIndex: 2,
-            transform: 'translateY(-50%)',
-          }}
-        >
-          <ArrowForwardIos />
-        </IconButton>
+            <IconButton
+              onClick={() => scroll('right')}
+              size="small"
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                right: 10,
+                transform: 'translateY(-50%)',
+                zIndex: 3,
+                bgcolor: 'rgba(255,255,255,0.7)',
+                '&:hover': {
+                  bgcolor: 'rgba(255,255,255,0.9)',
+                },
+              }}
+            >
+              <ArrowForwardIos fontSize="inherit" />
+            </IconButton>
+          </>
+        )}
+      </Box>
+
+      {/* Pagination Dots */}
+      <Box display="flex" justifyContent="center" mt={3} gap={1}>
+        {products.map((_, index) => (
+          <Box
+            key={index}
+            sx={{
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              backgroundColor: activeIndex === index ? '#d32f2f' : '#999',
+              transition: 'background-color 0.3s ease',
+            }}
+          />
+        ))}
       </Box>
     </Box>
   );
