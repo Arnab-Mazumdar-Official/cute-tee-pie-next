@@ -28,7 +28,7 @@ import moment from 'moment';
 import { letterSpacing } from 'html2canvas/dist/types/css/property-descriptors/letter-spacing';
 
 // Constants
-const tshirtColors = ['White', 'Black', 'Navy Blue','Maroon','Beige'];
+const tshirtColors = ['Navy Blue','White', 'Black','Maroon','Beige'];
 const tshirtSizes = ['Ex', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'];
 const frontBackOptions = ['front', 'back'];
 
@@ -38,7 +38,7 @@ export default function TshirtCustomizerPage() {
   const router = useRouter();
 
   // States
-  const [color, setColor] = useState('White');
+  const [color, setColor] = useState('Maroon');
   const [size, setSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
   const [frontBack, setFrontBack] = useState<'front' | 'back'>('front');
@@ -344,7 +344,7 @@ const onTouchEnd = () => {
       <Box sx={{ p: 3, backgroundColor: isDarkMode ? '#121212' : '#fff', minHeight: '100vh' }}>
         <Box display="flex" justifyContent="center" width="100%">
           <Typography variant="h4" gutterBottom>
-            Design Round Neck Men T-shirt
+            Design Polo T-shirt
           </Typography>
         </Box>
 

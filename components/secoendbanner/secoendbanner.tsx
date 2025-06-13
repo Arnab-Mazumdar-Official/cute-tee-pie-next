@@ -1,8 +1,8 @@
 'use client'
 import React, { useState } from 'react';
-import { Box, Button, Card, CardContent, CardMedia, Grid, Typography, useTheme } from '@mui/material';
-import ComingSoonModal from '../commingsoon/commingsoon';
+import { Box, Typography, useTheme } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import ChooseActionModal from '../ChooseActionModal/ChooseActionModal';
 
 
 const tshirtOptions = [
@@ -10,42 +10,53 @@ const tshirtOptions = [
     title: 'Inside My Head 2.0',
     image: "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/66226700-ca70-4cba-a9ff-aa212fadd61d.jpg",
     path: '/blog/inside-my-head-20',
+    slug: 'inside-my-head-20',
     color: '#FF6347',
   },
   {
     title: 'Elevate Hustle',
     image: "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/c65f08eb-e912-4781-bf7f-83bc28992fa7.jpg",
     path: '/blog/elevate-hustle',
+    slug: 'elevate-hustle',
     color: '#FF6347',
   },
   {
     title: 'Calorie Burn',
     image: "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/c2447542-cc5e-49c2-b1bf-a8157f6fc932.jpg",
     path: '/blog/calorie-burn',
+    slug: 'calorie-burn',
     color: '#FF6347',
   },
   {
     title: 'Armour',
     image: "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/f9d355e1-5cd5-41eb-ac88-71f5794b6f0a.jpg",
     path: '/blog/armour',
+    slug: 'armour',
     color: '#FF6347',
   },
   {
     title: 'Kind A Savage',
     image: "https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/481ec431-0b37-4c41-8514-692fa7da8209.jpg",
     path: '/blog/kinda-savage',
+    slug: 'kinda-savage',
     color: '#FF6347',
   },
 ];
 
 const MovableSectionWithBackgrounds = () => {
   const [open, setOpen] = useState(false);
+  const [slug, setSlug] = useState('');
   const router = useRouter();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
   const bgColor = isDark ? '#000' : '#fff';
   const textColor = isDark ? '#fff' : '#000';
   const borderColor = textColor;
+
+  const handleCardClick = (slug:any) => {
+    setOpen(true);
+    setSlug(slug)
+  };
 
   return (
     <Box>
@@ -89,7 +100,7 @@ const MovableSectionWithBackgrounds = () => {
         {tshirtOptions.map((item) => (
           <Box
             key={item.path}
-            onClick={() => router.push(item.path)}
+            onClick={() =>handleCardClick(item.slug)}
             sx={{
               cursor: 'pointer',
               width: {
@@ -152,6 +163,11 @@ const MovableSectionWithBackgrounds = () => {
         ))}
       </Box>
     </Box>
+    <ChooseActionModal
+        open={open}
+        onClose={() => setOpen(false)}
+        productSlug={slug}
+        productId={''}      />
 
 
       {/* Bottom Still Background */}
@@ -169,6 +185,7 @@ const MovableSectionWithBackgrounds = () => {
         }}
       />
     </Box>
+    
     
   );
 };

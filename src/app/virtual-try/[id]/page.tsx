@@ -1,5 +1,6 @@
 'use client';
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import {
   Box,
   Button,
@@ -17,6 +18,7 @@ import {
   Fade,
   Zoom,
   Slide,
+  Alert,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
@@ -26,10 +28,10 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import { keyframes } from '@emotion/react';
-import TShirtGrid from '../../../components/collections/collections';
-import Footer from '../../../components/footer/footer';
-import AnnouncementBar from '../../../components/anouncement/announcement';
-import Header from '../../../components/header/header';
+import TShirtGrid from '../../../../components/collections/collections';
+import Footer from '../../../../components/footer/footer';
+import AnnouncementBar from '../../../../components/anouncement/announcement';
+import Header from '../../../../components/header/header';
 
 // Animated keyframes
 const float = keyframes`
@@ -58,9 +60,20 @@ const gradientShift = keyframes`
   100% { background-position: 0% 50%; }
 `;
 
+interface GarmentData {
+  id: string;
+  name: string;
+  image: string;
+  description?: string;
+  price?: number;
+}
+
 export default function TryOnUploader() {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
+  const params = useParams();
+  const garmentId = params.id as string;
+  const router = useRouter();
 
   const [humanImage, setHumanImage] = useState<File | null>(null);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
@@ -68,10 +81,60 @@ export default function TryOnUploader() {
   const [error, setError] = useState<string | null>(null);
   const [showUploadAnimation, setShowUploadAnimation] = useState(false);
 
-  const clothImageUrl =
-    'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/0cdfd891-4de2-4480-a13a-f6570a00709f.jpg';
+  // New states for garment loading
+  const [garmentData, setGarmentData] = useState<GarmentData | null>(null);
+  const [garmentLoading, setGarmentLoading] = useState(true);
+  const [garmentError, setGarmentError] = useState<string | null>(null);
+
   const imageBoxWidth = 280;
   const imageBoxHeight = 350;
+
+  // Fetch garment data on component mount
+  useEffect(() => {
+    const fetchGarmentData = async () => {
+      if (!garmentId) {
+        setGarmentError('No garment ID provided');
+        setGarmentLoading(false);
+        return;
+      }
+
+      try {
+        setGarmentLoading(true);
+        setGarmentError(null);
+
+        const response = await fetch('/api/garments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            slug: garmentId,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch garment: ${response.status} ${response.statusText}`
+          );
+        }
+
+        const data = await response.json();
+
+        if (!data || !data.image) {
+          throw new Error('Invalid garment data received');
+        }
+
+        setGarmentData(data);
+      } catch (err: any) {
+        console.error('Error fetching garment:', err);
+        setGarmentError(err.message || 'Failed to load garment data');
+      } finally {
+        setGarmentLoading(false);
+      }
+    };
+
+    fetchGarmentData();
+  }, [garmentId]);
 
   const toBase64 = (file: Blob): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -93,6 +156,11 @@ export default function TryOnUploader() {
       };
       img.src = URL.createObjectURL(file);
     });
+  };
+
+  const handleBuyNow = () => {
+    router.push(`/blog/${garmentId}`);
+    // onclose();
   };
 
   const handleHumanImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -142,8 +210,14 @@ export default function TryOnUploader() {
 
   const handleTryOn = async () => {
     setError(null);
+
     if (!humanImage) {
       setError('Please upload your photo to continue.');
+      return;
+    }
+
+    if (!garmentData || !garmentData.image) {
+      setError('Garment data not available. Please try again.');
       return;
     }
 
@@ -157,16 +231,16 @@ export default function TryOnUploader() {
 
       const humanBase64 = await toBase64(humanImage);
 
-      if (!clothImageUrl) throw new Error('Garment image URL is missing.');
-
       console.log('Base64 Human Image:', humanBase64.substring(0, 100));
+      console.log('Garment Image URL:', garmentData.image);
 
       const res = await fetch('/api/vton', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           humanImageBase64: humanBase64,
-          garm_img_url: clothImageUrl, // just pass URL, don't fetch it client-side
+          garm_img_url: garmentData.image,
+          garmentId: garmentId,
         }),
       });
 
@@ -179,14 +253,14 @@ export default function TryOnUploader() {
         setResultUrl(data.url);
       } else {
         throw new Error(
-          'We’re a bit overwhelmed. Please try again later,Pardon us'
+          "We're a bit overwhelmed. Please try again later, Pardon us"
         );
       }
     } catch (err: any) {
       console.error('Try-on error:', err);
       setError(
         err.message ||
-          'We’re a bit overwhelmed. Please try again later,Pardon us'
+          "We're a bit overwhelmed. Please try again later, Pardon us"
       );
     } finally {
       setLoading(false);
@@ -199,6 +273,267 @@ export default function TryOnUploader() {
     setError(null);
     setLoading(false);
   };
+
+  // Show loading state while fetching garment data
+  if (garmentLoading) {
+    return (
+      <Box>
+        <AnnouncementBar />
+        <Header />
+        <Box
+          sx={{
+            background: isDark
+              ? 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%)'
+              : 'linear-gradient(135deg, #f8f9ff 0%, #e8f4ff 50%, #f0f8ff 100%)',
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Container maxWidth="sm" sx={{ textAlign: 'center' }}>
+            <CircularProgress
+              size={80}
+              thickness={4}
+              sx={{
+                color: '#ff4081',
+                mb: 3,
+                filter: 'drop-shadow(0 0 10px rgba(255, 64, 129, 0.5))',
+              }}
+            />
+            <Typography
+              variant="h5"
+              fontWeight={600}
+              color={isDark ? '#fff' : '#333'}
+              mb={2}
+            >
+              Loading Garment Details...
+            </Typography>
+            <Typography
+              variant="body1"
+              color={isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)'}
+            >
+              Please wait while we fetch the garment information
+            </Typography>
+          </Container>
+        </Box>
+      </Box>
+    );
+  }
+
+  // Show error state if garment loading failed
+  if (garmentError) {
+    return (
+      <Box>
+        <AnnouncementBar />
+        <Header />
+        <Box
+          sx={{
+            background: isDark
+              ? 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%)'
+              : 'linear-gradient(135deg, #f8f9ff 0%, #e8f4ff 50%, #f0f8ff 100%)',
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Container maxWidth="md">
+            {/* Attractive Error Card */}
+            <Box
+              sx={{
+                background: isDark
+                  ? 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)'
+                  : 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '24px',
+                border: isDark
+                  ? '1px solid rgba(255,255,255,0.1)'
+                  : '1px solid rgba(0,0,0,0.05)',
+                boxShadow: isDark
+                  ? '0 20px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)'
+                  : '0 20px 40px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8)',
+                p: 6,
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Decorative Background Elements */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: -20,
+                  right: -20,
+                  width: 100,
+                  height: 100,
+                  borderRadius: '50%',
+                  background: isDark
+                    ? 'linear-gradient(135deg, #ff4081, #ff6b9d)'
+                    : 'linear-gradient(135deg, #ff4081, #ff6b9d)',
+                  opacity: 0.1,
+                  filter: 'blur(20px)',
+                }}
+              />
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bottom: -30,
+                  left: -30,
+                  width: 80,
+                  height: 80,
+                  borderRadius: '50%',
+                  background: isDark
+                    ? 'linear-gradient(135deg, #2196f3, #21cbf3)'
+                    : 'linear-gradient(135deg, #2196f3, #21cbf3)',
+                  opacity: 0.1,
+                  filter: 'blur(15px)',
+                }}
+              />
+
+              {/* Error Image with Modern Frame */}
+              <Box mb={4}>
+                <Box
+                  sx={{
+                    display: 'inline-block',
+                    p: 2,
+                    borderRadius: '20px',
+                    background: isDark
+                      ? 'linear-gradient(135deg, rgba(255,64,129,0.1) 0%, rgba(255,107,157,0.1) 100%)'
+                      : 'linear-gradient(135deg, rgba(255,64,129,0.05) 0%, rgba(255,107,157,0.05) 100%)',
+                    border: isDark
+                      ? '2px solid rgba(255,64,129,0.2)'
+                      : '2px solid rgba(255,64,129,0.1)',
+                  }}
+                >
+                  <img
+                    src="/vton/hVuKyhjJShi9WBzMHI9ETQ.jpeg"
+                    alt="Fashion garment"
+                    style={{
+                      width: '280px',
+                      height: '320px',
+                      objectFit: 'cover',
+                      borderRadius: '16px',
+                      boxShadow: isDark
+                        ? '0 10px 30px rgba(0,0,0,0.5)'
+                        : '0 10px 30px rgba(0,0,0,0.15)',
+                    }}
+                  />
+                </Box>
+              </Box>
+
+              {/* Modern Typography */}
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: 700,
+                  background: isDark
+                    ? 'linear-gradient(135deg, #fff 0%, #e0e0e0 100%)'
+                    : 'linear-gradient(135deg, #1a1a1a 0%, #333 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  mb: 2,
+                }}
+              >
+                Stunning Fashion Piece
+              </Typography>
+
+              <Typography
+                variant="h6"
+                sx={{
+                  color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
+                  mb: 1,
+                  fontWeight: 500,
+                }}
+              >
+                Ready to make this yours?
+              </Typography>
+
+              <Typography
+                variant="body1"
+                sx={{
+                  color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)',
+                  mb: 4,
+                  maxWidth: '400px',
+                  mx: 'auto',
+                  lineHeight: 1.6,
+                }}
+              >
+                Discover the perfect style that matches your personality.
+                Premium quality, trendy design, unbeatable comfort.
+              </Typography>
+
+              {/* Action Buttons */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: 2,
+                  justifyContent: 'center',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <Button
+                  variant="contained"
+                  onClick={handleBuyNow}
+                  sx={{
+                    background:
+                      'linear-gradient(135deg, #ff4081 0%, #ff6b9d 100%)',
+                    color: '#fff',
+                    fontWeight: 700,
+                    fontSize: '1.1rem',
+                    px: 5,
+                    py: 2,
+                    borderRadius: '16px',
+                    textTransform: 'none',
+                    boxShadow: '0 8px 25px rgba(255,64,129,0.4)',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 12px 35px rgba(255,64,129,0.5)',
+                      background:
+                        'linear-gradient(135deg, #e91e63 0%, #ff4081 100%)',
+                    },
+                  }}
+                >
+                  🛍️ Buy It Now
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  onClick={() => window.history.back()}
+                  sx={{
+                    color: isDark ? '#fff' : '#333',
+                    borderColor: isDark
+                      ? 'rgba(255,255,255,0.3)'
+                      : 'rgba(0,0,0,0.2)',
+                    fontWeight: 600,
+                    fontSize: '1.1rem',
+                    px: 5,
+                    py: 2,
+                    borderRadius: '16px',
+                    textTransform: 'none',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      borderColor: isDark
+                        ? 'rgba(255,255,255,0.5)'
+                        : 'rgba(0,0,0,0.4)',
+                      background: isDark
+                        ? 'rgba(255,255,255,0.05)'
+                        : 'rgba(0,0,0,0.02)',
+                      transform: 'translateY(-1px)',
+                    },
+                  }}
+                >
+                  ← Go Back
+                </Button>
+              </Box>
+            </Box>
+          </Container>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box>
@@ -336,6 +671,20 @@ export default function TryOnUploader() {
                 technology. Upload your photo and watch the magic happen
                 instantly!
               </Typography>
+
+              {garmentData && (
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    color: '#ff4081',
+                    fontWeight: 600,
+                    mt: 2,
+                    fontSize: '1.2rem',
+                  }}
+                >
+                  Now trying: {garmentData.name || 'Featured Garment'}
+                </Typography>
+              )}
             </Box>
           </Fade>
 
@@ -540,7 +889,7 @@ export default function TryOnUploader() {
                   </Box>
                 </Zoom>
 
-                {/* Featured Garment */}
+                {/* Selected Garment */}
                 <Zoom in timeout={1000}>
                   <Box textAlign="center">
                     <Box
@@ -557,7 +906,7 @@ export default function TryOnUploader() {
                         fontWeight="700"
                         color={isDark ? '#fff' : '#333'}
                       >
-                        Featured Garment
+                        Selected Garment
                       </Typography>
                     </Box>
 
@@ -577,33 +926,58 @@ export default function TryOnUploader() {
                         },
                       }}
                     >
-                      <img
-                        src={clothImageUrl}
-                        alt="Featured Garment"
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                        }}
-                      />
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          top: 12,
-                          left: 12,
-                          background:
-                            'linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)',
-                          color: '#fff',
-                          px: 2,
-                          py: 0.5,
-                          borderRadius: 2,
-                          fontSize: '0.875rem',
-                          fontWeight: 'bold',
-                          boxShadow: '0 2px 8px rgba(76, 175, 80, 0.3)',
-                        }}
-                      >
-                        ⭐ Featured
-                      </Box>
+                      {garmentData?.image ? (
+                        <>
+                          <img
+                            src={garmentData.image}
+                            alt={garmentData.name || 'Selected Garment'}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                            }}
+                          />
+                          <Box
+                            sx={{
+                              position: 'absolute',
+                              top: 12,
+                              left: 12,
+                              background:
+                                'linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)',
+                              color: '#fff',
+                              px: 2,
+                              py: 0.5,
+                              borderRadius: 2,
+                              fontSize: '0.875rem',
+                              fontWeight: 'bold',
+                              boxShadow: '0 2px 8px rgba(76, 175, 80, 0.3)',
+                              maxWidth: imageBoxWidth - 24,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {garmentData.name || '⭐ Selected'}
+                          </Box>
+                        </>
+                      ) : (
+                        <Box
+                          sx={{
+                            width: '100%',
+                            height: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: isDark
+                              ? 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)'
+                              : 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%)',
+                          }}
+                        >
+                          <Typography color={isDark ? '#fff' : '#333'}>
+                            Loading garment...
+                          </Typography>
+                        </Box>
+                      )}
                     </Paper>
                   </Box>
                 </Zoom>
@@ -848,6 +1222,115 @@ export default function TryOnUploader() {
                   </Zoom>
                 )}
               </Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  mt: resultUrl ? 3 : 2,
+                  mb: 2,
+                }}
+              >
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={handleBuyNow}
+                  sx={{
+                    background:
+                      'linear-gradient(45deg, #FF6B6B, #FF8E53, #FF6B9D)',
+                    backgroundSize: '200% 200%',
+                    animation: 'gradientShift 3s ease infinite',
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    fontSize: '1.2rem',
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: '50px',
+                    textTransform: 'none',
+                    boxShadow: '0 8px 25px rgba(255, 107, 107, 0.4)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    minWidth: '200px',
+                    '&:hover': {
+                      transform: 'translateY(-2px) scale(1.05)',
+                      boxShadow: '0 12px 35px rgba(255, 107, 107, 0.6)',
+                      background:
+                        'linear-gradient(45deg, #FF8E53, #FF6B9D, #FF6B6B)',
+                    },
+                    '&:active': {
+                      transform: 'translateY(0) scale(1.02)',
+                    },
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: '-100%',
+                      width: '100%',
+                      height: '100%',
+                      background:
+                        'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                      transition: 'left 0.5s ease',
+                    },
+                    '&:hover::before': {
+                      left: '100%',
+                    },
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    '@keyframes gradientShift': {
+                      '0%': {
+                        backgroundPosition: '0% 50%',
+                      },
+                      '50%': {
+                        backgroundPosition: '100% 50%',
+                      },
+                      '100%': {
+                        backgroundPosition: '0% 50%',
+                      },
+                    },
+                  }}
+                  startIcon={
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        '& svg': {
+                          fontSize: '1.5rem',
+                          animation: 'pulse 2s ease-in-out infinite',
+                        },
+                        '@keyframes pulse': {
+                          '0%, 100%': {
+                            transform: 'scale(1)',
+                          },
+                          '50%': {
+                            transform: 'scale(1.1)',
+                          },
+                        },
+                      }}
+                    >
+                      🛍️
+                    </Box>
+                  }
+                  endIcon={
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        ml: 1,
+                        '& svg': {
+                          fontSize: '1.2rem',
+                          transition: 'transform 0.3s ease',
+                        },
+                        '&:hover svg': {
+                          transform: 'translateX(4px)',
+                        },
+                      }}
+                    >
+                      →
+                    </Box>
+                  }
+                >
+                  Shop Now
+                </Button>
+              </Box>
 
               {loading && (
                 <Typography
@@ -918,10 +1401,15 @@ export default function TryOnUploader() {
 
               <Stack
                 direction={{ xs: 'column', sm: 'row' }}
-                spacing={3}
+                // spacing={3}
                 justifyContent="center"
                 alignItems="center"
                 flexWrap="wrap"
+                sx={{
+                  '& > *': {
+                    m: '24px', // full control, no interference
+                  },
+                }}
               >
                 {[
                   {
@@ -941,57 +1429,62 @@ export default function TryOnUploader() {
                   },
                 ].map((item, idx) => (
                   <Zoom key={idx} in timeout={1000 + idx * 200}>
-                    <Card
-                      elevation={4}
-                      sx={{
-                        position: 'relative',
-                        borderRadius: 3,
-                        overflow: 'hidden',
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-8px) scale(1.05)',
-                          boxShadow: '0 15px 35px rgba(255, 64, 129, 0.2)',
-                        },
-                      }}
-                    >
-                      <Box
-                        component="img"
-                        src={item.src}
-                        alt={item.label}
+                    <Box sx={{ m: '24px' }}>
+                      <Card
+                        elevation={4}
                         sx={{
-                          width: { xs: 180, sm: 160, md: 200 },
-                          height: { xs: 240, sm: 220, md: 280 },
-                          objectFit: 'cover',
-                          display: 'block',
-                        }}
-                      />
-                      <CardContent
-                        sx={{
-                          background: isDark
-                            ? 'linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(255,64,129,0.1) 100%)'
-                            : 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,64,129,0.05) 100%)',
-                          backdropFilter: 'blur(10px)',
-                          p: 2,
+                          position: 'relative',
+                          borderRadius: 3,
+                          overflow: 'hidden',
+                          transition:
+                            'transform 0.3s ease, box-shadow 0.3s ease',
+                          '&:hover': {
+                            transform: 'translateY(-8px) scale(1.05)',
+                            boxShadow: '0 15px 35px rgba(255, 64, 129, 0.2)',
+                          },
                         }}
                       >
-                        <Typography
-                          variant="subtitle1"
-                          fontWeight="600"
-                          color={isDark ? '#fff' : '#333'}
-                          mb={0.5}
+                        <Box
+                          component="img"
+                          src={item.src}
+                          alt={item.label}
+                          sx={{
+                            width: { xs: 200, sm: 200, md: 200 },
+                            height: { xs: 240, sm: 220, md: 280 },
+                            objectFit: 'cover',
+                            display: 'block',
+                          }}
+                        />
+                        <CardContent
+                          sx={{
+                            background: isDark
+                              ? 'linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(255,64,129,0.1) 100%)'
+                              : 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,64,129,0.05) 100%)',
+                            backdropFilter: 'blur(10px)',
+                            p: 2,
+                          }}
                         >
-                          {item.label}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          color={
-                            isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)'
-                          }
-                        >
-                          {item.tip}
-                        </Typography>
-                      </CardContent>
-                    </Card>
+                          <Typography
+                            variant="subtitle1"
+                            fontWeight={600}
+                            color={isDark ? '#fff' : '#333'}
+                            mb={0.5}
+                          >
+                            {item.label}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color={
+                              isDark
+                                ? 'rgba(255,255,255,0.7)'
+                                : 'rgba(0,0,0,0.7)'
+                            }
+                          >
+                            {item.tip}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Box>
                   </Zoom>
                 ))}
               </Stack>

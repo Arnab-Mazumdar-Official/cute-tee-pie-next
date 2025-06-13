@@ -2,48 +2,67 @@
 
 import { Box, Typography, useTheme } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import ChooseActionModal from '../ChooseActionModal/ChooseActionModal';
+import { useState } from 'react';
 
 const tshirtOptions = [
   {
     title: 'One More Chapter',
+    slug: 'one-more-chapter',
     path: '/blog/one-more-chapter',
     color: '#FF6347',
-    image: 'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/22e4615e-b6fc-47c1-ad74-e3a2bc5e05db.jpg', // Optional placeholder or leave blank
+    image:
+      'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/22e4615e-b6fc-47c1-ad74-e3a2bc5e05db.jpg', // Optional placeholder or leave blank
   },
   {
     title: 'Fly Like A Butterfly',
+    slug: 'fly-like-a-butterfly',
     path: 'blog/fly-like-a-butterfly',
     color: '#1E90FF',
-    image: 'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/194dc8fd-e5a1-45ce-b894-c6cf1aeeb3d2.jpg',
+    image:
+      'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/194dc8fd-e5a1-45ce-b894-c6cf1aeeb3d2.jpg',
   },
   {
     title: 'Unlimited',
+    slug: 'unlimited',
     path: '/blog/unlimited',
     color: '#FFA500',
-    image: 'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/98be9756-8323-4c99-88df-eff267c6164e.jpg',
+    image:
+      'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/98be9756-8323-4c99-88df-eff267c6164e.jpg',
   },
   {
     title: 'Error : 404',
+    slug: 'error-404',
     path: '/blog/error-404',
     color: '#32CD32',
-    image: 'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/63ee33be-e282-49a4-9b6d-3ef3c283038c.jpg',
+    image:
+      'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/63ee33be-e282-49a4-9b6d-3ef3c283038c.jpg',
   },
   {
     title: 'Tried and Tired',
+    slug: 'tried-and-tired',
     path: '/blog/tried-and-tired',
     color: '#FFD700',
-    image: 'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/7d966cd3-d2fc-4a8b-8cd4-c3fc73db84cc.jpg', // Replace with actual path
+    image:
+      'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/7d966cd3-d2fc-4a8b-8cd4-c3fc73db84cc.jpg', // Replace with actual path
   },
 ];
 
 const Weeklypick = () => {
   const theme = useTheme();
   const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [slug, setSlug] = useState('');
 
   const isDark = theme.palette.mode === 'dark';
   const bgColor = isDark ? '#000' : '#fff';
   const textColor = isDark ? '#fff' : '#000';
   const borderColor = textColor;
+
+  const handleClick = (slug:any) => {
+    setOpen(true);
+    setSlug(slug)
+  };
 
   return (
     <Box
@@ -71,7 +90,7 @@ const Weeklypick = () => {
         {tshirtOptions.map((item) => (
           <Box
             key={item.path}
-            onClick={() => router.push(item.path)}
+             onClick={() => handleClick(item.slug)}
             sx={{
               cursor: 'pointer',
               width: {
@@ -133,6 +152,12 @@ const Weeklypick = () => {
           </Box>
         ))}
       </Box>
+      <ChooseActionModal
+        open={open}
+        onClose={() => setOpen(false)}
+        productSlug={slug}
+        productId={''}
+      />
     </Box>
   );
 };

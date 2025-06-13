@@ -14,6 +14,7 @@ import {
 import { useRouter } from 'next/navigation';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
+import ChooseActionModal from '../ChooseActionModal/ChooseActionModal';
 
 const products = [
   {
@@ -21,6 +22,7 @@ const products = [
     title: 'Muscle Hustle',
     category: 'Adventure Fit',
     price: '₹ 1299',
+    slug: 'muscle-hustle',
     path: '/blog/muscle-hustle',
     image:
       'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/3cf60248-a2f2-4467-98e4-9dcc76c2b95e.jpg',
@@ -30,6 +32,7 @@ const products = [
     title: 'Geometric Escape',
     category: 'Minimalist Vibes',
     price: '₹ 1299',
+    slug: 'geometric-escape',
     path: '/blog/geometric-escape',
     image:
       'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/e1df5ee4-d3b6-4719-a561-4843b9751273.jpg',
@@ -39,6 +42,7 @@ const products = [
     title: 'Muscle Hustle',
     category: 'Adventure Fit',
     price: '₹ 1299',
+    slug: 'muscle-hustle',
     path: '/blog/muscle-hustle',
     image:
       'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/f14a631b-4e13-40d6-b061-5d2c7e1b43e0.jpg',
@@ -48,6 +52,7 @@ const products = [
     title: 'Mountain Sketch',
     category: 'Minimalist Vibes',
     price: '₹ 1299',
+    slug: 'mountain-sketch',
     path: '/blog/mountain-sketch',
     image:
       'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/63d5ad1f-9475-4a9c-b165-1ff0ead8da6c.jpg',
@@ -57,6 +62,7 @@ const products = [
     title: 'Muscle Hustle',
     category: 'Adventure Fit',
     price: '₹ 1299',
+    slug: 'muscle-hustle',
     path: '/blog/muscle-hustle',
     image:
       'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/60eabcd1-4721-46bc-93a2-0543e3a7370c.jpg',
@@ -66,6 +72,7 @@ const products = [
     title: 'Calorie Burn',
     category: 'T-Shirts',
     price: '₹ 1299',
+    slug: 'calorie-burn',
     path: '/blog/calorie-burn',
     image:
       'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/c2447542-cc5e-49c2-b1bf-a8157f6fc932.jpg',
@@ -75,6 +82,7 @@ const products = [
     title: 'Overthinking Mode',
     category: 'T-Shirts',
     price: '₹ 1299',
+    slug: 'overthinking-mode',
     path: '/blog/overthinking-mode',
     image:
       'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/27cd182e-5721-4250-909d-99ad52ad299a.jpg',
@@ -84,6 +92,7 @@ const products = [
     title: 'Muscle Hustle',
     category: 'Adventure Fit',
     price: '₹ 999',
+    slug: 'muscle-hustle',
     path: '/blog/muscle-hustle',
     image:
       'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/c626c3b1-f2e0-4740-8ebb-b7c0934e1822.jpg',
@@ -93,6 +102,7 @@ const products = [
     title: 'Road Legend',
     category: 'Pants',
     price: '₹ 1699',
+    slug: 'road-legend',
     path: '/blog/road-legend',
     image:
       'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/17121ad2-3951-451e-a341-b047a69ea58f.jpg',
@@ -102,6 +112,7 @@ const products = [
     title: 'Road Legend',
     category: 'Joggers',
     price: '₹ 1299',
+    slug: 'road-legend',
     path: '/blog/road-legend',
     image:
       'https://printeepal-collections-images.s3.us-east-1.amazonaws.com/products/9e6c0d03-8946-4407-97e9-fd96f7470e82.jpg',
@@ -110,6 +121,8 @@ const products = [
 
 const ScrollableProductCarousel = () => {
   const containerRef = React.useRef(null);
+  const [open, setOpen] = useState(false);
+  const [slug, setSlug] = useState('');
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const router = useRouter();
@@ -120,6 +133,11 @@ const ScrollableProductCarousel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const cardWidth = 350 + 16; // Card width + spacing approx
+
+  const handleCardClick = (slug:any) => {
+    setOpen(true);
+    setSlug(slug)
+  };
 
   const handleScroll = () => {
     if (containerRef.current) {
@@ -245,7 +263,7 @@ const ScrollableProductCarousel = () => {
                 flexDirection: 'column',
                 mx: 1,
               })}
-              onClick={() => router.push(product.path)}
+              onClick={() => handleCardClick(product.slug)}
             >
               <Box
                 sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
@@ -358,6 +376,11 @@ const ScrollableProductCarousel = () => {
           />
         ))}
       </Box>
+      <ChooseActionModal
+        open={open}
+        onClose={() => setOpen(false)}
+        productSlug={slug}
+        productId={''}      />
     </Box>
   );
 };

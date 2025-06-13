@@ -29,7 +29,6 @@ import { Collapse } from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
-
 const MotionButton = ({
   children,
   onClick,
@@ -65,7 +64,6 @@ export default function ResponsiveHeader() {
   const [openCustomization, setOpenCustomization] = useState(false);
   const [openproducts, setOpenproducts] = useState(false);
 
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
@@ -86,7 +84,7 @@ export default function ResponsiveHeader() {
   }, []);
 
   const handleLogout = () => {
-    document.cookie.split(';').forEach(cookie => {
+    document.cookie.split(';').forEach((cookie) => {
       const name = cookie.split('=')[0].trim();
       document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     });
@@ -151,23 +149,26 @@ export default function ResponsiveHeader() {
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            
             <Tooltip title="Cart" arrow>
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <MotionButton onClick={openCartSection}>
                   <ShoppingBagOutlinedIcon fontSize="large" />
                 </MotionButton>
               </motion.div>
             </Tooltip>
             <ThemeToggle />
-            
           </Box>
-
         </Toolbar>
 
         {/* Modal Components */}
         <ComingSoonModal open={openModal} onClose={() => setOpenModal(false)} />
-        <LoginNeeded open={openLogineed} onClose={() => setOpenLogineed(false)} />
+        <LoginNeeded
+          open={openLogineed}
+          onClose={() => setOpenLogineed(false)}
+        />
       </AppBar>
 
       {/* Cart Drawer */}
@@ -187,8 +188,9 @@ export default function ResponsiveHeader() {
         }}
       >
         <Box sx={{ p: 2 }}>
-              <List>
-
+          <List>
+            {!isAdmin && (
+              <>
                 <ListItem button onClick={() => navigate('/sign-up')}>
                   <ListItemText primary="Sign Up" />
                 </ListItem>
@@ -198,141 +200,179 @@ export default function ResponsiveHeader() {
                   <ListItemText primary="Log In" />
                 </ListItem>
                 <Divider sx={{ my: 1 }} />
+              </>
+            )}
 
-                
+            <ListItem
+              button
+              onClick={() => setOpenCustomization(!openCustomization)}
+            >
+              <ListItemText primary="Customisation" />
+              {openCustomization ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
 
-               <ListItem button onClick={() => setOpenCustomization(!openCustomization)}>
-                  <ListItemText primary="Customisation" />
-                  {openCustomization ? <ExpandLess /> : <ExpandMore />}
+            <Divider sx={{ my: 1, mr: 2 }} />
+            <Collapse in={openCustomization} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  sx={{ pl: 4 }}
+                  onClick={() => navigate('/round-neck-t-shirt')}
+                >
+                  <ListItemText primary="Round Neck Men" />
                 </ListItem>
-                
-                <Divider sx={{ my: 1, mr: 2 }} />
-                <Collapse in={openCustomization} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/round-neck-t-shirt')}>
-                      <ListItemText primary="Round Neck Men" />
-                    </ListItem>
-                    <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
-
-                    <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/female-round-neck-tshirt')}>
-                      <ListItemText primary="Round Neck Women" />
-                    </ListItem>
-                    <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
-
-                    <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/polo-customised-tshirt')}>
-                      <ListItemText primary="Work Wear Polo" />
-                    </ListItem>
-                    <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
-
-                    <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/unisex-oversize-tshirt')}>
-                      <ListItemText primary="Unisex Oversize T-shirt" />
-                    </ListItem>
-                    <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
-
-                    <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/mens_full_sleeve_t_shirt')}>
-                      <ListItemText primary="Full Sleeve (Men)" />
-                    </ListItem>
-                    <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
-                  </List>
-                </Collapse>
-
-                <ListItem button onClick={() => setOpenproducts(!openproducts)}>
-                  <ListItemText primary="Our Products" />
-                  {openproducts ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
-                
-                <Divider sx={{ my: 1, mr: 2 }} />
-                <Collapse in={openproducts} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/products-by-type/Uinsex_Over_Size_T-Shirts')}>
-                      <ListItemText primary="Uinsex Over Size T-Shirts" />
-                    </ListItem>
-                    <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
-
-                    <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/products-by-type/Female_Round_Neck_Half_Sleeve')}>
-                      <ListItemText primary="Female Round Neck Half Sleeve" />
-                    </ListItem>
-                    <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
-
-                    <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/products-by-type/Work_Wear_Polo')}>
-                      <ListItemText primary="Work Wear Polo" />
-                    </ListItem>
-                    <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
-
-                    <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/products-by-type/Men_Round_Neck_Half_Sleeve')}>
-                      <ListItemText primary="Men Round Neck Half Sleeve" />
-                    </ListItem>
-                    <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
-
-                    <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/products-by-type/Round_Neck_Full_Sleeve_T-Shirts')}>
-                      <ListItemText primary="Round Neck Full Sleeve T-Shirts" />
-                    </ListItem>
-                    <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
-                  </List>
-                </Collapse>
+                <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
 
                 <ListItem
                   button
-                  onClick={() => {
-                    if (isLogin) {
-                      navigate('/orders');
-                    } else {
-                      setOpenLogineed(true);
-                    }
-                  }}
+                  sx={{ pl: 4 }}
+                  onClick={() => navigate('/female-round-neck-tshirt')}
                 >
-                  <ListItemText primary="Your Orders" />
+                  <ListItemText primary="Round Neck Women" />
                 </ListItem>
-                <Divider sx={{ my: 1 }} />
+                <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
 
                 <ListItem
                   button
-                  onClick={() => {
-                    if (isLogin) {
-                      navigate('/customised-t-shirt-orders');
-                    } else {
-                      setOpenLogineed(true);
-                    }
-                  }}
+                  sx={{ pl: 4 }}
+                  onClick={() => navigate('/polo-customised-tshirt')}
                 >
-                  <ListItemText primary="Your Customised T-shirt Orders" />
+                  <ListItemText primary="Work Wear Polo" />
                 </ListItem>
-                <Divider sx={{ my: 1 }} />
+                <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
 
                 <ListItem
                   button
-                  onClick={() => {
-                    if (isLogin) {
-                      navigate('/virtual-try');
-                    } else {
-                      setOpenLogineed(true);
-                    }
-                  }}
+                  sx={{ pl: 4 }}
+                  onClick={() => navigate('/unisex-oversize-tshirt')}
                 >
-                  <ListItemText primary="Virtual Trial Room" />
+                  <ListItemText primary="Unisex Oversize T-shirt" />
                 </ListItem>
-                <Divider sx={{ my: 1 }} />
+                <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
 
-                {isAdmin && (
-                  <>
-                    <ListItem button onClick={() => navigate('/admin-dashboard')}>
-                      <ListItemText primary="Admin Dashboard" />
-                    </ListItem>
-                    <Divider sx={{ my: 1 }} />
-                  </>
-                )}
-
-                {isLogin && (
-                  <>
-                    <ListItem button onClick={handleLogout}>
-                      <ListItemText primary="Log Out" />
-                    </ListItem>
-                    <Divider sx={{ my: 1 }} />
-                  </>
-                )}
+                <ListItem
+                  button
+                  sx={{ pl: 4 }}
+                  onClick={() => navigate('/mens_full_sleeve_t_shirt')}
+                >
+                  <ListItemText primary="Full Sleeve (Men)" />
+                </ListItem>
+                <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
               </List>
-            </Box>
+            </Collapse>
 
+            <ListItem button onClick={() => setOpenproducts(!openproducts)}>
+              <ListItemText primary="Our Products" />
+              {openproducts ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+
+            <Divider sx={{ my: 1, mr: 2 }} />
+            <Collapse in={openproducts} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  sx={{ pl: 4 }}
+                  onClick={() =>
+                    navigate('/products-by-type/Uinsex_Over_Size_T-Shirts')
+                  }
+                >
+                  <ListItemText primary="Uinsex Over Size T-Shirts" />
+                </ListItem>
+                <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
+
+                <ListItem
+                  button
+                  sx={{ pl: 4 }}
+                  onClick={() =>
+                    navigate('/products-by-type/Female_Round_Neck_Half_Sleeve')
+                  }
+                >
+                  <ListItemText primary="Female Round Neck Half Sleeve" />
+                </ListItem>
+                <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
+
+                <ListItem
+                  button
+                  sx={{ pl: 4 }}
+                  onClick={() => navigate('/products-by-type/Work_Wear_Polo')}
+                >
+                  <ListItemText primary="Work Wear Polo" />
+                </ListItem>
+                <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
+
+                <ListItem
+                  button
+                  sx={{ pl: 4 }}
+                  onClick={() =>
+                    navigate('/products-by-type/Men_Round_Neck_Half_Sleeve')
+                  }
+                >
+                  <ListItemText primary="Men Round Neck Half Sleeve" />
+                </ListItem>
+                <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
+
+                <ListItem
+                  button
+                  sx={{ pl: 4 }}
+                  onClick={() =>
+                    navigate(
+                      '/products-by-type/Round_Neck_Full_Sleeve_T-Shirts'
+                    )
+                  }
+                >
+                  <ListItemText primary="Round Neck Full Sleeve T-Shirts" />
+                </ListItem>
+                <Divider sx={{ my: 1, ml: 4, mr: 2 }} />
+              </List>
+            </Collapse>
+
+            <ListItem
+              button
+              onClick={() => {
+                if (isLogin) {
+                  navigate('/orders');
+                } else {
+                  setOpenLogineed(true);
+                }
+              }}
+            >
+              <ListItemText primary="Your Orders" />
+            </ListItem>
+            <Divider sx={{ my: 1 }} />
+
+            <ListItem
+              button
+              onClick={() => {
+                if (isLogin) {
+                  navigate('/customised-t-shirt-orders');
+                } else {
+                  setOpenLogineed(true);
+                }
+              }}
+            >
+              <ListItemText primary="Your Customised T-shirt Orders" />
+            </ListItem>
+            <Divider sx={{ my: 1 }} />
+
+            {isAdmin && (
+              <>
+                <ListItem button onClick={() => navigate('/admin-dashboard')}>
+                  <ListItemText primary="Admin Dashboard" />
+                </ListItem>
+                <Divider sx={{ my: 1 }} />
+              </>
+            )}
+
+            {isLogin && (
+              <>
+                <ListItem button onClick={handleLogout}>
+                  <ListItemText primary="Log Out" />
+                </ListItem>
+                <Divider sx={{ my: 1 }} />
+              </>
+            )}
+          </List>
+        </Box>
       </Drawer>
     </>
   );
