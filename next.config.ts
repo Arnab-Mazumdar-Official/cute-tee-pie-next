@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   eslint: {
@@ -19,9 +19,12 @@ const nextConfig: NextConfig = {
     SECRET_KEY: process.env.SECRET_KEY,
     RAZORPAY_PAYMENT_TOKEN: process.env.RAZORPAY_PAYMENT_TOKEN,
     RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    ARCJET_KEY: process.env.ARCJET_KEY,
   },
   images: {
-    domains: ["printeepal-collections-images.s3.us-east-1.amazonaws.com"],
+    domains: ['printeepal-collections-images.s3.us-east-1.amazonaws.com'],
   },
 };
 

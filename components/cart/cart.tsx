@@ -129,7 +129,7 @@ const EmptyCartAnimation = () => {
     <Fade in timeout={1000}>
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)',
+          // background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)',
           backgroundSize: '400% 400%',
           animation: 'gradientMove 3s ease infinite',
           borderRadius: 3,

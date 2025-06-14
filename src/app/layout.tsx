@@ -1,12 +1,11 @@
+// src/app/layout.tsx
+
 import './globals.css';
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import WhatsAppButton from '../../components/whatsappbtn/whatsapp';
 import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
-import ThemeProviderWrapper from '../../components/theamprovider/theamprovider';
-import RootLayoutInner from '../../components/rootlayout/rootlayout';
-import QueryProvider from '../../components/QueryProvider/QueryProvider';
+import ClientLayout from '../../components/client-layout/client-layout';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -92,12 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${geistSans.variable} ${geistMono.variable}`}
         style={{ margin: 0, padding: 0 }}
       >
-        <QueryProvider>
-          <ThemeProviderWrapper>
-            <RootLayoutInner>{children}</RootLayoutInner>
-          </ThemeProviderWrapper>
-          <WhatsAppButton />
-        </QueryProvider>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
