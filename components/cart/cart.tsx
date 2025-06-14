@@ -18,7 +18,8 @@ import {
   CardContent,
   Fade,
   Zoom,
-  Slide
+  Slide,
+  useTheme
 } from '@mui/material';
 import { 
   DeleteOutline, 
@@ -56,32 +57,21 @@ type CartDrawerProps = {
   onClose: () => void;
 };
 
-// Animated Loading Skeleton Component
-const AnimatedSkeleton = () => {
+// Simple Loading Skeleton Component
+const LoadingSkeleton = () => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+  
   return (
-    <Box sx={{ animation: 'pulse 1.5s ease-in-out infinite' }}>
+    <Box>
       {[1, 2, 3].map((index) => (
         <Card
           key={index}
           sx={{
             mb: 2,
-            background: 'linear-gradient(45deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)',
-            backgroundSize: '200% 200%',
-            animation: 'gradientShift 2s ease-in-out infinite',
-            border: '1px solid #00FFFF',
+            backgroundColor: isDarkMode ? '#000' : '#fff',
+            border: `1px solid ${isDarkMode ? '#fff' : '#000'}`,
             borderRadius: 2,
-            overflow: 'hidden',
-            position: 'relative',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: '-100%',
-              width: '100%',
-              height: '100%',
-              background: 'linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent)',
-              animation: 'shimmer 1.5s infinite',
-            }
           }}
         >
           <CardContent sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
@@ -92,16 +82,14 @@ const AnimatedSkeleton = () => {
               sx={{
                 borderRadius: 2,
                 mr: 2,
-                background: 'linear-gradient(45deg, #333, #555, #333)',
-                backgroundSize: '200% 200%',
-                animation: 'gradientShift 1.5s ease-in-out infinite'
+                bgcolor: isDarkMode ? '#333' : '#f0f0f0'
               }}
             />
             <Box sx={{ flexGrow: 1 }}>
-              <Skeleton variant="text" width="70%" height={24} sx={{ mb: 1, bgcolor: '#444' }} />
-              <Skeleton variant="text" width="50%" height={20} sx={{ mb: 1, bgcolor: '#444' }} />
-              <Skeleton variant="text" width="40%" height={20} sx={{ mb: 1, bgcolor: '#444' }} />
-              <Skeleton variant="text" width="30%" height={20} sx={{ bgcolor: '#444' }} />
+              <Skeleton variant="text" width="70%" height={24} sx={{ mb: 1, bgcolor: isDarkMode ? '#333' : '#f0f0f0' }} />
+              <Skeleton variant="text" width="50%" height={20} sx={{ mb: 1, bgcolor: isDarkMode ? '#333' : '#f0f0f0' }} />
+              <Skeleton variant="text" width="40%" height={20} sx={{ mb: 1, bgcolor: isDarkMode ? '#333' : '#f0f0f0' }} />
+              <Skeleton variant="text" width="30%" height={20} sx={{ bgcolor: isDarkMode ? '#333' : '#f0f0f0' }} />
             </Box>
           </CardContent>
         </Card>
@@ -110,10 +98,12 @@ const AnimatedSkeleton = () => {
   );
 };
 
-// Empty Cart Animation Component
-const EmptyCartAnimation = () => {
+// Empty Cart Component with Icon Changes Only
+const EmptyCartDisplay = () => {
   const [currentIcon, setCurrentIcon] = useState(0);
   const router = useRouter();
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
   const icons = [ShoppingCartOutlined, FavoriteOutlined, LocalFireDepartment, TrendingUp];
   
   useEffect(() => {
@@ -126,160 +116,70 @@ const EmptyCartAnimation = () => {
   const CurrentIcon = icons[currentIcon];
 
   return (
-    <Fade in timeout={1000}>
-      <Box
+    <Box
+      sx={{
+        backgroundColor: isDarkMode ? '#000' : '#fff',
+        border: `2px solid ${isDarkMode ? '#fff' : '#000'}`,
+        borderRadius: 3,
+        padding: 4,
+        textAlign: 'center',
+        maxWidth: 500,
+        margin: 2,
+      }}
+    >
+      <Box sx={{ mb: 3 }}>
+        <CurrentIcon
+          sx={{
+            fontSize: 80,
+            color: isDarkMode ? '#fff' : '#000',
+          }}
+        />
+      </Box>
+
+      <Typography
+        variant="h5"
+        gutterBottom
         sx={{
-          // background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)',
-          backgroundSize: '400% 400%',
-          animation: 'gradientMove 3s ease infinite',
-          borderRadius: 3,
-          padding: 4,
-          textAlign: 'center',
-          maxWidth: 500,
-          margin: 2,
-          position: 'relative',
-          overflow: 'hidden',
-          border: '2px solid transparent',
-          backgroundClip: 'padding-box',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            borderRadius: 3,
-            padding: '2px',
-            background: 'linear-gradient(45deg, #00FFFF, #FF00FF, #FFFF00, #00FFFF)',
-            backgroundSize: '400% 400%',
-            animation: 'borderGradient 2s linear infinite',
-            mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-            maskComposite: 'exclude',
-            zIndex: -1,
-          }
+          color: isDarkMode ? '#fff' : '#000',
+          fontWeight: 'bold',
+          mb: 2
         }}
       >
-        {/* Floating particles */}
-        {[...Array(6)].map((_, i) => (
-          <Box
-            key={i}
-            sx={{
-              position: 'absolute',
-              width: 4,
-              height: 4,
-              backgroundColor: '#00FFFF',
-              borderRadius: '50%',
-              top: `${20 + i * 15}%`,
-              left: `${10 + i * 15}%`,
-              animation: `float ${2 + i * 0.5}s ease-in-out infinite`,
-              animationDelay: `${i * 0.3}s`,
-              boxShadow: '0 0 10px #00FFFF'
-            }}
-          />
-        ))}
+        Your Cart Awaits Magic! ✨
+      </Typography>
 
-        <Zoom in timeout={800}>
-          <Box sx={{ mb: 3, position: 'relative' }}>
-            <CurrentIcon
-              sx={{
-                fontSize: 80,
-                color: '#00FFFF',
-                animation: 'iconPulse 2s ease-in-out infinite',
-                filter: 'drop-shadow(0 0 20px #00FFFF)',
-                transition: 'all 0.5s ease'
-              }}
-            />
-            <Star
-              sx={{
-                position: 'absolute',
-                top: -10,
-                right: -10,
-                fontSize: 20,
-                color: '#FFD700',
-                animation: 'twinkle 1s ease-in-out infinite'
-              }}
-            />
-          </Box>
-        </Zoom>
+      <Typography
+        variant="body1"
+        sx={{
+          color: isDarkMode ? '#fff' : '#000',
+          mb: 3,
+        }}
+      >
+        "Style is a way to say who you are without having to speak. Add a t-shirt that speaks for you!"
+      </Typography>
 
-        <Typography
-          variant="h5"
-          gutterBottom
-          sx={{
-            color: 'white',
-            fontWeight: 'bold',
-            background: 'linear-gradient(45deg, #00FFFF, #FF00FF)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            animation: 'textGlow 2s ease-in-out infinite',
-            mb: 2
-          }}
-        >
-          Your Cart Awaits Magic! ✨
-        </Typography>
-
-        <Typography
-          variant="body1"
-          sx={{
-            color: '#ccc',
-            mb: 3,
-            animation: 'fadeInUp 1s ease-out 0.5s both'
-          }}
-        >
-          "Style is a way to say who you are without having to speak. Add a t-shirt that speaks for you!"
-        </Typography>
-
-        <Button
-          variant="contained"
-          size="large"
-          startIcon={<Rocket sx={{ animation: 'rocket 1s ease-in-out infinite' }} />}
-          sx={{
-            background: 'linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1)',
-            backgroundSize: '200% 200%',
-            animation: 'gradientShift 2s ease infinite',
-            color: 'white',
-            fontWeight: 'bold',
-            px: 4,
-            py: 1.5,
-            borderRadius: 3,
-            textTransform: 'none',
-            fontSize: '1.1rem',
-            boxShadow: '0 8px 32px rgba(255, 107, 107, 0.3)',
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              transform: 'translateY(-2px) scale(1.05)',
-              boxShadow: '0 12px 40px rgba(255, 107, 107, 0.4)',
-              animation: 'gradientShift 1s ease infinite, pulse 0.5s ease infinite'
-            }
-          }}
-          onClick={() => router.push('/products')}
-        >
-          Start Shopping Now!
-        </Button>
-      </Box>
-    </Fade>
-  );
-};
-
-// Item Animation Wrapper
-const AnimatedCartItem = ({ children, index, isWishlist = false }) => {
-  return (
-    <Slide direction="left" in timeout={300 + index * 100}>
-      <Zoom in timeout={500 + index * 50}>
-        <Box
-          sx={{
-            animation: `slideInBounce 0.6s ease-out ${index * 0.1}s both`,
-            '&:hover': {
-              transform: 'scale(1.02)',
-              transition: 'transform 0.3s ease'
-            }
-          }}
-        >
-          {children}
-        </Box>
-      </Zoom>
-    </Slide>
+      <Button
+        variant="contained"
+        size="large"
+        startIcon={<Rocket />}
+        sx={{
+          backgroundColor: isDarkMode ? '#fff' : '#000',
+          color: isDarkMode ? '#000' : '#fff',
+          fontWeight: 'bold',
+          px: 4,
+          py: 1.5,
+          borderRadius: 3,
+          textTransform: 'none',
+          fontSize: '1.1rem',
+          '&:hover': {
+            backgroundColor: isDarkMode ? '#f0f0f0' : '#333',
+          }
+        }}
+        onClick={() => router.push('/products')}
+      >
+        Start Shopping Now!
+      </Button>
+    </Box>
   );
 };
 
@@ -292,79 +192,13 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const [noticemodal, setNoticemodal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
     severity: 'success' | 'error';
   }>({ open: false, message: '', severity: 'success' });
-
-  // Enhanced CSS animations
-  const animationStyles = `
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    
-    @keyframes shimmer {
-      0% { left: -100%; }
-      100% { left: 100%; }
-    }
-    
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    
-    @keyframes borderGradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(180deg); }
-    }
-    
-    @keyframes iconPulse {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px #00FFFF); }
-      50% { transform: scale(1.1); filter: drop-shadow(0 0 30px #00FFFF); }
-    }
-    
-    @keyframes twinkle {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.2); }
-    }
-    
-    @keyframes textGlow {
-      0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 255, 0.5); }
-      50% { text-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(255, 0, 255, 0.3); }
-    }
-    
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes rocket {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-5px); }
-    }
-    
-    @keyframes slideInBounce {
-      0% { transform: translateX(100px) scale(0.8); opacity: 0; }
-      60% { transform: translateX(-10px) scale(1.05); opacity: 0.8; }
-      100% { transform: translateX(0) scale(1); opacity: 1; }
-    }
-    
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
-    }
-  `;
 
   const getUserIdFromCookie = (): string | null => {
     try {
@@ -547,7 +381,6 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
       setLoading(true);
       setInitialLoad(true);
 
-      // Simulate realistic loading time for better UX
       setTimeout(() => {
         fetch(`/api/cart?user_id=${userId}`)
           .then(res => res.json())
@@ -559,7 +392,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           .finally(() => {
             setLoading(false);
           });
-      }, 1500);
+      }, 1000);
     }
   }, [open]);
 
@@ -569,7 +402,6 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 
   return (
     <>
-      <style>{animationStyles}</style>
       <Drawer anchor="right" open={open} onClose={onClose}>
         <Box
           width={isSmallScreen ? 300 : 400}
@@ -578,39 +410,22 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           flexDirection="column"
           height="100%"
           sx={{
-            background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%)',
-            position: 'relative',
-            overflow: 'hidden'
+            backgroundColor: isDarkMode ? '#000' : '#fff',
           }}
         >
-          {/* Animated Background Elements */}
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 0, 255, 0.1) 0%, transparent 50%)',
-              animation: 'gradientMove 4s ease-in-out infinite',
-              zIndex: 0
-            }}
-          />
-
-          <Box p={isSmallScreen ? 1 : 2} flexGrow={1} overflow="auto" sx={{ position: 'relative', zIndex: 1 }}>
+          <Box p={isSmallScreen ? 1 : 2} flexGrow={1} overflow="auto">
             {initialLoad ? (
-              <AnimatedSkeleton />
+              <LoadingSkeleton />
             ) : activeCartItems.length === 0 ? (
-              <EmptyCartAnimation />
+              <EmptyCartDisplay />
             ) : (
               <>
-                {/* Enhanced Cart Header */}
+                {/* Cart Header */}
                 <Box
                   onClick={() => setCartOpen(!cartOpen)}
                   sx={{
-                    background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)',
-                    backgroundSize: '200% 200%',
-                    animation: 'gradientShift 3s ease infinite',
+                    backgroundColor: isDarkMode ? '#000' : '#fff',
+                    border: `1px solid ${isDarkMode ? '#fff' : '#000'}`,
                     p: 2,
                     borderRadius: 2,
                     cursor: 'pointer',
@@ -618,213 +433,155 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                     justifyContent: 'center',
                     alignItems: 'center',
                     gap: 1,
-                    border: '1px solid #00FFFF',
-                    boxShadow: '0 4px 20px rgba(0, 255, 255, 0.2)',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      transform: 'translateY(-1px)',
-                      boxShadow: '0 6px 25px rgba(0, 255, 255, 0.3)',
-                    }
                   }}
                 >
-                  <FlashOn sx={{ color: '#FFD700', animation: 'twinkle 1s ease-in-out infinite' }} />
+                  <FlashOn sx={{ color: isDarkMode ? '#fff' : '#000' }} />
                   <Typography
                     variant="subtitle1"
                     sx={{
-                      color: 'white',
+                      color: isDarkMode ? '#fff' : '#000',
                       textAlign: 'center',
-                      fontFamily: '"Georgia", "Times New Roman", serif',
                       fontWeight: 'bold',
-                      textShadow: '0 0 10px rgba(0, 255, 255, 0.5)'
                     }}
                   >
                     Your Cart Items ({activeCartItems.length})
                   </Typography>
                   {cartOpen ? (
-                    <ExpandLess sx={{ color: 'white', animation: 'iconPulse 2s ease-in-out infinite' }} />
+                    <ExpandLess sx={{ color: isDarkMode ? '#fff' : '#000' }} />
                   ) : (
-                    <ExpandMore sx={{ color: 'white', animation: 'iconPulse 2s ease-in-out infinite' }} />
+                    <ExpandMore sx={{ color: isDarkMode ? '#fff' : '#000' }} />
                   )}
                 </Box>
 
-                {/* Enhanced Cart Items */}
+                {/* Cart Items */}
                 <Collapse in={cartOpen}>
                   <List>
                     {activeCartItems.map((item, index) => (
-                      <AnimatedCartItem key={item._id} index={index}>
-                        <Box
+                      <Box
+                        key={item._id}
+                        sx={{
+                          display: 'flex',
+                          border: `1px solid ${isDarkMode ? '#fff' : '#000'}`,
+                          borderRadius: 2,
+                          p: isSmallScreen ? 1 : 2,
+                          mb: 2,
+                          backgroundColor: isDarkMode ? '#000' : '#fff',
+                          color: isDarkMode ? '#fff' : '#000',
+                          alignItems: 'center',
+                          position: 'relative',
+                        }}
+                      >
+                        <IconButton
+                          onClick={() => handleDelete(item._id)}
                           sx={{
-                            position: 'relative',
-                            display: 'flex',
-                            border: '1px solid #00FFFF',
-                            borderRadius: 2,
-                            p: isSmallScreen ? 1 : 2,
-                            mb: 2,
-                            background: 'linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #121212 100%)',
-                            backgroundSize: '200% 200%',
-                            animation: 'gradientShift 4s ease infinite',
-                            color: 'white',
-                            alignItems: 'center',
-                            boxShadow: '0 4px 15px rgba(0, 255, 255, 0.1)',
-                            overflow: 'hidden',
-                            '&::before': {
-                              content: '""',
-                              position: 'absolute',
-                              top: 0,
-                              left: '-100%',
-                              width: '100%',
-                              height: '100%',
-                              background: 'linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent)',
-                              animation: 'shimmer 3s infinite',
-                            }
+                            position: 'absolute',
+                            top: 8,
+                            right: 8,
+                            color: isDarkMode ? '#fff' : '#000',
+                            border: `2px solid ${isDarkMode ? '#fff' : '#000'}`,
+                            borderRadius: '50%',
+                            padding: '4px',
                           }}
                         >
-                          <IconButton
-                            onClick={() => handleDelete(item._id)}
+                          <DeleteOutline />
+                        </IconButton>
+
+                        <Box
+                          sx={{
+                            width: isSmallScreen ? 60 : 80,
+                            height: isSmallScreen ? 60 : 80,
+                            mr: 2,
+                            flexShrink: 0,
+                            borderRadius: 2,
+                            overflow: 'hidden',
+                            border: `2px solid ${isDarkMode ? '#fff' : '#000'}`,
+                          }}
+                        >
+                          <img
+                            src={item.thumbnail_url}
+                            alt={item.title}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                            }}
+                          />
+                        </Box>
+
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Typography
+                            fontWeight="bold"
+                            fontSize={isSmallScreen ? '0.9rem' : '1rem'}
+                            sx={{ color: isDarkMode ? '#fff' : '#000' }}
+                          >
+                            {item.title}
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: isDarkMode ? '#fff' : '#000' }}>Size: {item.size}</Typography>
+                          <Typography variant="body2" sx={{ color: isDarkMode ? '#fff' : '#000' }}>Color: {item.color}</Typography>
+                          <Typography variant="body2" sx={{ color: isDarkMode ? '#fff' : '#000' }}>Qty: {item.quantity}</Typography>
+                          <Typography
+                            variant="body2"
                             sx={{
-                              position: 'absolute',
-                              top: 8,
-                              right: 8,
-                              color: 'white',
-                              border: '2px solid white',
-                              borderRadius: '50%',
-                              padding: '4px',
-                              transition: 'all 0.3s ease',
-                              '&:hover': {
-                                transform: 'scale(1.1) rotate(90deg)',
-                                borderColor: '#FF6B6B',
-                                color: '#FF6B6B',
-                                boxShadow: '0 0 15px rgba(255, 107, 107, 0.5)'
-                              }
+                              color: isDarkMode ? '#fff' : '#000',
+                              fontWeight: 'bold',
+                              fontSize: '1.1rem',
                             }}
                           >
-                            <DeleteOutline />
-                          </IconButton>
+                            ₹{item.price}
+                          </Typography>
 
-                          <Box
-                            sx={{
-                              width: isSmallScreen ? 60 : 80,
-                              height: isSmallScreen ? 60 : 80,
-                              mr: 2,
-                              flexShrink: 0,
-                              borderRadius: 2,
-                              overflow: 'hidden',
-                              border: '2px solid #00FFFF',
-                              boxShadow: '0 0 15px rgba(0, 255, 255, 0.3)',
-                              transition: 'all 0.3s ease',
-                              '&:hover': {
-                                transform: 'scale(1.05)',
-                                boxShadow: '0 0 20px rgba(0, 255, 255, 0.5)'
-                              }
-                            }}
-                          >
-                            <img
-                              src={item.thumbnail_url}
-                              alt={item.title}
-                              style={{
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                              }}
-                            />
-                          </Box>
-
-                          <Box sx={{ flexGrow: 1 }}>
-                            <Typography
-                              fontWeight="bold"
-                              fontSize={isSmallScreen ? '0.9rem' : '1rem'}
+                          <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              onClick={() => handleProductClick(item.product_id)}
                               sx={{
-                                background: 'linear-gradient(45deg, #00FFFF, #FF00FF)',
-                                backgroundClip: 'text',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                animation: 'textGlow 2s ease-in-out infinite'
+                                color: isDarkMode ? '#fff' : '#000',
+                                borderColor: isDarkMode ? '#fff' : '#000',
+                                minWidth: 'auto',
+                                px: 1,
+                                py: 0.5,
+                                fontSize: '0.75rem',
+                                borderRadius: 2,
                               }}
                             >
-                              {item.title}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: '#ccc' }}>Size: {item.size}</Typography>
-                            <Typography variant="body2" sx={{ color: '#ccc' }}>Color: {item.color}</Typography>
-                            <Typography variant="body2" sx={{ color: '#ccc' }}>Qty: {item.quantity}</Typography>
-                            <Typography
-                              variant="body2"
+                              View Product
+                            </Button>
+
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              onClick={() => toggleSaveForLater(item._id)}
                               sx={{
-                                color: 'cyan',
-                                fontWeight: 'bold',
-                                fontSize: '1.1rem',
-                                textShadow: '0 0 10px rgba(0, 255, 255, 0.5)'
+                                color: isDarkMode ? '#fff' : '#000',
+                                borderColor: isDarkMode ? '#fff' : '#000',
+                                minWidth: 'auto',
+                                px: 1,
+                                py: 0.5,
+                                fontSize: '0.75rem',
+                                borderRadius: 2,
                               }}
                             >
-                              ₹{item.price}
-                            </Typography>
-
-                            <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                              <Button
-                                size="small"
-                                variant="text"
-                                onClick={() => handleProductClick(item.product_id)}
-                                sx={{
-                                  color: 'cyan',
-                                  border: '1px solid white',
-                                  minWidth: 'auto',
-                                  px: 1,
-                                  py: 0.5,
-                                  fontSize: '0.75rem',
-                                  borderRadius: 2,
-                                  transition: 'all 0.3s ease',
-                                  '&:hover': {
-                                    transform: 'scale(1.05)',
-                                    borderColor: 'cyan',
-                                    boxShadow: '0 0 10px rgba(0, 255, 255, 0.3)'
-                                  }
-                                }}
-                              >
-                                View Product
-                              </Button>
-
-                              <Button
-                                size="small"
-                                variant="text"
-                                onClick={() => toggleSaveForLater(item._id)}
-                                sx={{
-                                  color: 'cyan',
-                                  border: '1px solid white',
-                                  minWidth: 'auto',
-                                  px: 1,
-                                  py: 0.5,
-                                  fontSize: '0.75rem',
-                                  borderRadius: 2,
-                                  transition: 'all 0.3s ease',
-                                  '&:hover': {
-                                    transform: 'scale(1.05)',
-                                    borderColor: '#FF00FF',
-                                    color: '#FF00FF',
-                                    boxShadow: '0 0 10px rgba(255, 0, 255, 0.3)'
-                                  }
-                                }}
-                              >
-                                Save As Wishlist
-                              </Button>
-                            </Box>
+                              Save As Wishlist
+                            </Button>
                           </Box>
                         </Box>
-                      </AnimatedCartItem>
+                      </Box>
                     ))}
                   </List>
                 </Collapse>
               </>
             )}
 
-            {/* Enhanced Wishlist Section */}
+            {/* Wishlist Section */}
             {savedItems.length > 0 && (
               <>
-                <Divider sx={{ my: 3, borderColor: '#333' }} />
+                <Divider sx={{ my: 3, borderColor: isDarkMode ? '#fff' : '#000' }} />
                 <Box
                   onClick={() => setWishlistOpen(!wishlistOpen)}
                   sx={{
-                    background: 'linear-gradient(135deg, #1a0033 0%, #330066 50%, #1a0033 100%)',
-                    backgroundSize: '200% 200%',
-                    animation: 'gradientShift 3s ease infinite',
+                    backgroundColor: isDarkMode ? '#000' : '#fff',
+                    border: `1px solid ${isDarkMode ? '#fff' : '#000'}`,
                     p: 2,
                     borderRadius: 2,
                     cursor: 'pointer',
@@ -832,196 +589,139 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                     justifyContent: 'center',
                     alignItems: 'center',
                     gap: 1,
-                    border: '1px solid #FF00FF',
-                    boxShadow: '0 4px 20px rgba(255, 0, 255, 0.2)',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      transform: 'translateY(-1px)',
-                      boxShadow: '0 6px 25px rgba(255, 0, 255, 0.3)',
-                    }
                   }}
                 >
-                  <FavoriteOutlined sx={{ color: '#FFD700', animation: 'iconPulse 2s ease-in-out infinite' }} />
+                  <FavoriteOutlined sx={{ color: isDarkMode ? '#fff' : '#000' }} />
                   <Typography
                     variant="subtitle1"
                     sx={{
-                      color: 'white',
+                      color: isDarkMode ? '#fff' : '#000',
                       textAlign: 'center',
-                      fontFamily: '"Georgia", "Times New Roman", serif',
                       fontWeight: 'bold',
-                      textShadow: '0 0 10px rgba(255, 0, 255, 0.5)'
                     }}
                   >
                     Your Wishlisted Items ({savedItems.length})
                   </Typography>
                   {wishlistOpen ? (
-                    <ExpandLess sx={{ color: 'white', animation: 'iconPulse 2s ease-in-out infinite' }} />
+                    <ExpandLess sx={{ color: isDarkMode ? '#fff' : '#000' }} />
                   ) : (
-                    <ExpandMore sx={{ color: 'white', animation: 'iconPulse 2s ease-in-out infinite' }} />
+                    <ExpandMore sx={{ color: isDarkMode ? '#fff' : '#000' }} />
                   )}
                 </Box>
 
                 <Collapse in={wishlistOpen}>
                   <List>
                     {savedItems.map((item, index) => (
-                      <AnimatedCartItem key={item._id} index={index} isWishlist={true}>
-                        <Box
+                      <Box
+                        key={item._id}
+                        sx={{
+                          display: 'flex',
+                          border: `1px solid ${isDarkMode ? '#fff' : '#000'}`,
+                          borderRadius: 2,
+                          p: isSmallScreen ? 1 : 2,
+                          mb: 2,
+                          backgroundColor: isDarkMode ? '#000' : '#fff',
+                          color: isDarkMode ? '#fff' : '#000',
+                          alignItems: 'center',
+                          position: 'relative',
+                        }}
+                      >
+                        <IconButton
+                          onClick={() => handleDelete(item._id)}
                           sx={{
-                            position: 'relative',
-                            display: 'flex',
-                            border: '1px solid #FF00FF',
-                            borderRadius: 2,
-                            p: isSmallScreen ? 1 : 2,
-                            mb: 2,
-                            background: 'linear-gradient(135deg, #1a0033 0%, #2d1a4d 50%, #1a0033 100%)',
-                            backgroundSize: '200% 200%',
-                            animation: 'gradientShift 4s ease infinite',
-                            color: 'white',
-                            alignItems: 'center',
-                            boxShadow: '0 4px 15px rgba(255, 0, 255, 0.1)',
-                            overflow: 'hidden',
-                            '&::before': {
-                              content: '""',
-                              position: 'absolute',
-                              top: 0,
-                              left: '-100%',
-                              width: '100%',
-                              height: '100%',
-                              background: 'linear-gradient(90deg, transparent, rgba(255, 0, 255, 0.1), transparent)',
-                              animation: 'shimmer 3s infinite',
-                            }
+                            position: 'absolute',
+                            top: 8,
+                            right: 8,
+                            color: isDarkMode ? '#fff' : '#000',
+                            border: `2px solid ${isDarkMode ? '#fff' : '#000'}`,
+                            borderRadius: '50%',
+                            padding: '4px',
                           }}
                         >
-                          <IconButton
-                            onClick={() => handleDelete(item._id)}
+                          <DeleteOutline />
+                        </IconButton>
+
+                        <Box
+                          sx={{
+                            width: isSmallScreen ? 60 : 80,
+                            height: isSmallScreen ? 60 : 80,
+                            mr: 2,
+                            flexShrink: 0,
+                            borderRadius: 2,
+                            overflow: 'hidden',
+                            border: `2px solid ${isDarkMode ? '#fff' : '#000'}`,
+                          }}
+                        >
+                          <img
+                            src={item.thumbnail_url}
+                            alt={item.title}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                            }}
+                          />
+                        </Box>
+
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Typography
+                            fontWeight="bold"
+                            fontSize={isSmallScreen ? '0.9rem' : '1rem'}
+                            sx={{ color: isDarkMode ? '#fff' : '#000' }}
+                          >
+                            {item.title}
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: isDarkMode ? '#fff' : '#000' }}>Size: {item.size}</Typography>
+                          <Typography variant="body2" sx={{ color: isDarkMode ? '#fff' : '#000' }}>Color: {item.color}</Typography>
+                          <Typography variant="body2" sx={{ color: isDarkMode ? '#fff' : '#000' }}>Qty: {item.quantity}</Typography>
+                          <Typography
+                            variant="body2"
                             sx={{
-                              position: 'absolute',
-                              top: 8,
-                              right: 8,
-                              color: 'white',
-                              border: '2px solid white',
-                              borderRadius: '50%',
-                              padding: '4px',
-                              transition: 'all 0.3s ease',
-                              '&:hover': {
-                                transform: 'scale(1.1) rotate(90deg)',
-                                borderColor: '#FF6B6B',
-                                color: '#FF6B6B',
-                                boxShadow: '0 0 15px rgba(255, 107, 107, 0.5)'
-                              }
+                              color: isDarkMode ? '#fff' : '#000',
+                              fontWeight: 'bold',
+                              fontSize: '1.1rem',
                             }}
                           >
-                            <DeleteOutline />
-                          </IconButton>
+                            ₹{item.price}
+                          </Typography>
 
-                          <Box
-                            sx={{
-                              width: isSmallScreen ? 60 : 80,
-                              height: isSmallScreen ? 60 : 80,
-                              mr: 2,
-                              flexShrink: 0,
-                              borderRadius: 2,
-                              overflow: 'hidden',
-                              border: '2px solid #FF00FF',
-                              boxShadow: '0 0 15px rgba(255, 0, 255, 0.3)',
-                              transition: 'all 0.3s ease',
-                              '&:hover': {
-                                transform: 'scale(1.05)',
-                                boxShadow: '0 0 20px rgba(255, 0, 255, 0.5)'
-                              }
-                            }}
-                          >
-                            <img
-                              src={item.thumbnail_url}
-                              alt={item.title}
-                              style={{
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                              }}
-                            />
-                          </Box>
-
-                          <Box sx={{ flexGrow: 1 }}>
-                            <Typography
-                              fontWeight="bold"
-                              fontSize={isSmallScreen ? '0.9rem' : '1rem'}
+                          <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              onClick={() => handleProductClick(item.product_id)}
                               sx={{
-                                background: 'linear-gradient(45deg, #FF00FF, #FFD700)',
-                                backgroundClip: 'text',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                animation: 'textGlow 2s ease-in-out infinite'
+                                color: isDarkMode ? '#fff' : '#000',
+                                borderColor: isDarkMode ? '#fff' : '#000',
+                                minWidth: 'auto',
+                                px: 1,
+                                py: 0.5,
+                                fontSize: '0.75rem',
+                                borderRadius: 2,
                               }}
                             >
-                              {item.title}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: '#ccc' }}>Size: {item.size}</Typography>
-                            <Typography variant="body2" sx={{ color: '#ccc' }}>Color: {item.color}</Typography>
-                            <Typography variant="body2" sx={{ color: '#ccc' }}>Qty: {item.quantity}</Typography>
-                            <Typography
-                              variant="body2"
+                              View Product
+                            </Button>
+
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              onClick={() => toggleSaveForLater(item._id)}
                               sx={{
-                                color: '#FF00FF',
-                                fontWeight: 'bold',
-                                fontSize: '1.1rem',
-                                textShadow: '0 0 10px rgba(255, 0, 255, 0.5)'
+                                color: isDarkMode ? '#fff' : '#000',
+                                borderColor: isDarkMode ? '#fff' : '#000',
+                                minWidth: 'auto',
+                                px: 1,
+                                py: 0.5,
+                                fontSize: '0.75rem',
+                                borderRadius: 2,
                               }}
                             >
-                              ₹{item.price}
-                            </Typography>
-
-                            <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                              <Button
-                                size="small"
-                                variant="text"
-                                onClick={() => handleProductClick(item.product_id)}
-                                sx={{
-                                  color: '#FF00FF',
-                                  border: '1px solid white',
-                                  minWidth: 'auto',
-                                  px: 1,
-                                  py: 0.5,
-                                  fontSize: '0.75rem',
-                                  borderRadius: 2,
-                                  transition: 'all 0.3s ease',
-                                  '&:hover': {
-                                    transform: 'scale(1.05)',
-                                    borderColor: '#FF00FF',
-                                    boxShadow: '0 0 10px rgba(255, 0, 255, 0.3)'
-                                  }
-                                }}
-                              >
-                                View Product
-                              </Button>
-
-                              <Button
-                                size="small"
-                                variant="text"
-                                onClick={() => toggleSaveForLater(item._id)}
-                                sx={{
-                                  color: '#FF00FF',
-                                  border: '1px solid white',
-                                  minWidth: 'auto',
-                                  px: 1,
-                                  py: 0.5,
-                                  fontSize: '0.75rem',
-                                  borderRadius: 2,
-                                  transition: 'all 0.3s ease',
-                                  '&:hover': {
-                                    transform: 'scale(1.05)',
-                                    borderColor: '#00FFFF',
-                                    color: '#00FFFF',
-                                    boxShadow: '0 0 10px rgba(0, 255, 255, 0.3)'
-                                  }
-                                }}
-                              >
-                                Move to Cart
-                              </Button>
-                            </Box>
+                              Move to Cart
+                            </Button>
                           </Box>
                         </Box>
-                      </AnimatedCartItem>
+                      </Box>
                     ))}
                   </List>
                 </Collapse>
@@ -1029,20 +729,14 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             )}
           </Box>
 
-          {/* Enhanced Total & Checkout Section */}
+          {/* Total & Checkout Section */}
           {activeCartItems.length > 0 && (
             <Box
               p={isSmallScreen ? 1 : 2}
-              borderTop="1px solid #333"
+              borderTop={`1px solid ${isDarkMode ? '#fff' : '#000'}`}
               sx={{
-                background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)',
-                backgroundSize: '200% 200%',
-                animation: 'gradientShift 3s ease infinite',
-                color: 'white',
-                position: 'relative',
-                zIndex: 1,
-                borderRadius: '20px 20px 0 0',
-                boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.5)'
+                backgroundColor: isDarkMode ? '#000' : '#fff',
+                color: isDarkMode ? '#fff' : '#000',
               }}
             >
               <Typography
@@ -1050,12 +744,8 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 sx={{
                   mb: 2,
                   textAlign: 'center',
-                  background: 'linear-gradient(45deg, #00FFFF, #FF00FF)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: isDarkMode ? '#fff' : '#000',
                   fontWeight: 'bold',
-                  animation: 'textGlow 2s ease-in-out infinite'
                 }}
               >
                 💰 Total Breakdown
@@ -1063,41 +753,35 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 
               <Box sx={{ maxHeight: 100, overflow: 'auto', mb: 2 }}>
                 {activeCartItems.map((item, index) => (
-                  <Fade in timeout={300 + index * 100} key={item.id}>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        mb: 0.5,
-                        p: 1,
-                        borderRadius: 1,
-                        background: 'rgba(0, 255, 255, 0.1)',
-                        border: '1px solid rgba(0, 255, 255, 0.2)',
-                        animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`
-                      }}
-                    >
-                      <span>{item.title} x {item.quantity}</span>
-                      <span style={{ fontWeight: 'bold', color: '#00FFFF' }}>₹{item.price * item.quantity}</span>
-                    </Typography>
-                  </Fade>
+                  <Typography
+                    key={item.id}
+                    variant="body2"
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 0.5,
+                      p: 1,
+                      borderRadius: 1,
+                      backgroundColor: isDarkMode ? '#000' : '#fff',
+                      border: `1px solid ${isDarkMode ? '#fff' : '#000'}`,
+                      color: isDarkMode ? '#fff' : '#000',
+                    }}
+                  >
+                    <span>{item.title} x {item.quantity}</span>
+                    <span style={{ fontWeight: 'bold' }}>₹{item.price * item.quantity}</span>
+                  </Typography>
                 ))}
               </Box>
 
-              <Divider sx={{ my: 2, borderColor: 'rgba(0, 255, 255, 0.3)' }} />
+              <Divider sx={{ my: 2, borderColor: isDarkMode ? '#fff' : '#000' }} />
 
               <Typography
                 variant="h5"
                 sx={{
                   textAlign: 'center',
                   mb: 3,
-                  background: 'linear-gradient(45deg, #FFD700, #FF6B6B)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: isDarkMode ? '#fff' : '#000',
                   fontWeight: 'bold',
-                  animation: 'textGlow 2s ease-in-out infinite',
-                  textShadow: '0 0 20px rgba(255, 215, 0, 0.5)'
                 }}
               >
                 🎯 Total: ₹{totalAmount.toFixed(2)}
@@ -1108,33 +792,15 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 fullWidth
                 onClick={handelCheckOut}
                 sx={{
-                  background: 'linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4)',
-                  backgroundSize: '300% 300%',
-                  animation: 'gradientShift 2s ease infinite',
-                  color: 'white',
+                  backgroundColor: isDarkMode ? '#fff' : '#000',
+                  color: isDarkMode ? '#000' : '#fff',
                   fontWeight: 'bold',
                   py: 2,
                   borderRadius: 3,
                   textTransform: 'none',
                   fontSize: '1.2rem',
-                  boxShadow: '0 8px 32px rgba(255, 107, 107, 0.4)',
-                  transition: 'all 0.3s ease',
-                  position: 'relative',
-                  overflow: 'hidden',
                   '&:hover': {
-                    transform: 'translateY(-3px) scale(1.02)',
-                    boxShadow: '0 15px 40px rgba(255, 107, 107, 0.6)',
-                    animation: 'gradientShift 1s ease infinite, pulse 0.5s ease infinite'
-                  },
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: '-100%',
-                    width: '100%',
-                    height: '100%',
-                    background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
-                    animation: 'shimmer 2s infinite',
+                    backgroundColor: isDarkMode ? '#f0f0f0' : '#333',
                   }
                 }}
               >
@@ -1151,8 +817,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                     zIndex: 1200,
                     height: 4,
                     '& .MuiLinearProgress-bar': {
-                      background: 'linear-gradient(45deg, #00FFFF, #FF00FF)',
-                      animation: 'gradientShift 1s ease infinite'
+                      backgroundColor: isDarkMode ? '#fff' : '#000',
                     }
                   }}
                 />
@@ -1174,12 +839,12 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             onClose={() => setSnackbar({ ...snackbar, open: false })}
             sx={{
               width: '100%',
-              background: snackbar.severity === 'error' 
-                ? 'linear-gradient(45deg, #FF6B6B, #FF8E8E)'
-                : 'linear-gradient(45deg, #4ECDC4, #44A08D)',
-              color: 'white',
+              backgroundColor: snackbar.severity === 'error' 
+                ? (isDarkMode ? '#000' : '#fff')
+                : (isDarkMode ? '#000' : '#fff'),
+              color: isDarkMode ? '#fff' : '#000',
+              border: `1px solid ${isDarkMode ? '#fff' : '#000'}`,
               fontWeight: 'bold',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
             }}
           >
             {snackbar.message}
