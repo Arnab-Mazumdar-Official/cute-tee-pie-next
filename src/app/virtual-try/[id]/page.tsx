@@ -180,12 +180,12 @@ export default function TryOnUploader() {
       return;
     }
 
-    if (file.size < MIN_SIZE) {
-      setError(
-        'Image is too small. Please upload a clearer image (min 100KB).'
-      );
-      return;
-    }
+    // if (file.size < MIN_SIZE) {
+    //   setError(
+    //     'Image is too small. Please upload a clearer image (min 100KB).'
+    //   );
+      // return;
+    // }
 
     const isValidDimensions = await validateImageDimensions(file);
     if (!isValidDimensions) {
@@ -224,7 +224,8 @@ export default function TryOnUploader() {
     setLoading(true);
 
     try {
-      if (humanImage.size > MAX_SIZE || humanImage.size < MIN_SIZE) {
+      if (humanImage.size > MAX_SIZE ) {
+      // if (humanImage.size > MAX_SIZE || humanImage.size < MIN_SIZE) {
         setError('Please upload a clearer photo (between 100KB to 5MB).');
         return;
       }
