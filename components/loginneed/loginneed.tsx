@@ -30,21 +30,19 @@ const LoginNeeded = ({
   const [loading, setLoading] = useState(false);
   const [showContent, setShowContent] = useState(false);
 
-  // Warm color scheme
+  // Simple black/white color scheme
   const colors = {
-    primary: isDark ? '#ff9a56' : '#ff7043',
-    secondary: isDark ? '#ffb74d' : '#ffa726',
-    accent: isDark ? '#81c784' : '#66bb6a',
-    background: isDark 
-      ? 'linear-gradient(135deg, #2c1810 0%, #3e2723 50%, #4e342e 100%)'
-      : 'linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #ffcc02 100%)',
-    cardBg: isDark ? 'rgba(46, 24, 16, 0.85)' : 'rgba(255, 255, 255, 0.95)',
-    text: isDark ? '#fff8e1' : '#3e2723',
-    textSecondary: isDark ? '#ffcc80' : '#8d6e63',
-    border: isDark ? '#ff9a56' : '#ff7043',
+    primary: isDark ? '#ffffff' : '#000000',
+    background: isDark ? '#000000' : '#ffffff',
+    cardBg: isDark ? '#000000' : '#ffffff',
+    text: isDark ? '#ffffff' : '#000000',
+    textSecondary: isDark ? '#cccccc' : '#666666',
+    border: isDark ? '#ffffff' : '#000000',
+    inputBorder: isDark ? '#666666' : '#cccccc',
+    hoverBg: isDark ? '#333333' : '#f5f5f5',
     glow: isDark 
-      ? `0 15px 40px rgba(255, 154, 86, 0.25), 0 0 30px rgba(255, 183, 77, 0.15)`
-      : `0 15px 40px rgba(255, 112, 67, 0.3), 0 0 30px rgba(255, 167, 38, 0.2)`,
+      ? `0 15px 40px rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.05)`
+      : `0 15px 40px rgba(0, 0, 0, 0.1), 0 0 30px rgba(0, 0, 0, 0.05)`,
   };
 
   useEffect(() => {
@@ -135,11 +133,12 @@ const LoginNeeded = ({
         },
       }}
     >
-      {/* Gentle Header Section */}
+      {/* Header Section */}
       <Box
         sx={{
           height: '120px',
-          background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+          background: colors.background,
+          border: `1px solid ${colors.border}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -152,7 +151,7 @@ const LoginNeeded = ({
             left: '-100%',
             width: '100%',
             height: '100%',
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+            background: `linear-gradient(90deg, transparent, ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}, transparent)`,
             animation: 'gentleShimmer 4s infinite',
           },
           '@keyframes gentleShimmer': {
@@ -165,8 +164,8 @@ const LoginNeeded = ({
           variant="h3" 
           fontWeight="600"
           sx={{
-            color: isDark ? '#2c1810' : '#fff',
-            textShadow: '0 2px 8px rgba(0,0,0,0.2)',
+            color: colors.text,
+            textShadow: `0 2px 8px ${isDark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)'}`,
             zIndex: 1,
           }}
         >
@@ -184,14 +183,13 @@ const LoginNeeded = ({
           p: 4,
           position: 'relative',
           background: colors.cardBg,
-          backdropFilter: 'blur(20px)',
           mx: 2,
           my: 2,
           borderRadius: 4,
-          border: `1px solid ${isDark ? 'rgba(255, 154, 86, 0.2)' : 'rgba(255, 112, 67, 0.15)'}`,
+          border: `1px solid ${colors.inputBorder}`,
         }}
       >
-        {/* Gentle Floating Elements */}
+        {/* Floating Elements */}
         <Box
           sx={{
             position: 'absolute',
@@ -200,8 +198,8 @@ const LoginNeeded = ({
             width: '50px',
             height: '50px',
             borderRadius: '50%',
-            background: `linear-gradient(45deg, ${colors.secondary}, ${colors.accent})`,
-            opacity: 0.4,
+            background: colors.inputBorder,
+            opacity: 0.3,
             animation: 'gentleFloat 6s ease-in-out infinite',
             '@keyframes gentleFloat': {
               '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
@@ -217,8 +215,8 @@ const LoginNeeded = ({
             width: '35px',
             height: '35px',
             borderRadius: '50%',
-            background: `linear-gradient(45deg, ${colors.accent}, ${colors.primary})`,
-            opacity: 0.3,
+            background: colors.inputBorder,
+            opacity: 0.2,
             animation: 'gentleFloat 8s ease-in-out infinite reverse',
           }}
         />
@@ -230,10 +228,7 @@ const LoginNeeded = ({
               fontWeight="600" 
               gutterBottom
               sx={{
-                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
+                color: colors.text,
                 mb: 2,
               }}
             >
@@ -256,7 +251,7 @@ const LoginNeeded = ({
           <Box sx={{ width: '100%', mb: 4, zIndex: 1 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 3 }}>
               {[
-                { icon: '🛍️', title: 'Smart Shopping', desc: 'Personalized picks' },
+                { icon: '🛍️', title: 'Smart Shopping', desc: 'Virtual Trial Room' },
                 { icon: '📦', title: 'Quick Orders', desc: 'Seamless checkout' },
                 { icon: '🎨', title: 'Custom Designs', desc: 'Made for you' },
                 { icon: '💝', title: 'Special Offers', desc: 'Exclusive deals' },
@@ -264,18 +259,16 @@ const LoginNeeded = ({
                 <Box
                   key={index}
                   sx={{
-                    background: isDark 
-                      ? 'linear-gradient(135deg, rgba(255, 154, 86, 0.1), rgba(129, 199, 132, 0.1))'
-                      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 112, 67, 0.1))',
+                    background: colors.background,
                     padding: '18px',
                     borderRadius: 3,
-                    border: `1px solid ${isDark ? 'rgba(255, 154, 86, 0.2)' : 'rgba(255, 112, 67, 0.2)'}`,
+                    border: `1px solid ${colors.inputBorder}`,
                     textAlign: 'center',
-                    backdropFilter: 'blur(10px)',
                     transition: 'all 0.3s ease',
                     '&:hover': {
                       transform: 'translateY(-2px)',
-                      boxShadow: `0 8px 25px ${isDark ? 'rgba(255, 154, 86, 0.2)' : 'rgba(255, 112, 67, 0.2)'}`,
+                      backgroundColor: colors.hoverBg,
+                      boxShadow: `0 8px 25px ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
                     },
                   }}
                 >
@@ -296,8 +289,8 @@ const LoginNeeded = ({
           variant="contained"
           onClick={handleLogin}
           sx={{
-            background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-            color: isDark ? '#2c1810' : '#fff',
+            background: colors.text,
+            color: colors.background,
             fontWeight: '600',
             mb: 3,
             width: '100%',
@@ -305,11 +298,11 @@ const LoginNeeded = ({
             fontSize: '1.1rem',
             borderRadius: 4,
             transition: 'all 0.3s ease',
-            boxShadow: `0 6px 20px ${isDark ? 'rgba(255, 154, 86, 0.3)' : 'rgba(255, 112, 67, 0.3)'}`,
+            boxShadow: `0 6px 20px ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`,
             '&:hover': {
-              background: `linear-gradient(45deg, ${colors.secondary}, ${colors.primary})`,
+              background: colors.textSecondary,
               transform: 'translateY(-2px)',
-              boxShadow: `0 8px 25px ${isDark ? 'rgba(255, 154, 86, 0.4)' : 'rgba(255, 112, 67, 0.4)'}`,
+              boxShadow: `0 8px 25px ${isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'}`,
             },
           }}
         >
@@ -330,25 +323,24 @@ const LoginNeeded = ({
           InputProps={{
             style: { 
               color: colors.text,
-              backgroundColor: isDark ? 'rgba(255, 154, 86, 0.05)' : 'rgba(255, 255, 255, 0.8)',
+              backgroundColor: colors.background,
             },
           }}
           sx={{
             mb: 2,
             '& .MuiOutlinedInput-root': {
               borderRadius: 4,
-              backdropFilter: 'blur(10px)',
               '& fieldset': {
-                borderColor: isDark ? 'rgba(255, 154, 86, 0.3)' : 'rgba(255, 112, 67, 0.3)',
+                borderColor: colors.inputBorder,
                 borderWidth: 1.5,
               },
               '&:hover fieldset': {
-                borderColor: colors.primary,
-                boxShadow: `0 0 10px ${isDark ? 'rgba(255, 154, 86, 0.2)' : 'rgba(255, 112, 67, 0.2)'}`,
+                borderColor: colors.border,
+                boxShadow: `0 0 10px ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
               },
               '&.Mui-focused fieldset': {
-                borderColor: colors.primary,
-                boxShadow: `0 0 15px ${isDark ? 'rgba(255, 154, 86, 0.3)' : 'rgba(255, 112, 67, 0.3)'}`,
+                borderColor: colors.border,
+                boxShadow: `0 0 15px ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`,
               },
             },
             '& .MuiInputBase-input::placeholder': {
@@ -363,11 +355,11 @@ const LoginNeeded = ({
               variant="body2" 
               sx={{ 
                 mb: 2,
-                color: isDark ? '#ffcc80' : '#d84315',
-                backgroundColor: isDark ? 'rgba(255, 204, 128, 0.1)' : 'rgba(216, 67, 21, 0.1)',
+                color: colors.text,
+                backgroundColor: colors.hoverBg,
                 padding: '12px 20px',
                 borderRadius: 4,
-                border: `1px solid ${isDark ? 'rgba(255, 204, 128, 0.2)' : 'rgba(216, 67, 21, 0.2)'}`,
+                border: `1px solid ${colors.inputBorder}`,
                 textAlign: 'center',
                 fontWeight: 400,
                 width: '100%',
@@ -384,30 +376,29 @@ const LoginNeeded = ({
           disabled={loading}
           fullWidth
           sx={{
-            borderColor: colors.primary,
-            color: colors.primary,
+            borderColor: colors.border,
+            color: colors.text,
             fontWeight: '600',
             py: 2,
             borderRadius: 4,
             borderWidth: 1.5,
-            background: isDark ? 'rgba(255, 154, 86, 0.05)' : 'rgba(255, 112, 67, 0.05)',
-            backdropFilter: 'blur(10px)',
+            background: colors.background,
             transition: 'all 0.3s ease',
             '&:hover': {
-              backgroundColor: isDark ? 'rgba(255, 154, 86, 0.1)' : 'rgba(255, 112, 67, 0.1)',
-              borderColor: colors.primary,
+              backgroundColor: colors.hoverBg,
+              borderColor: colors.border,
               transform: 'translateY(-1px)',
-              boxShadow: `0 6px 20px ${isDark ? 'rgba(255, 154, 86, 0.15)' : 'rgba(255, 112, 67, 0.15)'}`,
+              boxShadow: `0 6px 20px ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
             },
             '&:disabled': {
-              borderColor: isDark ? 'rgba(255, 154, 86, 0.3)' : 'rgba(255, 112, 67, 0.3)',
-              color: isDark ? 'rgba(255, 154, 86, 0.7)' : 'rgba(255, 112, 67, 0.7)',
+              borderColor: colors.inputBorder,
+              color: colors.textSecondary,
             },
           }}
         >
           {loading ? (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CircularProgress size={20} sx={{ color: colors.primary }} />
+              <CircularProgress size={20} sx={{ color: colors.text }} />
               <Typography variant="button">Setting up your account...</Typography>
             </Box>
           ) : (
@@ -416,11 +407,12 @@ const LoginNeeded = ({
         </Button>
       </DialogContent>
 
-      {/* Gentle Footer Section */}
+      {/* Footer Section */}
       <Box
         sx={{
           height: '80px',
-          background: `linear-gradient(45deg, ${colors.secondary}, ${colors.accent})`,
+          background: colors.background,
+          border: `1px solid ${colors.border}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -431,7 +423,7 @@ const LoginNeeded = ({
         <Typography 
           variant="body2" 
           sx={{ 
-            color: isDark ? '#2c1810' : '#fff',
+            color: colors.text,
             fontWeight: 500,
             textAlign: 'center',
             zIndex: 1,
@@ -440,7 +432,7 @@ const LoginNeeded = ({
           🔒 Secure • 🌟 Trusted • 💝 Always Free
         </Typography>
         
-        {/* Gentle footer glow */}
+        {/* Footer glow line */}
         <Box
           sx={{
             position: 'absolute',
@@ -448,13 +440,13 @@ const LoginNeeded = ({
             left: 0,
             right: 0,
             height: '2px',
-            background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary}, ${colors.accent}, ${colors.primary})`,
-            backgroundSize: '200% 100%',
+            background: colors.border,
+            opacity: 0.5,
             animation: 'gentleGlow 6s ease infinite',
             '@keyframes gentleGlow': {
-              '0%': { backgroundPosition: '0% 50%' },
-              '50%': { backgroundPosition: '100% 50%' },
-              '100%': { backgroundPosition: '0% 50%' },
+              '0%': { opacity: 0.3 },
+              '50%': { opacity: 0.7 },
+              '100%': { opacity: 0.3 },
             },
           }}
         />

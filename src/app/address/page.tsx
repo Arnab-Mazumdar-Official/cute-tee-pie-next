@@ -1126,13 +1126,13 @@ const PaymentPage: React.FC = () => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
+          // initial={{ opacity: 0, y: 30 }}
+          // animate={{ opacity: 1, y: 0 }}
+          // transition={{ delay: 0.6 }}
         >
           <Box
             sx={{
-              border: `3px solid ${primaryAccent}`,
+              // border: `3px solid ${primaryAccent}`,
               borderRadius: 3,
               p: 4,
               backgroundColor: bgColor,
@@ -1148,7 +1148,7 @@ const PaymentPage: React.FC = () => {
                 left: 0,
                 right: 0,
                 height: '4px',
-                background: `linear-gradient(90deg, ${primaryAccent}, ${secondaryAccent}, ${primaryAccent})`,
+                // background: `linear-gradient(90deg, ${primaryAccent}, ${secondaryAccent}, ${primaryAccent})`,
                 animation: 'gradient-shift 2s ease-in-out infinite',
               },
             }}
