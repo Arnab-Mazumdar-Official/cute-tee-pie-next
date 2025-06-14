@@ -17,9 +17,6 @@ const FormalProductSection = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isCompact, setIsCompact] = useState(false);
 
-  const navigate = (path) => {
-    console.log(`Navigate to: ${path}`);
-  };
 
   const cardData = [
     {
@@ -261,7 +258,7 @@ const FormalProductSection = () => {
                       cursor: 'pointer',
                       transition: 'background-color 0.2s ease, color 0.2s ease',
                     }}
-                    onClick={() => navigate(card.path)}
+                    onClick={() => router.push(card.path)}
                     onMouseEnter={(e) => {
                       e.target.style.backgroundColor = '#ffffff';
                       e.target.style.color = '#000000';

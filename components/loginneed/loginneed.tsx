@@ -123,7 +123,7 @@ const LoginNeeded = ({
           background: colors.background,
           color: colors.text,
           border: `2px solid ${colors.border}`,
-          borderRadius: 6,
+          borderRadius: 2,
           width: '480px',
           minHeight: '600px',
           p: 0,
@@ -133,45 +133,6 @@ const LoginNeeded = ({
         },
       }}
     >
-      {/* Header Section */}
-      <Box
-        sx={{
-          height: '120px',
-          background: colors.background,
-          border: `1px solid ${colors.border}`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          overflow: 'hidden',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: '-100%',
-            width: '100%',
-            height: '100%',
-            background: `linear-gradient(90deg, transparent, ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}, transparent)`,
-            animation: 'gentleShimmer 4s infinite',
-          },
-          '@keyframes gentleShimmer': {
-            '0%': { left: '-100%' },
-            '100%': { left: '100%' },
-          },
-        }}
-      >
-        <Typography 
-          variant="h3" 
-          fontWeight="600"
-          sx={{
-            color: colors.text,
-            textShadow: `0 2px 8px ${isDark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)'}`,
-            zIndex: 1,
-          }}
-        >
-          🌟 PrinteePaL
-        </Typography>
-      </Box>
 
       <DialogContent
         sx={{
@@ -220,32 +181,6 @@ const LoginNeeded = ({
             animation: 'gentleFloat 8s ease-in-out infinite reverse',
           }}
         />
-
-        <Fade in={showContent} timeout={1000}>
-          <Box sx={{ textAlign: 'center', zIndex: 1, mb: 3 }}>
-            <Typography 
-              variant="h5" 
-              fontWeight="600" 
-              gutterBottom
-              sx={{
-                color: colors.text,
-                mb: 2,
-              }}
-            >
-              🌸 Welcome to Premium
-            </Typography>
-            <Typography 
-              variant="body1" 
-              sx={{ 
-                color: colors.textSecondary,
-                fontWeight: 400,
-                lineHeight: 1.7,
-              }}
-            >
-              Discover personalized features designed just for you
-            </Typography>
-          </Box>
-        </Fade>
 
         <Fade in={showContent} timeout={1400}>
           <Box sx={{ width: '100%', mb: 4, zIndex: 1 }}>
@@ -406,51 +341,6 @@ const LoginNeeded = ({
           )}
         </Button>
       </DialogContent>
-
-      {/* Footer Section */}
-      <Box
-        sx={{
-          height: '80px',
-          background: colors.background,
-          border: `1px solid ${colors.border}`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        <Typography 
-          variant="body2" 
-          sx={{ 
-            color: colors.text,
-            fontWeight: 500,
-            textAlign: 'center',
-            zIndex: 1,
-          }}
-        >
-          🔒 Secure • 🌟 Trusted • 💝 Always Free
-        </Typography>
-        
-        {/* Footer glow line */}
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '2px',
-            background: colors.border,
-            opacity: 0.5,
-            animation: 'gentleGlow 6s ease infinite',
-            '@keyframes gentleGlow': {
-              '0%': { opacity: 0.3 },
-              '50%': { opacity: 0.7 },
-              '100%': { opacity: 0.3 },
-            },
-          }}
-        />
-      </Box>
     </Dialog>
   );
 };
